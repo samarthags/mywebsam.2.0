@@ -967,6 +967,8 @@ export default function ProfileCreator() {
                   }}
                 />
               </div>
+            </div>
+
             <div className="card">
               <Lbl>Profile Photo</Lbl>
               <div style={{display:"flex",alignItems:"center",gap:14,padding:14,borderRadius:12,cursor:"pointer",border:`2px dashed ${dragOver?"#6C63FF":form.avatar?"#6C63FF":"#e5e7eb"}`,background:dragOver?"#f2f0ff":form.avatar?"#f8f7ff":"#fafafa",transition:"all .2s"}}
