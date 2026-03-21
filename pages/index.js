@@ -366,8 +366,10 @@ export default function ProfileCreator() {
   const [pubUser,   setPubUser]  = useState("");
   const [copied,    setCopied]   = useState(false);
   const [showShare, setShowShare]= useState(false);
-  const [showDelete,setShowDelete]=useState(false);
-  const [deleting,  setDeleting]  =useState(false);
+  const [showDelete,  setShowDelete]  =useState(false);
+  const [deleting,    setDeleting]    =useState(false);
+  const [unameStatus, setUnameStatus] =useState("idle"); // idle | checking | available | taken | editing
+  const [unameTimer,  setUnameTimer]  =useState(null);
   const fileRef = useRef(null);
 
   /* ── Mount: read localStorage ── */
@@ -580,7 +582,7 @@ export default function ProfileCreator() {
   const NR=({ok=true})=>(
     <div style={{display:"flex",gap:10,marginTop:22}}>
       {step>1&&<button type="button" className="btn btn-s" style={{flex:1}} onClick={()=>setStep(s=>s-1)}><i className="fas fa-arrow-left" style={{fontSize:12}}/> Back</button>}
-      {step<5&&<button type="button" className="btn btn-p" style={{flex:2}} onClick={()=>setStep(s=>s+1)} disabled={!ok}>Continue <i className="fas fa-arrow-right" style={{fontSize:12}}/></button>}
+      {step<5&&<button type="button" className="btn btn-p" style={{flex:2}} onClick={()=>setStep(s=>s+1)} disabled={!ok||(step===1&&unameStatus==="taken")}>Continue <i className="fas fa-arrow-right" style={{fontSize:12}}/></button>}
     </div>
   );
 
@@ -742,10 +744,75 @@ export default function ProfileCreator() {
                 <Lbl req>Username</Lbl>
                 <div style={{position:"relative"}}>
                   <span style={{position:"absolute",left:13,top:"50%",transform:"translateY(-50%)",color:"#adb5c0",fontSize:14,pointerEvents:"none"}}>@</span>
-                  <input className="inp" style={{paddingLeft:27}} placeholder="yourname" value={form.username} onChange={e=>setField("username",e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g,""))}/>
+                  <input className="inp"
+                    style={{paddingLeft:27,paddingRight:36,
+                      borderColor: unameStatus==="taken"?"#ef4444":unameStatus==="available"?"#10b981":undefined,
+                      boxShadow: unameStatus==="taken"?"0 0 0 3px rgba(239,68,68,0.12)":unameStatus==="available"?"0 0 0 3px rgba(16,185,129,0.12)":undefined
+                    }}
+                    placeholder="yourname"
+                    value={form.username}
+                    onChange={e=>{
+                      const val=e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g,"");
+                      setField("username",val);
+                      // If editing own profile and username unchanged — mark as editing (always fine)
+                      if(saved?.username && val===saved.username){
+                        setUnameStatus("editing");
+                        if(unameTimer) clearTimeout(unameTimer);
+                        return;
+                      }
+                      if(!val||val.length<3){setUnameStatus("idle");return;}
+                      setUnameStatus("checking");
+                      if(unameTimer) clearTimeout(unameTimer);
+                      // Debounce 600ms
+                      const t=setTimeout(async()=>{
+                        try{
+                          const r=await fetch(`/api/check-username?username=${val}`);
+                          const d=await r.json();
+                          setUnameStatus(d.available?"available":"taken");
+                        }catch(_){setUnameStatus("idle");}
+                      },600);
+                      setUnameTimer(t);
+                    }}
+                  />
+                  {/* Status icon inside input */}
+                  <span style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",fontSize:14,pointerEvents:"none"}}>
+                    {unameStatus==="checking"  && <i className="fas fa-spinner spin" style={{color:"#adb5c0"}}/>}
+                    {unameStatus==="available" && <i className="fas fa-circle-check" style={{color:"#10b981"}}/>}
+                    {unameStatus==="taken"     && <i className="fas fa-circle-xmark" style={{color:"#ef4444"}}/>}
+                    {unameStatus==="editing"   && <i className="fas fa-pen" style={{color:AC}}/>}
+                  </span>
                 </div>
-                {form.username&&<Hint>mywebsam.site/<strong style={{color:AC}}>{form.username}</strong></Hint>}
-                {saved?.username&&form.username!==saved.username&&<Hint icon="fas fa-triangle-exclamation">Changing username will update your profile link.</Hint>}
+                {/* Status message below input */}
+                {unameStatus==="available" && (
+                  <div style={{fontSize:12,color:"#10b981",marginTop:5,display:"flex",alignItems:"center",gap:5}}>
+                    <i className="fas fa-circle-check"/>
+                    <strong>@{form.username}</strong> is available!
+                  </div>
+                )}
+                {unameStatus==="taken" && (
+                  <div style={{fontSize:12,color:"#ef4444",marginTop:5,display:"flex",alignItems:"center",gap:5}}>
+                    <i className="fas fa-circle-xmark"/>
+                    <strong>@{form.username}</strong> is already taken. Try another.
+                  </div>
+                )}
+                {unameStatus==="editing" && (
+                  <div style={{fontSize:12,color:AC,marginTop:5,display:"flex",alignItems:"center",gap:5}}>
+                    <i className="fas fa-pen"/>
+                    Keeping your current username.
+                  </div>
+                )}
+                {unameStatus==="idle" && form.username && form.username.length>=3 && (
+                  <div style={{fontSize:12,color:"#adb5c0",marginTop:5,display:"flex",alignItems:"center",gap:5}}>
+                    <i className="fas fa-globe"/>
+                    mywebsam.site/<strong style={{color:AC}}>{form.username}</strong>
+                  </div>
+                )}
+                {form.username && form.username.length>0 && form.username.length<3 && (
+                  <div style={{fontSize:12,color:"#f59e0b",marginTop:5,display:"flex",alignItems:"center",gap:5}}>
+                    <i className="fas fa-triangle-exclamation"/>
+                    Username must be at least 3 characters.
+                  </div>
+                )}
               </div>
               <div style={{marginBottom:14}}>
                 <Lbl req>Full Name</Lbl>
