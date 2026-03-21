@@ -264,6 +264,27 @@ export default function ProfilePage({ user }) {
           </div>
         )}
 
+        {/* Favourite Song — Spotify Embed */}
+        {user.favSongTrackId && (
+          <div className="section">
+            <div className="section-title">
+              <i className="fab fa-spotify" style={{color:"#1DB954"}} />
+              Currently Vibing To
+            </div>
+            <div style={{borderRadius:14,overflow:"hidden",boxShadow:"0 2px 12px rgba(0,0,0,0.08)"}}>
+              <iframe
+                src={`https://open.spotify.com/embed/track/${user.favSongTrackId}?utm_source=generator&theme=0`}
+                width="100%"
+                height="152"
+                frameBorder="0"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"
+                style={{display:"block"}}
+              />
+            </div>
+          </div>
+        )}
+
         {/* Interests */}
         {user.interests && Object.values(user.interests).flat().filter(Boolean).length > 0 && (
           <div className="section">
@@ -318,6 +339,10 @@ export async function getServerSideProps({ params }) {
           socialProfiles: user.socialProfiles || {},
           links:          user.links          || [],
           interests:      user.interests      || {},
+          favSong:        user.favSong        || "",
+          favArtist:      user.favArtist      || "",
+          favSongUrl:     user.favSongUrl     || "",
+          favSongTrackId: user.favSongTrackId || "",
         }))
       }
     };
