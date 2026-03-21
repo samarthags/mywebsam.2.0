@@ -7,6 +7,7 @@ export default async function handler(req, res) {
   const {
     username, name, dob, location, bio, aboutme,
     avatar, socialProfiles, links, interests,
+    favSong, favArtist, favSongUrl, favSongTrackId,
     _isEditing,   // true = user is updating their own profile
   } = req.body;
 
@@ -51,6 +52,10 @@ export default async function handler(req, res) {
           socialProfiles: socialProfiles || {},
           links:          links          || [],
           interests:      interests      || {},
+          favSong:        favSong        || "",
+          favArtist:      favArtist      || "",
+          favSongUrl:     favSongUrl     || "",
+          favSongTrackId: favSongTrackId || "",
           updatedAt:      new Date(),
         },
         $setOnInsert: {
