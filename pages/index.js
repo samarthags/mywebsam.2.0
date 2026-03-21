@@ -486,32 +486,54 @@ export default function ProfileCreator() {
     }finally{setAiLoad(false);}
   };
 
-  /* ── Publish — always calls /api/create with update flag ──
-     The server-side /api/create should upsert by username.
-     We send _isUpdate flag so the API can handle both cases. */
+  /* ── Publish ──
+     If same username → PUT /api/update  (updates existing profile on server)
+     If new username  → POST /api/create (creates new profile on server)
+     Local storage always saved first so UI never breaks even if API fails.
+  */
   const handlePublish=async()=>{
     setSubmitting(true);
     const aboutme=genBio||form.bio;
     const pUrl=`https://mywebsam.site/${form.username}`;
     const pObj={...form,aboutme,savedAt:new Date().toISOString(),publishedUrl:pUrl};
 
-    // Always save locally first
+    // Save locally FIRST — always
     persist(pObj);
 
+    const isUpdate=!!(saved&&saved.username===form.username);
+
     try{
-      // Send to /api/create — pass _isUpdate so the API knows to upsert
-      const isUpdate = !!(saved && saved.username === form.username);
-      const res=await fetch("/api/create",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({...form,aboutme,_isUpdate:isUpdate}),
-      });
+      let res;
+      if(isUpdate){
+        // UPDATE existing profile — use PUT /api/update
+        res=await fetch("/api/update",{
+          method:"PUT",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({...form,aboutme}),
+        });
+        // Some setups use POST for update too — fallback
+        if(!res.ok&&res.status===405){
+          res=await fetch("/api/update",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({...form,aboutme}),
+          });
+        }
+      }else{
+        // CREATE new profile
+        res=await fetch("/api/create",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({...form,aboutme}),
+        });
+      }
       const data=await res.json();
       const finalUrl=data.url||pUrl;
       persist({...pObj,publishedUrl:finalUrl});
       setPubUrl(finalUrl);
       setPubUser(form.username);
     }catch(_){
+      // Even if API fails, show success — data is saved locally
       setPubUrl(pUrl);
       setPubUser(form.username);
     }finally{
@@ -525,18 +547,19 @@ export default function ProfileCreator() {
 
   const copyLink=useCallback(()=>{
     const url=getUrl();
-    const attempt=navigator.clipboard?.writeText(url);
-    if(attempt){attempt.catch(()=>{});}else{
+    // Try clipboard API first, fallback to execCommand
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).catch(()=>{
+        try{const el=document.createElement("textarea");el.value=url;document.body.appendChild(el);el.select();document.execCommand("copy");document.body.removeChild(el);}catch(_){}
+      });
+    }else{
       try{const el=document.createElement("textarea");el.value=url;document.body.appendChild(el);el.select();document.execCommand("copy");document.body.removeChild(el);}catch(_){}
     }
     setCopied(true);setTimeout(()=>setCopied(false),2200);
   },[pubUrl,saved]);
 
-  const openShare=async()=>{
-    const url=getUrl();
-    if(navigator.share){try{await navigator.share({title:"My Profile",url});return;}catch(_){}}
-    setShowShare(true);
-  };
+  // Always open our custom share sheet — never the browser/OS native share
+  const openShare=()=>{ setShowShare(true); };
 
   /* ── Small helpers ── */
   const Lbl=({children,req})=><div className="lbl">{children}{req&&<span style={{color:"#ef4444",marginLeft:3}}>*</span>}</div>;
