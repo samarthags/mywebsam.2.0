@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 
-/* ── SSR-safe — never runs on server ── */
+/* ── SSR guard: never runs on server ── */
 let _booted = false;
 const CSS = `
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -15,8 +15,7 @@ input:focus,textarea:focus,select:focus{border-color:#6C63FF!important;box-shado
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 @keyframes spin{to{transform:rotate(360deg);}}
 @keyframes popIn{0%{opacity:0;transform:scale(.88);}100%{opacity:1;transform:scale(1);}}
-@keyframes confettiFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1;}100%{transform:translateY(80px) rotate(360deg);opacity:0;}}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(90px) rotate(400deg);opacity:0;}}
 .fu{animation:fadeUp 0.3s cubic-bezier(.22,.68,0,1.15) both;}
 .pop{animation:popIn 0.38s cubic-bezier(.22,.68,0,1.2) both;}
 .inp{width:100%;padding:11px 14px;background:#fff;border:1.5px solid #e5e7eb;border-radius:10px;color:#111827;font-family:inherit;font-size:14px;transition:border-color .16s,box-shadow .16s;}
@@ -35,8 +34,6 @@ input:focus,textarea:focus,select:focus{border-color:#6C63FF!important;box-shado
 .btn-gh:hover{background:#f9fafb;color:#374151;}
 .btn-d{background:transparent;color:#ef4444;border:1.5px solid #fca5a5;padding:7px 12px;font-size:13px;}
 .btn-d:hover{background:#fef2f2;border-color:#ef4444;}
-.btn-warn{background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;padding:9px 16px;font-size:13px;}
-.btn-warn:hover{background:#ffedd5;border-color:#fb923c;}
 .tag{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:999px;border:1.5px solid #e5e7eb;background:#fff;color:#6b7280;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s ease;user-select:none;}
 .tag:hover{border-color:#6C63FF;color:#6C63FF;background:#f2f0ff;}
 .tag:active{transform:scale(0.95);}
@@ -55,7 +52,7 @@ input:focus,textarea:focus,select:focus{border-color:#6C63FF!important;box-shado
 .lr{display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;border:1.5px solid #e9eaf0;border-radius:10px;transition:border-color .15s,box-shadow .15s;}
 .lr:hover{border-color:#c7c3f9;box-shadow:0 2px 8px rgba(108,99,255,0.07);}
 .success-ring{width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,#6C63FF,#10b981);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 32px rgba(108,99,255,0.28);}
-.confetti-piece{position:absolute;width:8px;height:8px;border-radius:2px;animation:confettiFall 1.4s ease-out forwards;}
+.confetti-piece{position:absolute;width:9px;height:9px;border-radius:2px;animation:confettiFall 1.5s ease-out forwards;}
 .lbl{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#9ca3af;margin-bottom:8px;}
 .hint{font-size:12px;color:#6b7280;margin-top:5px;display:flex;align-items:center;gap:5px;}
 .badge-green{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:#d1fae5;color:#065f46;font-size:11px;font-weight:600;}
@@ -64,7 +61,14 @@ input:focus,textarea:focus,select:focus{border-color:#6C63FF!important;box-shado
 .charcount.warn{color:#f59e0b;}.charcount.over{color:#ef4444;}
 .topbar{background:#fff;border-bottom:1px solid #e9eaf0;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
 .footer{text-align:center;padding:28px 16px 20px;font-size:13px;color:#9ca3af;}
-.section-divider{height:1px;background:#f0f0f5;margin:18px 0;}
+.section-divider{height:1px;background:#f0f0f5;margin:16px 0;}
+/* Share sheet overlay */
+.share-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;display:flex;align-items:flex-end;justify-content:center;}
+.share-sheet{background:#fff;border-radius:20px 20px 0 0;padding:20px 16px 32px;width:100%;max-width:480px;animation:fadeUp 0.25s ease;}
+.share-item{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;user-select:none;flex:1;min-width:60px;}
+.share-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;transition:transform .15s;}
+.share-item:active .share-icon{transform:scale(0.92);}
+.share-item span{font-size:11px;font-weight:600;color:#374151;}
 @media(max-width:520px){
   .card{padding:15px 14px;}
   .btn{padding:11px 14px;font-size:13px;}
@@ -92,46 +96,41 @@ function bootStyles() {
   }
 }
 
-/* ── Strip <think>...</think> blocks from AI output ── */
-function stripThink(text) {
-  if (!text) return "";
-  return text
-    .replace(/<think>[\s\S]*?<\/think>/gi, "")
-    .replace(/^[\s\n]+/, "")
-    .trim();
+/* Strip <think> tags from any AI model that leaks reasoning */
+function stripThink(t) {
+  if (!t) return "";
+  return t.replace(/<think>[\s\S]*?<\/think>/gi, "").replace(/^\s+/, "").trim();
 }
 
-/* ── localStorage key ── */
-const LS_KEY = "mywebsam_profile_v2";
+const LS_KEY   = "mywebsam_profile_v3";
+const ACCENT   = "#6C63FF";
+const GROQ_KEY = "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";
 
-/* ── Constants ── */
-const ACCENT = "#6C63FF";
-const SARVAM_KEY = "sk_rvgkd5mg_eorP6Y0JCfoWZxVqtCrmiOTB";
-
-const SOCIAL_META = {
-  email:         {icon:"fas fa-envelope",        color:"#EA4335", bg:"#fef2f2"},
-  instagram:     {icon:"fab fa-instagram",        color:"#E4405F", bg:"#fdf2f4"},
-  whatsapp:      {icon:"fab fa-whatsapp",         color:"#25D366", bg:"#edfaf3"},
-  facebook:      {icon:"fab fa-facebook-f",       color:"#1877F2", bg:"#eef4ff"},
-  youtube:       {icon:"fab fa-youtube",          color:"#FF0000", bg:"#fff2f2"},
-  twitter:       {icon:"fab fa-x-twitter",        color:"#111",    bg:"#f5f5f5"},
-  tiktok:        {icon:"fab fa-tiktok",           color:"#010101", bg:"#f5f5f5"},
-  snapchat:      {icon:"fab fa-snapchat",         color:"#d4b800", bg:"#fffce8"},
-  pinterest:     {icon:"fab fa-pinterest",        color:"#E60023", bg:"#fff0f1"},
-  telegram:      {icon:"fab fa-telegram",         color:"#26A5E4", bg:"#edf7fd"},
-  discord:       {icon:"fab fa-discord",          color:"#5865F2", bg:"#eef0ff"},
-  linkedin:      {icon:"fab fa-linkedin-in",      color:"#0A66C2", bg:"#e8f3fc"},
-  github:        {icon:"fab fa-github",           color:"#24292e", bg:"#f6f8fa"},
-  twitch:        {icon:"fab fa-twitch",           color:"#9146FF", bg:"#f3eeff"},
-  spotify:       {icon:"fab fa-spotify",          color:"#1DB954", bg:"#edfaf3"},
-  reddit:        {icon:"fab fa-reddit-alien",     color:"#FF4500", bg:"#fff2ed"},
-  medium:        {icon:"fab fa-medium",           color:"#333",    bg:"#f5f5f5"},
-  devto:         {icon:"fab fa-dev",              color:"#0a0a0a", bg:"#f5f5f5"},
-  codepen:       {icon:"fab fa-codepen",          color:"#111",    bg:"#f5f5f5"},
-  stackoverflow: {icon:"fab fa-stack-overflow",   color:"#F58025", bg:"#fff4ed"},
-  behance:       {icon:"fab fa-behance",          color:"#1769FF", bg:"#eef2ff"},
-  dribbble:      {icon:"fab fa-dribbble",         color:"#ea4c89", bg:"#fdf0f5"},
-  npm:           {icon:"fab fa-npm",              color:"#CC3534", bg:"#fff0f0"},
+/* ── Social metadata ── */
+const SM = {
+  email:         {icon:"fas fa-envelope",       color:"#EA4335",bg:"#fef2f2"},
+  instagram:     {icon:"fab fa-instagram",       color:"#E4405F",bg:"#fdf2f4"},
+  whatsapp:      {icon:"fab fa-whatsapp",        color:"#25D366",bg:"#edfaf3"},
+  facebook:      {icon:"fab fa-facebook-f",      color:"#1877F2",bg:"#eef4ff"},
+  youtube:       {icon:"fab fa-youtube",         color:"#FF0000",bg:"#fff2f2"},
+  twitter:       {icon:"fab fa-x-twitter",       color:"#111",   bg:"#f5f5f5"},
+  tiktok:        {icon:"fab fa-tiktok",          color:"#010101",bg:"#f5f5f5"},
+  snapchat:      {icon:"fab fa-snapchat",        color:"#d4b800",bg:"#fffce8"},
+  pinterest:     {icon:"fab fa-pinterest",       color:"#E60023",bg:"#fff0f1"},
+  telegram:      {icon:"fab fa-telegram",        color:"#26A5E4",bg:"#edf7fd"},
+  discord:       {icon:"fab fa-discord",         color:"#5865F2",bg:"#eef0ff"},
+  linkedin:      {icon:"fab fa-linkedin-in",     color:"#0A66C2",bg:"#e8f3fc"},
+  github:        {icon:"fab fa-github",          color:"#24292e",bg:"#f6f8fa"},
+  twitch:        {icon:"fab fa-twitch",          color:"#9146FF",bg:"#f3eeff"},
+  spotify:       {icon:"fab fa-spotify",         color:"#1DB954",bg:"#edfaf3"},
+  reddit:        {icon:"fab fa-reddit-alien",    color:"#FF4500",bg:"#fff2ed"},
+  medium:        {icon:"fab fa-medium",          color:"#333",   bg:"#f5f5f5"},
+  devto:         {icon:"fab fa-dev",             color:"#0a0a0a",bg:"#f5f5f5"},
+  codepen:       {icon:"fab fa-codepen",         color:"#111",   bg:"#f5f5f5"},
+  stackoverflow: {icon:"fab fa-stack-overflow",  color:"#F58025",bg:"#fff4ed"},
+  behance:       {icon:"fab fa-behance",         color:"#1769FF",bg:"#eef2ff"},
+  dribbble:      {icon:"fab fa-dribbble",        color:"#ea4c89",bg:"#fdf0f5"},
+  npm:           {icon:"fab fa-npm",             color:"#CC3534",bg:"#fff0f0"},
 };
 
 const ROLE_ICONS = {
@@ -154,34 +153,34 @@ const LINK_ICONS = [
   "fas fa-utensils","fas fa-flask","fas fa-laptop","fas fa-mobile-alt","fas fa-gift",
   "fas fa-handshake","fas fa-chart-bar","fas fa-comments","fas fa-envelope",
   "fas fa-map-marker-alt","fas fa-shopping-bag","fas fa-fire","fas fa-crown",
-  "fas fa-gem","fas fa-sun","fas fa-moon","fas fa-cloud","fas fa-tree",
+  "fas fa-gem","fas fa-sun","fas fa-moon","fas fa-tree",
   "fas fa-futbol","fas fa-basketball","fas fa-baseball","fas fa-table-tennis-paddle-ball",
 ];
 
 const SOCIALS_LIST = [
-  {n:"email",        l:"Email",          p:"your@email.com"},
-  {n:"instagram",    l:"Instagram",      p:"@username"},
-  {n:"whatsapp",     l:"WhatsApp",       p:"+1234567890"},
-  {n:"facebook",     l:"Facebook",       p:"username"},
-  {n:"youtube",      l:"YouTube",        p:"@channel"},
-  {n:"twitter",      l:"Twitter / X",   p:"@username"},
-  {n:"tiktok",       l:"TikTok",         p:"@username"},
-  {n:"snapchat",     l:"Snapchat",       p:"username"},
-  {n:"pinterest",    l:"Pinterest",      p:"username"},
-  {n:"telegram",     l:"Telegram",       p:"@username"},
-  {n:"discord",      l:"Discord",        p:"username"},
-  {n:"linkedin",     l:"LinkedIn",       p:"username"},
-  {n:"github",       l:"GitHub",         p:"username"},
-  {n:"twitch",       l:"Twitch",         p:"username"},
-  {n:"spotify",      l:"Spotify",        p:"username"},
-  {n:"reddit",       l:"Reddit",         p:"u/username"},
-  {n:"medium",       l:"Medium",         p:"@username"},
-  {n:"devto",        l:"DEV.to",         p:"username"},
-  {n:"codepen",      l:"CodePen",        p:"username"},
-  {n:"stackoverflow",l:"Stack Overflow", p:"user ID"},
-  {n:"behance",      l:"Behance",        p:"username"},
-  {n:"dribbble",     l:"Dribbble",       p:"username"},
-  {n:"npm",          l:"npm",            p:"~username"},
+  {n:"email",        l:"Email",         p:"your@email.com"},
+  {n:"instagram",    l:"Instagram",     p:"@username"},
+  {n:"whatsapp",     l:"WhatsApp",      p:"+1234567890"},
+  {n:"facebook",     l:"Facebook",      p:"username"},
+  {n:"youtube",      l:"YouTube",       p:"@channel"},
+  {n:"twitter",      l:"Twitter / X",  p:"@username"},
+  {n:"tiktok",       l:"TikTok",        p:"@username"},
+  {n:"snapchat",     l:"Snapchat",      p:"username"},
+  {n:"pinterest",    l:"Pinterest",     p:"username"},
+  {n:"telegram",     l:"Telegram",      p:"@username"},
+  {n:"discord",      l:"Discord",       p:"username"},
+  {n:"linkedin",     l:"LinkedIn",      p:"username"},
+  {n:"github",       l:"GitHub",        p:"username"},
+  {n:"twitch",       l:"Twitch",        p:"username"},
+  {n:"spotify",      l:"Spotify",       p:"username"},
+  {n:"reddit",       l:"Reddit",        p:"u/username"},
+  {n:"medium",       l:"Medium",        p:"@username"},
+  {n:"devto",        l:"DEV.to",        p:"username"},
+  {n:"codepen",      l:"CodePen",       p:"username"},
+  {n:"stackoverflow",l:"Stack Overflow",p:"user ID"},
+  {n:"behance",      l:"Behance",       p:"username"},
+  {n:"dribbble",     l:"Dribbble",      p:"username"},
+  {n:"npm",          l:"npm",           p:"~username"},
 ];
 
 const STEPS = ["Basic","Vibe","Social","Links","Publish"];
@@ -196,7 +195,6 @@ const ROLES = [
   {v:"volunteer",l:"Volunteer"},{v:"other",l:"Other"},
 ];
 
-/* ── Massive interest lists — universal, not just dev ── */
 const SPORTS = [
   "Cricket","Football","Basketball","Volleyball","Tennis","Badminton",
   "Table Tennis","Baseball","Rugby","Hockey","Swimming","Athletics",
@@ -205,8 +203,8 @@ const SPORTS = [
   "Handball","Rowing","Sailing","Martial Arts","Judo","Karate",
   "Taekwondo","Fencing","Shooting","Weightlifting","Powerlifting",
   "CrossFit","Yoga","Pilates","Rock Climbing","Skateboarding",
-  "Parkour","Cheerleading","Polo","Equestrian","Motorsports",
-  "Formula 1","MMA","Chess","Esports","Snooker","Bowling",
+  "Parkour","Cheerleading","Polo","Motorsports","Formula 1",
+  "MMA","Chess","Esports","Snooker","Bowling","Kabaddi","Netball",
 ];
 
 const HOBBIES = [
@@ -214,7 +212,7 @@ const HOBBIES = [
   "Art & Crafts","Painting","Sketching","Dancing","Singing","Hiking",
   "Camping","Gardening","Fishing","Knitting","Sewing","Woodworking",
   "Pottery","Candle Making","Journaling","Blogging","Vlogging",
-  "Podcasting","Streaming","Stand-up Comedy","Magic","Astronomy",
+  "Podcasting","Streaming","Stand-up Comedy","Astronomy",
   "Birdwatching","Collecting","Origami","Calligraphy","Digital Art",
   "3D Printing","DIY Projects","Home Decor","Thrifting","Board Games",
   "Card Games","Puzzles","Meditation","Fitness","Running","Walking",
@@ -225,7 +223,7 @@ const MUSIC_G = [
   "Country","Metal","Indie","Latin","K-Pop","Folk","Reggae",
   "Lo-fi","Ambient","Blues","Soul","Gospel","Devotional",
   "Bollywood","Tollywood","Carnatic","Hindustani","EDM","House",
-  "Techno","Drum & Bass","Trap","Afrobeats","Punjabi","Bhangra",
+  "Techno","Trap","Afrobeats","Punjabi","Bhangra",
 ];
 
 const VIBES = [
@@ -245,12 +243,11 @@ const PASSIONS = [
 ];
 
 const CODING_SKILLS = [
-  "JavaScript","TypeScript","Python","Java","C++","C","Rust","Go",
-  "Swift","Kotlin","React","Next.js","Node.js","Vue","Angular",
-  "Flutter","React Native","Django","FastAPI","Spring Boot",
+  "JavaScript","TypeScript","Python","Java","C++","Rust","Go",
+  "Swift","Kotlin","React","Next.js","Node.js","Flutter",
   "UI/UX Design","Figma","Machine Learning","Data Science",
-  "Cybersecurity","DevOps","Blockchain","Cloud (AWS/GCP/Azure)",
-  "Video Editing","Graphic Design","Photography Editing","3D / Blender",
+  "Cybersecurity","DevOps","Blockchain","Cloud","Video Editing",
+  "Graphic Design","Photography Editing","3D / Blender",
 ];
 
 const EMPTY_FORM = {
@@ -259,17 +256,16 @@ const EMPTY_FORM = {
   interests:{role:"",hobbies:[],sports:[],vibes:[],music:[],passions:[],skills:[]},
 };
 
-/* ════════════════════════════════════════
+/* ═══════════════════════════════════════════════
    MAIN COMPONENT
-════════════════════════════════════════ */
+═══════════════════════════════════════════════ */
 export default function DevProfileCreator() {
   useEffect(() => { bootStyles(); }, []);
 
-  /* ── view: "loading" | "dashboard" | "create" | "success" ── */
   const [view,       setView]       = useState("loading");
   const [step,       setStep]       = useState(1);
   const [form,       setForm]       = useState(EMPTY_FORM);
-  const [savedData,  setSavedData]  = useState(null); // the stored profile object
+  const [savedData,  setSavedData]  = useState(null);
   const [newLink,    setNewLink]    = useState({title:"",url:"",icon:"fas fa-link"});
   const [showIcons,  setShowIcons]  = useState(false);
   const [uploading,  setUploading]  = useState(false);
@@ -280,43 +276,39 @@ export default function DevProfileCreator() {
   const [submitting, setSubmitting] = useState(false);
   const [published,  setPublished]  = useState(null);
   const [copied,     setCopied]     = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showShare,  setShowShare]  = useState(false);
   const fileRef = useRef(null);
 
-  /* ── On mount: check localStorage ── */
+  /* ── Load from localStorage on mount ── */
   useEffect(() => {
     try {
       const raw = localStorage.getItem(LS_KEY);
       if (raw) {
-        const profile = JSON.parse(raw);
-        setSavedData(profile);
+        const p = JSON.parse(raw);
+        setSavedData(p);
         setView("dashboard");
       } else {
         setView("create");
       }
-    } catch {
-      setView("create");
-    }
+    } catch { setView("create"); }
   }, []);
 
-  /* ── Persist to localStorage ── */
   const persist = useCallback((profile) => {
     try { localStorage.setItem(LS_KEY, JSON.stringify(profile)); } catch {}
     setSavedData(profile);
   }, []);
 
-  /* ── Load profile into form for editing ── */
   const loadIntoForm = useCallback((profile) => {
     setForm({
-      username:       profile.username        || "",
-      name:           profile.name            || "",
-      dob:            profile.dob             || "",
-      location:       profile.location        || "",
-      bio:            profile.bio             || "",
-      avatar:         profile.avatar          || "",
-      socialProfiles: profile.socialProfiles  || {},
-      links:          profile.links           || [],
-      interests:      profile.interests       || EMPTY_FORM.interests,
+      username:       profile.username       || "",
+      name:           profile.name           || "",
+      dob:            profile.dob            || "",
+      location:       profile.location       || "",
+      bio:            profile.bio            || "",
+      avatar:         profile.avatar         || "",
+      socialProfiles: profile.socialProfiles || {},
+      links:          profile.links          || [],
+      interests:      profile.interests      || EMPTY_FORM.interests,
     });
     setAiText(profile.aboutme || "");
     setAiEdited(false);
@@ -330,7 +322,7 @@ export default function DevProfileCreator() {
   const score = Math.min(100, Math.round(
     [form.username,form.name,form.avatar,form.dob,form.location].filter(Boolean).length * 6 +
     Math.min(totalTags,12)*2.5 + Math.min(filledSocials.length,5)*4 +
-    Math.min(form.links.length,3)*5 + (aiText||form.bio ? 5 : 0)
+    Math.min(form.links.length,3)*5 + (aiText||form.bio?5:0)
   ));
 
   const checklist = [
@@ -338,7 +330,7 @@ export default function DevProfileCreator() {
     {label:"Full name added",          done:!!form.name},
     {label:"Profile photo",            done:!!form.avatar},
     {label:"Location added",           done:!!form.location},
-    {label:"Role or vibe selected",    done:!!form.interests.role || form.interests.vibes.length>0},
+    {label:"Role or vibe selected",    done:!!form.interests.role||form.interests.vibes.length>0},
     {label:"At least 3 interests",     done:totalTags>=3},
     {label:"Social profile linked",    done:filledSocials.length>0},
     {label:"Bio written or generated", done:!!(aiText||form.bio)},
@@ -379,109 +371,161 @@ export default function DevProfileCreator() {
     [ls[i],ls[j]]=[ls[j],ls[i]]; return {...p,links:ls};
   });
 
-  /* ── Sarvam AI ── */
+  /* ── Groq AI bio ── */
   const generateBio = async () => {
     setAiLoading(true);
-    const role   = ROLES.find(r=>r.v===form.interests.role)?.l || "person";
-    const sports = form.interests.sports.slice(0,4).join(", ");
-    const hobbies= form.interests.hobbies.slice(0,4).join(", ");
-    const vibes  = form.interests.vibes.slice(0,3).join(", ");
-    const music  = form.interests.music.slice(0,3).join(", ");
-    const name   = form.name || "this person";
-    const loc    = form.location || "";
+    const role    = ROLES.find(r=>r.v===form.interests.role)?.l || "person";
+    const sports  = form.interests.sports.slice(0,4).join(", ");
+    const hobbies = form.interests.hobbies.slice(0,4).join(", ");
+    const vibes   = form.interests.vibes.slice(0,3).join(", ");
+    const music   = form.interests.music.slice(0,3).join(", ");
+    const name    = form.name || "this person";
+    const loc     = form.location || "";
 
-    /* System prompt that forces clean output — no thinking, no preamble */
-    const systemPrompt = `You are a bio writer for a social profile page. Output ONLY the bio text. No thinking. No explanation. No preamble. No labels. Just 2-3 casual, warm, first-person sentences.`;
-
-    const userPrompt = `Write a short, friendly, first-person bio for a profile page.
-Person: ${name}${loc ? `, from ${loc}` : ""}.
-They identify as: ${role}.
-Vibes: ${vibes||"easy-going"}.
-Sports they love: ${sports||"staying active"}.
-Hobbies: ${hobbies||"varied interests"}.
-Music: ${music||"all kinds"}.
-Rules: 2-3 sentences only. Casual and warm tone. First person. No hashtags. No emojis. No <think> blocks. Output the bio directly.`;
+    const systemMsg = "You write short bios for personal profile pages. Reply with ONLY the bio text — nothing else, no labels, no explanation, no thinking.";
+    const userMsg   = [
+      `Write a 2-3 sentence, warm, casual, first-person bio.`,
+      `Name: ${name}${loc?`, from ${loc}`:""}.`,
+      `They are a: ${role}.`,
+      vibes   && `Vibe: ${vibes}.`,
+      sports  && `Sports: ${sports}.`,
+      hobbies && `Hobbies: ${hobbies}.`,
+      music   && `Music: ${music}.`,
+      `Rules: first person, no hashtags, no emojis, casual and friendly tone, 2-3 sentences max.`,
+    ].filter(Boolean).join(" ");
 
     try {
-      const res = await fetch("https://api.sarvam.ai/v1/chat/completions", {
+      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method:"POST",
-        headers:{"Content-Type":"application/json","api-subscription-key":SARVAM_KEY},
+        headers:{
+          "Content-Type":"application/json",
+          "Authorization":`Bearer ${GROQ_KEY}`,
+        },
         body: JSON.stringify({
-          model:"sarvam-m",
+          model: "llama-3.1-8b-instant",
           messages:[
-            {role:"system", content:systemPrompt},
-            {role:"user",   content:userPrompt},
+            {role:"system", content:systemMsg},
+            {role:"user",   content:userMsg},
           ],
-          max_tokens:160,
-          temperature:0.75,
+          max_tokens: 150,
+          temperature: 0.78,
         }),
       });
-      const data = await res.json();
-      const raw  = data?.choices?.[0]?.message?.content || "";
+      if (!res.ok) throw new Error(`Groq ${res.status}`);
+      const data  = await res.json();
+      const raw   = data?.choices?.[0]?.message?.content || "";
       const clean = stripThink(raw);
-      if (clean.length > 10) {
-        setAiText(clean);
-        setAiEdited(false);
-      } else throw new Error("empty");
-    } catch {
-      const fallbackParts = [name, role];
-      if (vibes)   fallbackParts.push(`known for being ${vibes.split(",")[0].trim()}`);
-      if (sports)  fallbackParts.push(`love playing ${sports.split(",")[0].trim()}`);
-      if (hobbies) fallbackParts.push(`enjoy ${hobbies.split(",")[0].trim()}`);
-      setAiText(`I'm ${name} — ${role}${loc?` based in ${loc}`:""}. I ${sports?"love playing "+sports.split(",")[0].trim()+" and ":""}enjoy ${hobbies?hobbies.split(",")[0].trim():"life to the fullest"}. Always exploring new things and making memories.`);
+      if (clean.length > 10) { setAiText(clean); setAiEdited(false); }
+      else throw new Error("empty response");
+    } catch (err) {
+      console.error("Groq error:", err);
+      /* graceful fallback */
+      const parts = [`I'm ${name}`, role !== "person" && `a ${role}`].filter(Boolean).join(", ");
+      const extra = [sports&&`love ${sports.split(",")[0].trim()}`, hobbies&&`enjoy ${hobbies.split(",")[0].trim()}`].filter(Boolean).join(" and ");
+      setAiText(`${parts}${loc?` based in ${loc}`:""}.${extra ? ` I ${extra}.`:""} Always exploring new things and making every day count.`);
       setAiEdited(false);
-    } finally {
-      setAiLoading(false);
-    }
+    } finally { setAiLoading(false); }
   };
 
-  /* ── Submit / Publish ── */
+  /* ── Submit/Publish — handles both create & update, prevents duplicates ── */
   const handleSubmit = async () => {
     setSubmitting(true);
     const aboutme = aiText || form.bio;
-    const profile = {
+
+    /* Build the profile object we'll save locally, same regardless of API result */
+    const profileToSave = {
       ...form,
       aboutme,
-      savedAt: new Date().toISOString(),
+      savedAt:      new Date().toISOString(),
       publishedUrl: `https://mywebsam.site/${form.username}`,
     };
 
-    /* Always overwrite the single device profile */
-    persist(profile);
+    /* Persist locally first — this is the source of truth on device */
+    persist(profileToSave);
 
     try {
-      const res  = await fetch("/api/create", {
+      /* If we have an existing saved profile with the SAME username,
+         call update endpoint instead of create to prevent duplicate error */
+      const isUpdate = savedData && savedData.username === form.username;
+      const endpoint = isUpdate ? "/api/update" : "/api/create";
+
+      const res  = await fetch(endpoint, {
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body: JSON.stringify({...form, aboutme}),
       });
       const data = await res.json();
-      /* /api/create returns existing profile url on duplicate username — we just update */
+
+      /* Use returned URL if available, else fall back to constructed URL */
       const url = data.url || `https://mywebsam.site/${form.username}`;
-      persist({...profile, publishedUrl: url});
-      setPublished({url, username:form.username});
+      persist({...profileToSave, publishedUrl: url});
+      setPublished({url, username: form.username});
     } catch {
-      setPublished({url:`https://mywebsam.site/${form.username}`, username:form.username});
-    } finally {
-      setSubmitting(false);
-    }
+      /* Even if API fails, show success — profile is saved locally */
+      setPublished({url: profileToSave.publishedUrl, username: form.username});
+    } finally { setSubmitting(false); }
   };
 
+  /* ── Share helpers ── */
+  const getShareUrl = () => published?.url || savedData?.publishedUrl || `https://mywebsam.site/${savedData?.username||""}`;
+
   const copyLink = () => {
-    const url = published?.url || savedData?.publishedUrl;
-    if (!url) return;
+    const url = getShareUrl();
     navigator.clipboard.writeText(url).then(()=>{ setCopied(true); setTimeout(()=>setCopied(false),2200); });
   };
 
-  const deleteProfile = () => {
-    try { localStorage.removeItem(LS_KEY); } catch {}
-    setSavedData(null);
-    setPublished(null);
-    setForm(EMPTY_FORM);
-    setAiText("");
-    setView("create");
-    setShowDeleteConfirm(false);
+  const nativeShare = async () => {
+    const url  = getShareUrl();
+    const text = `Check out my profile on mywebsam!`;
+    if (navigator.share) {
+      try { await navigator.share({title:"My Profile", text, url}); return; } catch {}
+    }
+    setShowShare(true);
   };
+
+  /* Share via specific platforms */
+  const shareOptions = [
+    {
+      label:"Copy Link", icon:"fas fa-link", bg:"#f0edff", color:ACCENT,
+      action: () => { copyLink(); setShowShare(false); },
+    },
+    {
+      label:"WhatsApp", icon:"fab fa-whatsapp", bg:"#edfaf3", color:"#25D366",
+      action: () => { window.open(`https://wa.me/?text=${encodeURIComponent("Check out my profile! "+getShareUrl())}`,"_blank"); setShowShare(false); },
+    },
+    {
+      label:"Telegram", icon:"fab fa-telegram", bg:"#edf7fd", color:"#26A5E4",
+      action: () => { window.open(`https://t.me/share/url?url=${encodeURIComponent(getShareUrl())}&text=${encodeURIComponent("Check out my profile!")}`,"_blank"); setShowShare(false); },
+    },
+    {
+      label:"Twitter", icon:"fab fa-x-twitter", bg:"#f5f5f5", color:"#111",
+      action: () => { window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent("Check out my profile! "+getShareUrl())}`,"_blank"); setShowShare(false); },
+    },
+    {
+      label:"Facebook", icon:"fab fa-facebook-f", bg:"#eef4ff", color:"#1877F2",
+      action: () => { window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`,"_blank"); setShowShare(false); },
+    },
+    {
+      label:"LinkedIn", icon:"fab fa-linkedin-in", bg:"#e8f3fc", color:"#0A66C2",
+      action: () => { window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getShareUrl())}`,"_blank"); setShowShare(false); },
+    },
+    {
+      label:"Snapchat", icon:"fab fa-snapchat", bg:"#fffce8", color:"#d4b800",
+      action: () => { window.open(`https://www.snapchat.com/scan?attachmentUrl=${encodeURIComponent(getShareUrl())}`,"_blank"); setShowShare(false); },
+    },
+    {
+      label:"Reddit", icon:"fab fa-reddit-alien", bg:"#fff2ed", color:"#FF4500",
+      action: () => { window.open(`https://reddit.com/submit?url=${encodeURIComponent(getShareUrl())}&title=${encodeURIComponent("My Profile")}`,"_blank"); setShowShare(false); },
+    },
+    {
+      label:"Email", icon:"fas fa-envelope", bg:"#fef2f2", color:"#EA4335",
+      action: () => { window.open(`mailto:?subject=My Profile&body=${encodeURIComponent("Check out my profile: "+getShareUrl())}`); setShowShare(false); },
+    },
+    {
+      label:"SMS", icon:"fas fa-comment-sms", bg:"#f0fdf4", color:"#10b981",
+      action: () => { window.open(`sms:?body=${encodeURIComponent("Check out my profile: "+getShareUrl())}`); setShowShare(false); },
+    },
+  ];
 
   /* ── Small UI helpers ── */
   const Lbl = ({children,req}) => (
@@ -521,12 +565,9 @@ Rules: 2-3 sentences only. Casual and warm tone. First person. No hashtags. No e
       {step<5&&<button type="button" className="btn btn-p" style={{flex:2}} onClick={()=>setStep(s=>s+1)} disabled={!canGo}>Continue <i className="fas fa-arrow-right" style={{fontSize:12}}/></button>}
     </div>
   );
-
-  /* Topbar — shared */
   const Topbar = ({right}) => (
     <div className="topbar">
-      <a href="https://mywebsam.site/" target="_blank" rel="noreferrer"
-        style={{display:"flex",alignItems:"center",gap:8,textDecoration:"none"}}>
+      <a href="https://mywebsam.site/" target="_blank" rel="noreferrer" style={{display:"flex",alignItems:"center",gap:8,textDecoration:"none"}}>
         <div style={{width:28,height:28,borderRadius:8,background:ACCENT,display:"flex",alignItems:"center",justifyContent:"center"}}>
           <i className="fas fa-link" style={{color:"#fff",fontSize:12}}/>
         </div>
@@ -537,174 +578,164 @@ Rules: 2-3 sentences only. Casual and warm tone. First person. No hashtags. No e
   );
   const Footer = () => <div className="footer">Made with ❤️‍🔥 by <strong>Samartha GS</strong></div>;
 
-  /* ════════════════════════════════════
-     LOADING
-  ════════════════════════════════════ */
-  if (view==="loading") {
-    return (
-      <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"#f5f6fa"}}>
-        <i className="fas fa-spinner" style={{animation:"spin 0.8s linear infinite",fontSize:28,color:ACCENT}}/>
+  /* ── Share Sheet overlay ── */
+  const ShareSheet = () => (
+    <div className="share-overlay" onClick={()=>setShowShare(false)}>
+      <div className="share-sheet" onClick={e=>e.stopPropagation()}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}>
+          <h3 style={{fontSize:16,fontWeight:800}}>Share Profile</h3>
+          <button onClick={()=>setShowShare(false)} style={{background:"none",border:"none",fontSize:20,color:"#9ca3af",cursor:"pointer",lineHeight:1}}>×</button>
+        </div>
+        {/* URL pill */}
+        <div style={{display:"flex",alignItems:"center",gap:10,background:"#f5f6fa",border:"1.5px solid #e9eaf0",borderRadius:10,padding:"9px 13px",marginBottom:20}}>
+          <i className="fas fa-globe" style={{color:ACCENT,fontSize:13,flexShrink:0}}/>
+          <span style={{flex:1,fontSize:12,color:"#374151",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{getShareUrl()}</span>
+        </div>
+        <div style={{display:"flex",flexWrap:"wrap",gap:8,justifyContent:"center"}}>
+          {shareOptions.map(opt=>(
+            <div key={opt.label} className="share-item" onClick={opt.action}>
+              <div className="share-icon" style={{background:opt.bg,color:opt.color}}>
+                <i className={opt.icon}/>
+              </div>
+              <span>{opt.label}</span>
+            </div>
+          ))}
+        </div>
       </div>
-    );
-  }
+    </div>
+  );
 
-  /* ════════════════════════════════════
-     DASHBOARD — profile already exists
-  ════════════════════════════════════ */
-  if (view==="dashboard" && savedData && !published) {
-    const sp = savedData;
-    const filledS = Object.entries(sp.socialProfiles||{}).filter(([,v])=>v?.trim());
+  /* ════════ LOADING ════════ */
+  if (view==="loading") return (
+    <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"#f5f6fa"}}>
+      <i className="fas fa-spinner" style={{animation:"spin 0.8s linear infinite",fontSize:28,color:ACCENT}}/>
+    </div>
+  );
+
+  /* ════════ DASHBOARD ════════ */
+  if ((view==="dashboard") && savedData && !published) {
+    const sp         = savedData;
     const profileUrl = sp.publishedUrl || `https://mywebsam.site/${sp.username}`;
+    const lastSaved  = new Date(sp.savedAt).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
+
     return (
       <div style={{minHeight:"100vh",background:"#f5f6fa",paddingBottom:40}}>
+        {showShare && <ShareSheet/>}
         <Topbar right={
-          <div style={{display:"flex",gap:8,alignItems:"center"}}>
-            <button className="btn btn-s" style={{fontSize:12,padding:"7px 14px"}} onClick={()=>loadIntoForm(sp)}>
-              <i className="fas fa-pen" style={{fontSize:11}}/> Edit
-            </button>
-          </div>
+          <button className="btn btn-s" style={{fontSize:12,padding:"7px 14px"}} onClick={()=>loadIntoForm(sp)}>
+            <i className="fas fa-pen" style={{fontSize:11}}/> Edit Profile
+          </button>
         }/>
 
-        <div style={{maxWidth:520,margin:"0 auto",padding:"28px 14px 0"}}>
-          {/* Profile card */}
-          <div className="card pop" style={{textAlign:"center",padding:"32px 24px",marginBottom:14}}>
-            {sp.avatar
-              ? <img src={sp.avatar} alt="av" style={{width:90,height:90,borderRadius:"50%",objectFit:"cover",border:`3px solid ${ACCENT}`,marginBottom:14}}/>
-              : <div style={{width:90,height:90,borderRadius:"50%",background:"#ede9ff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:32,color:ACCENT,margin:"0 auto 14px"}}>
-                  <i className="fas fa-user"/>
-                </div>}
-            <h2 style={{fontSize:22,fontWeight:800,marginBottom:4}}>{sp.name}</h2>
-            <div style={{fontSize:13,color:ACCENT,fontWeight:600,marginBottom:sp.location?6:0}}>@{sp.username}</div>
-            {sp.location&&<div style={{fontSize:12,color:"#6b7280",marginBottom:10}}><i className="fas fa-location-dot" style={{marginRight:4}}/>{sp.location}</div>}
-            {(sp.aboutme||sp.bio)&&<p style={{fontSize:14,color:"#6b7280",lineHeight:1.7,maxWidth:360,margin:"0 auto 16px"}}>{sp.aboutme||sp.bio}</p>}
+        <div style={{maxWidth:480,margin:"0 auto",padding:"28px 14px 0"}}>
 
-            {/* Social icons */}
-            {filledS.length>0&&(
-              <div style={{display:"flex",justifyContent:"center",gap:9,marginBottom:18,flexWrap:"wrap"}}>
-                {filledS.map(([n])=>{
-                  const m=SOCIAL_META[n]||{icon:"fas fa-link",color:"#6b7280",bg:"#f9fafb"};
-                  return <div key={n} style={{width:36,height:36,borderRadius:9,background:m.bg,color:m.color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:15}}><i className={m.icon}/></div>;
-                })}
-              </div>
-            )}
+          {/* ── Simple clean card: just link + actions ── */}
+          <div className="card pop" style={{marginBottom:14}}>
 
-            {/* Links */}
-            {(sp.links||[]).length>0&&(
-              <div style={{display:"flex",flexDirection:"column",gap:8,textAlign:"left",marginBottom:20}}>
-                {sp.links.map(link=>(
-                  <a key={link.id} href={link.url} target="_blank" rel="noreferrer"
-                    style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"11px 16px",background:"#f8f7ff",borderRadius:10,border:`1.5px solid #ede9ff`,textDecoration:"none",color:"#111827"}}>
-                    <div style={{display:"flex",alignItems:"center",gap:8}}>
-                      <i className={link.icon} style={{color:ACCENT,fontSize:13}}/>
-                      <span style={{fontWeight:600,fontSize:14}}>{link.title}</span>
-                    </div>
-                    <i className="fas fa-arrow-right" style={{color:"#b0b7c3",fontSize:11}}/>
-                  </a>
-                ))}
-              </div>
-            )}
-
-            {/* URL row */}
-            <div style={{display:"flex",alignItems:"center",background:"#f5f6fa",border:"1.5px solid #e9eaf0",borderRadius:10,padding:"10px 14px",marginBottom:14,gap:10}}>
-              <i className="fas fa-globe" style={{color:ACCENT,fontSize:13,flexShrink:0}}/>
-              <span style={{flex:1,fontSize:12,color:"#374151",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",textAlign:"left"}}>{profileUrl}</span>
+            {/* Header with name + username only */}
+            <div style={{textAlign:"center",paddingBottom:20,borderBottom:"1px solid #f0f0f5",marginBottom:20}}>
+              <div style={{fontSize:22,fontWeight:800,marginBottom:3}}>{sp.name}</div>
+              <div style={{fontSize:13,color:ACCENT,fontWeight:600}}>mywebsam.site/{sp.username}</div>
+              <div style={{fontSize:12,color:"#b0b7c3",marginTop:4}}><i className="fas fa-clock" style={{marginRight:4}}/>Last updated {lastSaved}</div>
             </div>
 
+            {/* Profile URL box */}
+            <div style={{display:"flex",alignItems:"center",background:"#f8f7ff",border:`1.5px solid #ede9ff`,borderRadius:12,padding:"12px 16px",marginBottom:16,gap:10}}>
+              <i className="fas fa-globe" style={{color:ACCENT,fontSize:16,flexShrink:0}}/>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:10,fontWeight:700,color:"#b0b7c3",letterSpacing:"0.06em",marginBottom:2}}>YOUR PROFILE LINK</div>
+                <div style={{fontSize:13,fontWeight:600,color:"#374151",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{profileUrl}</div>
+              </div>
+            </div>
+
+            {/* Action buttons */}
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
               <button className="btn btn-p" style={{width:"100%"}} onClick={()=>window.open(profileUrl,"_blank")}>
-                <i className="fas fa-arrow-up-right-from-square"/> View
+                <i className="fas fa-arrow-up-right-from-square"/> View Profile
               </button>
+              <button className="btn btn-g" style={{width:"100%"}} onClick={nativeShare}>
+                <i className="fas fa-share-nodes"/> Share
+              </button>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
               <button className="btn btn-s" style={{width:"100%"}} onClick={copyLink}>
                 <i className={`fas fa-${copied?"check":"copy"}`} style={{color:copied?"#10b981":undefined}}/> {copied?"Copied!":"Copy Link"}
               </button>
-            </div>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:14}}>
-              <button className="btn btn-gh" style={{width:"100%",fontSize:13}} onClick={()=>{
-                window.open(`https://wa.me/?text=${encodeURIComponent("Check out my profile! "+profileUrl)}`,"_blank");
-              }}><i className="fab fa-whatsapp" style={{color:"#25D366"}}/> WhatsApp</button>
-              <button className="btn btn-gh" style={{width:"100%",fontSize:13}} onClick={()=>{
-                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent("Check out my profile! "+profileUrl)}`,"_blank");
-              }}><i className="fab fa-x-twitter"/> Share</button>
-            </div>
-
-            <button className="btn btn-s" style={{width:"100%",fontSize:13}} onClick={()=>loadIntoForm(sp)}>
-              <i className="fas fa-pen"/> Edit Profile
-            </button>
-          </div>
-
-          {/* Last saved */}
-          <div style={{textAlign:"center",fontSize:12,color:"#b0b7c3",marginBottom:8}}>
-            <i className="fas fa-clock" style={{marginRight:5}}/>
-            Last saved {new Date(sp.savedAt).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})}
-          </div>
-
-          {/* Delete */}
-          {!showDeleteConfirm ? (
-            <div style={{textAlign:"center"}}>
-              <button className="btn btn-warn" style={{fontSize:12}} onClick={()=>setShowDeleteConfirm(true)}>
-                <i className="fas fa-trash"/> Delete & Start Over
+              <button className="btn btn-s" style={{width:"100%"}} onClick={()=>loadIntoForm(sp)}>
+                <i className="fas fa-pen"/> Edit
               </button>
             </div>
-          ):(
-            <div className="card" style={{padding:"16px",textAlign:"center"}}>
-              <p style={{fontSize:13,color:"#374151",marginBottom:14}}>This will permanently delete your saved profile from this device.</p>
-              <div style={{display:"flex",gap:10,justifyContent:"center"}}>
-                <button className="btn btn-s" style={{fontSize:13}} onClick={()=>setShowDeleteConfirm(false)}>Cancel</button>
-                <button className="btn btn-d" style={{fontSize:13}} onClick={deleteProfile}><i className="fas fa-trash"/> Yes, Delete</button>
+          </div>
+
+          {/* Quick stats — compact */}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:14}}>
+            {[
+              {label:"Socials",  val:Object.entries(sp.socialProfiles||{}).filter(([,v])=>v?.trim()).length, icon:"fas fa-share-nodes", color:"#6C63FF"},
+              {label:"Links",    val:(sp.links||[]).length,                                                  icon:"fas fa-link",        color:"#10b981"},
+              {label:"Interests",val:Object.values(sp.interests||{}).flat().filter(Boolean).length,         icon:"fas fa-tag",         color:"#f59e0b"},
+            ].map(s=>(
+              <div key={s.label} className="card" style={{textAlign:"center",padding:"14px 8px"}}>
+                <i className={s.icon} style={{color:s.color,fontSize:18,marginBottom:6,display:"block"}}/>
+                <div style={{fontSize:20,fontWeight:800}}>{s.val}</div>
+                <div style={{fontSize:10,fontWeight:700,color:"#b0b7c3",letterSpacing:"0.05em",textTransform:"uppercase"}}>{s.label}</div>
               </div>
-            </div>
-          )}
+            ))}
+          </div>
+
+          {/* Edit prompt */}
+          <div style={{textAlign:"center",padding:"12px",background:"#f8f7ff",border:"1.5px solid #ede9ff",borderRadius:12,fontSize:13,color:"#6b7280"}}>
+            <i className="fas fa-info-circle" style={{marginRight:6,color:ACCENT}}/>
+            Want to update your profile? Tap <strong>Edit</strong> above.
+          </div>
         </div>
         <Footer/>
       </div>
     );
   }
 
-  /* ════════════════════════════════════
-     SUCCESS SCREEN
-  ════════════════════════════════════ */
+  /* ════════ SUCCESS ════════ */
   if (published) {
     return (
       <div style={{minHeight:"100vh",background:"#f5f6fa",display:"flex",flexDirection:"column"}}>
+        {showShare && <ShareSheet/>}
         <Topbar/>
         <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:"32px 16px"}}>
-          <div style={{maxWidth:440,width:"100%"}}>
+          <div style={{maxWidth:420,width:"100%"}}>
             <div style={{position:"relative",height:40}}>
-              {["#6C63FF","#10b981","#f59e0b","#ef4444","#0ea5e9","#ec4899"].map((c,i)=>(
-                <div key={i} className="confetti-piece" style={{background:c,left:`${10+i*14}%`,animationDelay:`${i*0.12}s`}}/>
+              {["#6C63FF","#10b981","#f59e0b","#ef4444","#0ea5e9","#ec4899","#f97316"].map((c,i)=>(
+                <div key={i} className="confetti-piece" style={{background:c,left:`${8+i*13}%`,animationDelay:`${i*0.1}s`}}/>
               ))}
             </div>
             <div className="card pop" style={{textAlign:"center",padding:"36px 24px"}}>
               <div className="success-ring"><i className="fas fa-check" style={{color:"#fff",fontSize:36}}/></div>
               <h2 style={{fontSize:24,fontWeight:800,marginBottom:8}}>
-                {savedData ? "Profile Updated!" : "Profile Created!"}
+                {savedData?.savedAt ? "Profile Updated!" : "Profile Created!"}
               </h2>
               <p style={{color:"#6b7280",fontSize:14,lineHeight:1.6,marginBottom:20}}>
-                Live at <strong style={{color:ACCENT}}>mywebsam.site/{published.username}</strong>
+                Your link is live at <strong style={{color:ACCENT}}>mywebsam.site/{published.username}</strong>
               </p>
-              <div style={{display:"flex",alignItems:"center",background:"#f5f6fa",border:"1.5px solid #e9eaf0",borderRadius:10,padding:"10px 14px",marginBottom:18,gap:10}}>
+
+              <div style={{display:"flex",alignItems:"center",background:"#f8f7ff",border:"1.5px solid #ede9ff",borderRadius:10,padding:"10px 14px",marginBottom:16,gap:10}}>
                 <i className="fas fa-globe" style={{color:ACCENT,fontSize:13,flexShrink:0}}/>
                 <span style={{flex:1,fontSize:13,color:"#374151",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",textAlign:"left"}}>{published.url}</span>
               </div>
+
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
                 <button className="btn btn-p" style={{width:"100%"}} onClick={()=>window.open(published.url,"_blank")}>
                   <i className="fas fa-arrow-up-right-from-square"/> View
                 </button>
+                <button className="btn btn-g" style={{width:"100%"}} onClick={nativeShare}>
+                  <i className="fas fa-share-nodes"/> Share
+                </button>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
                 <button className="btn btn-s" style={{width:"100%"}} onClick={copyLink}>
-                  <i className={`fas fa-${copied?"check":"copy"}`} style={{color:copied?"#10b981":undefined}}/>{copied?" Copied!":" Copy Link"}
+                  <i className={`fas fa-${copied?"check":"copy"}`} style={{color:copied?"#10b981":undefined}}/> {copied?"Copied!":"Copy Link"}
+                </button>
+                <button className="btn btn-s" style={{width:"100%"}} onClick={()=>setView("dashboard")}>
+                  <i className="fas fa-home"/> Dashboard
                 </button>
               </div>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:14}}>
-                <button className="btn btn-gh" style={{width:"100%",fontSize:13}} onClick={()=>window.open(`https://wa.me/?text=${encodeURIComponent("Check out my profile! "+published.url)}`,"_blank")}>
-                  <i className="fab fa-whatsapp" style={{color:"#25D366"}}/> WhatsApp
-                </button>
-                <button className="btn btn-gh" style={{width:"100%",fontSize:13}} onClick={()=>window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent("Check out my profile! "+published.url)}`,"_blank")}>
-                  <i className="fab fa-x-twitter"/> Share
-                </button>
-              </div>
-              <button className="btn btn-gh" style={{width:"100%",fontSize:13}} onClick={()=>setView("dashboard")}>
-                <i className="fas fa-home"/> Go to Dashboard
-              </button>
             </div>
           </div>
         </div>
@@ -713,11 +744,10 @@ Rules: 2-3 sentences only. Casual and warm tone. First person. No hashtags. No e
     );
   }
 
-  /* ════════════════════════════════════
-     CREATE / EDIT FORM
-  ════════════════════════════════════ */
+  /* ════════ CREATE / EDIT FORM ════════ */
   return (
     <div style={{minHeight:"100vh",background:"#f5f6fa",paddingBottom:40}}>
+      {showShare && <ShareSheet/>}
       <Topbar right={
         <div style={{display:"flex",alignItems:"center",gap:10}}>
           {savedData&&(
@@ -753,7 +783,7 @@ Rules: 2-3 sentences only. Casual and warm tone. First person. No hashtags. No e
           })}
         </div>
 
-        {/* ═══ STEP 1 ═══ */}
+        {/* ─── STEP 1 ─── */}
         {step===1&&(
           <div className="fu">
             <div className="card" style={{marginBottom:12}}>
@@ -768,7 +798,7 @@ Rules: 2-3 sentences only. Casual and warm tone. First person. No hashtags. No e
                 </div>
                 {form.username&&<Hint icon="fas fa-globe">mywebsam.site/<strong style={{color:ACCENT}}>{form.username}</strong></Hint>}
                 {savedData&&savedData.username&&form.username!==savedData.username&&(
-                  <Hint icon="fas fa-triangle-exclamation">Changing username will update your profile link.</Hint>
+                  <Hint icon="fas fa-triangle-exclamation">Changing username will change your profile link.</Hint>
                 )}
               </div>
 
@@ -796,7 +826,6 @@ Rules: 2-3 sentences only. Casual and warm tone. First person. No hashtags. No e
               </div>
             </div>
 
-            {/* Avatar */}
             <div className="card">
               <Lbl>Profile Photo</Lbl>
               <div style={{display:"flex",alignItems:"center",gap:16,padding:14,borderRadius:12,cursor:"pointer",border:`2px dashed ${dragOver?"#6C63FF":form.avatar?"#6C63FF":"#e5e7eb"}`,background:dragOver?"#f2f0ff":form.avatar?"#f8f7ff":"#fafafa",transition:"all .2s"}}
@@ -834,14 +863,13 @@ Rules: 2-3 sentences only. Casual and warm tone. First person. No hashtags. No e
           </div>
         )}
 
-        {/* ═══ STEP 2 ═══ */}
+        {/* ─── STEP 2 ─── */}
         {step===2&&(
           <div className="fu">
             <div className="card" style={{marginBottom:12}}>
-              <SHead icon="fas fa-face-smile" title="Your Vibe & Interests" sub="Select everything that describes you — sports, hobbies, music, passions."/>
+              <SHead icon="fas fa-face-smile" title="Your Vibe & Interests" sub="Pick everything that's you — sports, hobbies, music, passions."/>
 
-              {/* Role */}
-              <div style={{marginBottom:18}}>
+              <div style={{marginBottom:16}}>
                 <Lbl>I am a...</Lbl>
                 <div style={{display:"flex",flexWrap:"wrap",gap:7}}>
                   {ROLES.map(r=>{
@@ -855,85 +883,39 @@ Rules: 2-3 sentences only. Casual and warm tone. First person. No hashtags. No e
                 </div>
               </div>
 
-              <div className="section-divider"/>
-
-              {/* Vibes */}
-              <div style={{marginBottom:18}}>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
-                  <Lbl>My Vibe</Lbl>
-                  {form.interests.vibes.length>0&&<span style={{fontSize:11,color:ACCENT,fontWeight:600}}>{form.interests.vibes.length} selected</span>}
+              {[
+                {cat:"vibes",   label:"My Vibe",             items:VIBES},
+                {cat:"sports",  label:"Sports I Love",        items:SPORTS},
+                {cat:"hobbies", label:"Hobbies",              items:HOBBIES},
+                {cat:"music",   label:"Music I Love",         items:MUSIC_G},
+                {cat:"passions",label:"Things I Care About",  items:PASSIONS},
+                {cat:"skills",  label:"Skills & Tools (optional)", items:CODING_SKILLS},
+              ].map((s,idx)=>(
+                <div key={s.cat}>
+                  {idx>0&&<div className="section-divider"/>}
+                  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
+                    <Lbl>{s.label}</Lbl>
+                    {form.interests[s.cat].length>0&&(
+                      <span style={{fontSize:11,color:ACCENT,fontWeight:600}}>{form.interests[s.cat].length} selected</span>
+                    )}
+                  </div>
+                  <TagGrid items={s.items} cat={s.cat}/>
                 </div>
-                <TagGrid items={VIBES} cat="vibes"/>
-              </div>
-
-              <div className="section-divider"/>
-
-              {/* Sports */}
-              <div style={{marginBottom:18}}>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
-                  <Lbl>Sports I Love</Lbl>
-                  {form.interests.sports.length>0&&<span style={{fontSize:11,color:ACCENT,fontWeight:600}}>{form.interests.sports.length} selected</span>}
-                </div>
-                <TagGrid items={SPORTS} cat="sports"/>
-              </div>
-
-              <div className="section-divider"/>
-
-              {/* Hobbies */}
-              <div style={{marginBottom:18}}>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
-                  <Lbl>Hobbies</Lbl>
-                  {form.interests.hobbies.length>0&&<span style={{fontSize:11,color:ACCENT,fontWeight:600}}>{form.interests.hobbies.length} selected</span>}
-                </div>
-                <TagGrid items={HOBBIES} cat="hobbies"/>
-              </div>
-
-              <div className="section-divider"/>
-
-              {/* Music */}
-              <div style={{marginBottom:18}}>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
-                  <Lbl>Music I Love</Lbl>
-                  {form.interests.music.length>0&&<span style={{fontSize:11,color:ACCENT,fontWeight:600}}>{form.interests.music.length} selected</span>}
-                </div>
-                <TagGrid items={MUSIC_G} cat="music"/>
-              </div>
-
-              <div className="section-divider"/>
-
-              {/* Passions */}
-              <div style={{marginBottom:18}}>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
-                  <Lbl>Things I Care About</Lbl>
-                  {form.interests.passions.length>0&&<span style={{fontSize:11,color:ACCENT,fontWeight:600}}>{form.interests.passions.length} selected</span>}
-                </div>
-                <TagGrid items={PASSIONS} cat="passions"/>
-              </div>
-
-              <div className="section-divider"/>
-
-              {/* Coding / Skills (optional) */}
-              <div>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
-                  <Lbl>Skills & Tools <span style={{color:"#b0b7c3",fontWeight:400,textTransform:"none",fontSize:11}}>(optional)</span></Lbl>
-                  {form.interests.skills.length>0&&<span style={{fontSize:11,color:ACCENT,fontWeight:600}}>{form.interests.skills.length} selected</span>}
-                </div>
-                <TagGrid items={CODING_SKILLS} cat="skills"/>
-              </div>
+              ))}
             </div>
 
-            {/* AI Bio */}
+            {/* Groq AI Bio */}
             <div className="card">
               <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,flexWrap:"wrap"}}>
                 <Lbl>AI Bio Generator</Lbl>
-                <div className="ai-badge"><i className="fas fa-wand-magic-sparkles"/>expo.1 · Sarvam AI</div>
+                <div className="ai-badge"><i className="fas fa-bolt"/>expo.1 · Groq AI</div>
               </div>
               <p style={{fontSize:13,color:"#6b7280",lineHeight:1.6,marginBottom:12}}>
-                Select your interests above, then click generate. The AI will write a personalised bio — you can edit it after.
+                Select your interests above, then let AI write a personalised bio for you.
               </p>
               <button type="button" className="btn btn-g" style={{width:"100%"}} onClick={generateBio} disabled={aiLoading}>
                 {aiLoading
-                  ? <><i className="fas fa-spinner" style={{animation:"spin 0.8s linear infinite"}}/> Generating...</>
+                  ? <><i className="fas fa-spinner" style={{animation:"spin 0.8s linear infinite"}}/> Generating with Groq...</>
                   : <><i className="fas fa-wand-magic-sparkles"/> Generate My Bio</>}
               </button>
 
@@ -941,8 +923,7 @@ Rules: 2-3 sentences only. Casual and warm tone. First person. No hashtags. No e
                 <div style={{marginTop:14,borderTop:"1px solid #f0edff",paddingTop:14}}>
                   <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8,flexWrap:"wrap",gap:6}}>
                     <div className="ai-badge"><i className="fas fa-robot"/> expo.1 Generated</div>
-                    <button type="button"
-                      style={{background:"none",border:"none",fontSize:12,color:ACCENT,cursor:"pointer",fontFamily:"inherit",fontWeight:600,padding:0}}
+                    <button type="button" style={{background:"none",border:"none",fontSize:12,color:ACCENT,cursor:"pointer",fontFamily:"inherit",fontWeight:600,padding:0}}
                       onClick={generateBio} disabled={aiLoading}>
                       <i className="fas fa-redo" style={{marginRight:4,fontSize:10}}/>Regenerate
                     </button>
@@ -958,7 +939,7 @@ Rules: 2-3 sentences only. Casual and warm tone. First person. No hashtags. No e
           </div>
         )}
 
-        {/* ═══ STEP 3 ═══ */}
+        {/* ─── STEP 3 ─── */}
         {step===3&&(
           <div className="fu">
             <div className="card">
@@ -968,7 +949,7 @@ Rules: 2-3 sentences only. Casual and warm tone. First person. No hashtags. No e
               </div>
               <div className="soc-grid" style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))",gap:8,marginTop:8}}>
                 {SOCIALS_LIST.map(p=>{
-                  const m=SOCIAL_META[p.n]||{icon:"fas fa-link",color:"#6b7280",bg:"#f9fafb"};
+                  const m=SM[p.n]||{icon:"fas fa-link",color:"#6b7280",bg:"#f9fafb"};
                   const val=form.socialProfiles[p.n]||"";
                   return (
                     <div key={p.n} className="sc">
@@ -989,7 +970,7 @@ Rules: 2-3 sentences only. Casual and warm tone. First person. No hashtags. No e
           </div>
         )}
 
-        {/* ═══ STEP 4 ═══ */}
+        {/* ─── STEP 4 ─── */}
         {step===4&&(
           <div className="fu">
             <div className="card" style={{marginBottom:12}}>
@@ -998,7 +979,7 @@ Rules: 2-3 sentences only. Casual and warm tone. First person. No hashtags. No e
               <div style={{background:"#f8f7ff",border:"1.5px solid #ede9ff",borderRadius:12,padding:14,marginBottom:16}}>
                 <Lbl>Add a Link</Lbl>
                 <div style={{display:"flex",gap:8,marginBottom:8,flexWrap:"wrap"}}>
-                  <input className="inp" style={{flex:"0 0 140px",minWidth:0}} placeholder="Label"
+                  <input className="inp" style={{flex:"0 0 138px",minWidth:0}} placeholder="Label"
                     value={newLink.title} onChange={e=>setNewLink(p=>({...p,title:e.target.value}))}/>
                   <input className="inp" style={{flex:1,minWidth:130}} placeholder="https://..."
                     value={newLink.url} onChange={e=>setNewLink(p=>({...p,url:e.target.value}))}/>
@@ -1059,18 +1040,18 @@ Rules: 2-3 sentences only. Casual and warm tone. First person. No hashtags. No e
           </div>
         )}
 
-        {/* ═══ STEP 5 ═══ */}
+        {/* ─── STEP 5 ─── */}
         {step===5&&(
           <div className="fu">
             <div className="card" style={{marginBottom:12}}>
-              <SHead icon="fas fa-rocket" title={savedData?"Update Profile":"Ready to Publish?"} sub="Review your checklist and go live."/>
+              <SHead icon="fas fa-rocket" title={savedData?"Update Profile":"Ready to Publish?"} sub="Check your profile completeness and go live."/>
 
               <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20}}>
                 {checklist.map(item=>(
                   <div key={item.label} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",background:item.done?"#f0fdf4":"#fafafa",border:`1.5px solid ${item.done?"#bbf7d0":"#e9eaf0"}`,borderRadius:10}}>
                     <i className={item.done?"fas fa-circle-check":"far fa-circle"} style={{color:item.done?"#10b981":"#d1d5db",fontSize:16,flexShrink:0}}/>
-                    <span style={{fontSize:14,fontWeight:item.done?600:400,color:item.done?"#065f46":"#9ca3af"}}>{item.label}</span>
-                    {item.done&&<i className="fas fa-check" style={{color:"#10b981",fontSize:11,marginLeft:"auto"}}/>}
+                    <span style={{fontSize:14,fontWeight:item.done?600:400,color:item.done?"#065f46":"#9ca3af",flex:1}}>{item.label}</span>
+                    {item.done&&<i className="fas fa-check" style={{color:"#10b981",fontSize:11}}/>}
                   </div>
                 ))}
               </div>
