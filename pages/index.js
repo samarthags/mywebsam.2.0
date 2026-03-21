@@ -1,29 +1,15 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 
 /* ─────────────────────────────────────────────
-   Inject CSS & fonts ONCE at module level.
-   Keeping this outside the component ensures
-   React re-renders NEVER touch the DOM head,
-   which is what was causing inputs to blur and
-   the mobile keyboard to close on every keystroke.
+   Module-level flag so the DOM injection runs
+   EXACTLY ONCE across all re-renders, but only
+   ever in the browser (never during SSR), which
+   fixes both the Vercel "document is not defined"
+   build error AND the mobile keyboard closing bug.
 ───────────────────────────────────────────── */
-(function bootstrap() {
-  const links = [
-    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css",
-    "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800&family=JetBrains+Mono:wght@400;600&display=swap",
-  ];
-  links.forEach((href) => {
-    if (!document.querySelector(`link[href="${href}"]`)) {
-      const l = document.createElement("link");
-      l.rel = "stylesheet";
-      l.href = href;
-      document.head.appendChild(l);
-    }
-  });
+let _booted = false;
 
-  if (!document.getElementById("devpro-global-css")) {
-    const s = document.createElement("style");
-    s.id = "devpro-global-css";
+const CSS_CONTENT = `
     s.textContent = `
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
       body { font-family: 'Inter', sans-serif; background: #f0f2f5; color: #111827; }
@@ -159,10 +145,30 @@ import { useState, useRef, useCallback } from "react";
       .dp-footer a:hover { text-decoration: underline; }
 
       .dp-topbar { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 11px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
-    `;
+`;
+
+function bootStyles() {
+  if (_booted) return;
+  _booted = true;
+  const FONT_LINKS = [
+    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css",
+    "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800&family=JetBrains+Mono:wght@400;600&display=swap",
+  ];
+  FONT_LINKS.forEach((href) => {
+    if (!document.querySelector(`link[href="${href}"]`)) {
+      const l = document.createElement("link");
+      l.rel = "stylesheet";
+      l.href = href;
+      document.head.appendChild(l);
+    }
+  });
+  if (!document.getElementById("devpro-global-css")) {
+    const s = document.createElement("style");
+    s.id = "devpro-global-css";
+    s.textContent = CSS_CONTENT;
     document.head.appendChild(s);
   }
-})();
+}
 
 /* ─── Data constants ─── */
 const SOCIAL_META = {
@@ -210,6 +216,9 @@ const LINK_ICONS = [
 
 /* ─── Main component ─── */
 export default function DevProfileCreator() {
+  // Boot styles once, safely in the browser only (fixes SSR/Vercel build error)
+  useEffect(() => { bootStyles(); }, []);
+
   const [step, setStep]               = useState(1);
   const [uploading, setUploading]     = useState(false);
   const [dragOver, setDragOver]       = useState(false);
