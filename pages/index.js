@@ -723,7 +723,7 @@ export default function Home() {
         {step === 5 && (
           <div className="fade-in">
             <h2 style={{ marginBottom: 10 }}>Review Your Profile</h2>
-            <p style={{ color: "#666", marginBottom: 30 }}">Check everything before publishing</p>
+            <p style={{ color: "#666", marginBottom: 30 }}>Check everything before publishing</p>
             
             <div style={{ marginBottom: 20, padding: 20, backgroundColor: "#f8f9fa", borderRadius: 12 }}>
               <h3 style={{ marginTop: 0, marginBottom: 15 }}>Basic Info</h3>
@@ -734,7 +734,7 @@ export default function Home() {
               {form.avatar && (
                 <div>
                   <strong>Avatar:</strong>
-                  <img src={form.avatar} alt="Avatar" style={{ width: 50, height: 50, borderRadius: "50%", marginTop: 8 }} />
+                  <div><img src={form.avatar} alt="Avatar" style={{ width: 50, height: 50, borderRadius: "50%", marginTop: 8 }} /></div>
                 </div>
               )}
             </div>
