@@ -550,6 +550,7 @@ export default function ProfileCreator() {
   const [copied,    setCopied]   = useState(false);
   const [showShare, setShowShare]= useState(false);
   const [showDelete,  setShowDelete]  =useState(false);
+  const [liveStats,   setLiveStats]   =useState(null);
   const [deleting,    setDeleting]    =useState(false);
   const [unameStatus, setUnameStatus] =useState("idle"); // idle | checking | available | taken | editing
   const [unameTimer,  setUnameTimer]  =useState(null);
@@ -567,6 +568,16 @@ export default function ProfileCreator() {
     } catch(_){}
     setView("form");
   },[]);
+
+  /* ── Fetch live analytics when dashboard is shown ── */
+  useEffect(()=>{
+    if(view==="dashboard"&&saved?.username){
+      fetch(`/api/analytics?username=${saved.username}`)
+        .then(r=>r.json())
+        .then(d=>setLiveStats(d))
+        .catch(()=>{});
+    }
+  },[view,saved?.username]);
 
   /* ── Persist ── */
   const persist = useCallback((p)=>{
@@ -598,14 +609,11 @@ export default function ProfileCreator() {
   )),[form,totalTags,filledSocials,genBio]);
 
   const checklist = [
-    {t:"Username set",d:!!form.username},
-    {t:"Full name added",d:!!form.name},
-    {t:"Profile photo",d:!!form.avatar},
-    {t:"Location added",d:!!form.location},
-    {t:"Role or vibe selected",d:!!form.interests.role||form.interests.vibes.length>0},
-    {t:"At least 3 interests",d:totalTags>=3},
-    {t:"Social profile linked",d:filledSocials.length>0},
-    {t:"Bio written/generated",d:!!(genBio||form.bio)},
+    {t:"Username set",       d:!!form.username},
+    {t:"Full name added",    d:!!form.name},
+    {t:"Profile photo",      d:!!form.avatar},
+    {t:"Bio added",          d:!!(genBio||form.bio)},
+    {t:"Social link added",  d:filledSocials.length>0},
   ];
 
   /* ── Stable handlers ── */
@@ -728,7 +736,7 @@ export default function ProfileCreator() {
   },[pubUrl,saved]);
 
   // Always open our custom share sheet — never the browser/OS native share
-  const openShare=()=>{ setShowShare(true); };
+  const openShare=()=>{ setShowShare(true); if(saved?.username) fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:saved.username,event:'share'})}).catch(()=>{}); };
 
   /* ── Delete profile ── */
   const handleDelete=async()=>{
@@ -845,11 +853,12 @@ export default function ProfileCreator() {
               <div style={{fontWeight:700,fontSize:15,color:"#111827"}}>Analytics</div>
               <span style={{fontSize:11,color:"#adb5c0",marginLeft:"auto"}}>All time</span>
             </div>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10}}>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:10}}>
               {[
-                {label:"Profile Views",   value:saved.analytics?.views||0,        icon:"fas fa-eye",        color:"#6C63FF",bg:"#f0edff"},
-                {label:"Link Clicks",     value:saved.analytics?.linkClicks||0,    icon:"fas fa-arrow-up-right-from-square",color:"#10b981",bg:"#ecfdf5"},
-                {label:"Spotify Plays",   value:saved.analytics?.spotifyPlays||0,  icon:"fab fa-spotify",    color:"#1DB954",bg:"#ecfdf5"},
+                {label:"Profile Views",   value:liveStats?.views||0,         icon:"fas fa-eye",                         color:"#6C63FF",bg:"#f0edff"},
+                {label:"Link Clicks",     value:liveStats?.linkClicks||0,    icon:"fas fa-arrow-up-right-from-square",   color:"#10b981",bg:"#ecfdf5"},
+                {label:"Spotify Plays",   value:liveStats?.spotifyPlays||0,  icon:"fab fa-spotify",                     color:"#1DB954",bg:"#ecfdf5"},
+                {label:"Shares",          value:liveStats?.shares||0,        icon:"fas fa-share-nodes",                  color:"#f59e0b",bg:"#fffbeb"},
               ].map(s=>(
                 <div key={s.label} style={{background:s.bg,borderRadius:12,padding:"14px 10px",textAlign:"center"}}>
                   <i className={s.icon} style={{color:s.color,fontSize:20,marginBottom:6,display:"block"}}/>
@@ -1195,14 +1204,7 @@ export default function ProfileCreator() {
                     <button type="button" className="btn btn-gh" style={{fontSize:12,padding:"6px 12px"}} onClick={()=>setShowIconP(v=>!v)}>
                       <i className="fas fa-icons"/> Icons <i className={`fas fa-chevron-${showIconP?"up":"down"}`} style={{fontSize:10}}/>
                     </button>
-                    {/* Emoji input */}
-                    <input className="inp" style={{width:68,fontSize:22,textAlign:"center",padding:"5px 8px",flexShrink:0}}
-                      placeholder="😊"
-                      maxLength={2}
-                      title="Type or paste an emoji"
-                      value={newLink.icon?.startsWith("fas ")||newLink.icon?.startsWith("fab ")||newLink.icon?.startsWith("data:")?"":(newLink.icon||"")}
-                      onChange={e=>{const v=e.target.value.trim();if(v)setNewLink(p=>({...p,icon:v}));}}
-                    />
+
                     {/* Upload image from gallery */}
                     <button type="button" className="btn btn-gh" style={{fontSize:12,padding:"6px 12px"}}
                       onClick={()=>linkIconRef.current?.click()}>
