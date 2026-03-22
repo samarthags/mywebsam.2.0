@@ -217,6 +217,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
           @keyframes slideUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
           @keyframes breathe{0%,100%{opacity:.9;}50%{opacity:.4;}}
+          @keyframes shimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
 
           /* stagger helpers */
           .s1{animation:slideUp .55s .06s cubic-bezier(.22,.68,0,1.1) both;}
@@ -273,10 +274,10 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           /* ── IDENTITY ── */
           .id-block{
             text-align:center;
-            padding:20px 20px 0;
+            padding:16px 20px 0;
           }
           .pname{
-            font-size:clamp(32px,8.5vw,52px);
+            font-size:clamp(28px,7.5vw,46px);
             font-weight:800;
             color:#fff;
             letter-spacing:-0.025em;
@@ -289,33 +290,36 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
             flex-wrap:wrap;gap:8px;margin-bottom:4px;
           }
           .age-pill{
-            display:inline-flex;align-items:center;
-            background:rgba(255,255,255,.07);
-            border:1px solid rgba(255,255,255,.12);
-            border-radius:999px;padding:4px 13px;
-            font-size:12px;font-weight:600;color:rgba(255,255,255,.5);
+            display:inline-flex;align-items:center;gap:5px;
+            background:rgba(255,255,255,.05);
+            border:1px solid rgba(255,255,255,.09);
+            border-radius:999px;padding:4px 12px;
+            font-size:12px;font-weight:600;color:rgba(255,255,255,.42);
           }
+          .age-pill i{font-size:9px;opacity:.65;}
           .badge-pill{
             display:inline-flex;align-items:center;gap:6px;
-            background:rgba(255,255,255,.09);
-            border:1px solid rgba(255,255,255,.16);
-            border-radius:999px;padding:4px 14px;
+            background:linear-gradient(90deg,rgba(255,255,255,.06) 0%,rgba(255,255,255,.13) 50%,rgba(255,255,255,.06) 100%);
+            background-size:200% auto;
+            border:1px solid rgba(255,255,255,.14);
+            border-radius:999px;padding:5px 15px;
             font-size:12px;font-weight:700;
-            color:rgba(255,255,255,.72);
+            color:rgba(255,255,255,.65);
+            animation:shimmer 3s linear infinite;
           }
-          .badge-pill i{font-size:11px;opacity:.8;}
+          .badge-pill i{font-size:10px;opacity:.7;}
 
           /* ── CONTENT ── */
           .content{
             max-width:460px;
             margin:0 auto;
-            padding:18px 18px 80px;
+            padding:14px 18px 72px;
           }
 
           /* Bio */
           .bio-text{
             font-size:14px;line-height:1.8;
-            color:rgba(255,255,255,.42);
+            color:rgba(255,255,255,.36);
             text-align:center;
             margin-bottom:22px;
           }
@@ -364,7 +368,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
             box-shadow:0 1px 0 rgba(255,255,255,.04) inset;
           }
           .lbtn::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);pointer-events:none;}
-          .lbtn:hover{transform:translateY(-3px) scale(1.012);border-color:#333;box-shadow:0 16px 40px rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.06) inset;}
+          .lbtn:hover{transform:translateY(-3px) scale(1.012);border-color:#333;box-shadow:0 10px 28px rgba(0,0,0,.45),0 1px 0 rgba(255,255,255,.04) inset;}
           .lbtn:active{transform:scale(.98);}
           .lbtn-ic-wrap{
             width:60px;min-height:60px;
@@ -395,31 +399,57 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           }
           .lbtn:hover .lbtn-a{color:rgba(255,255,255,.45);transform:translateX(3px);}
 
-          /* Spotify */
+          /* Spotify player card */
           .sp-block{margin-bottom:24px;}
-          .sp-trig{
-            display:flex;align-items:center;gap:14px;padding:13px 16px;
-            background:#111;border:1px solid #1e1e1e;border-radius:16px;cursor:pointer;
-            position:relative;overflow:hidden;
-            transition:background .13s,border-color .13s;
+          .sp-card{
+            background:linear-gradient(135deg,#0d1f15 0%,#0a1410 100%);
+            border:1px solid rgba(29,185,84,.15);
+            border-radius:18px;overflow:hidden;
+            cursor:pointer;
+            transition:border-color .15s,box-shadow .15s;
           }
-          .sp-trig::before{content:"";position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(to bottom,rgba(255,255,255,.03),transparent);pointer-events:none;}
-          .sp-trig:hover{background:#181818;border-color:#2c2c2c;}
-          .sp-trig.open{border-radius:16px 16px 0 0;border-bottom-color:transparent;}
+          .sp-card:hover{border-color:rgba(29,185,84,.3);box-shadow:0 8px 28px rgba(29,185,84,.08);}
+          .sp-trig{
+            display:flex;align-items:center;gap:13px;
+            padding:14px 16px;
+            position:relative;
+          }
+          .sp-trig.open{border-bottom:1px solid rgba(29,185,84,.1);}
+          /* green glow line at top */
+          .sp-card::before{
+            content:"";display:block;height:2px;
+            background:linear-gradient(90deg,transparent,#1DB954,transparent);
+            opacity:.5;
+          }
           .sp-art{
-            width:48px;height:48px;border-radius:10px;
-            background:#0d1f15;border:1px solid rgba(29,185,84,.2);
+            width:50px;height:50px;border-radius:10px;
+            background:rgba(29,185,84,.08);
+            border:1px solid rgba(29,185,84,.18);
             display:flex;align-items:center;justify-content:center;
-            font-size:22px;color:#1DB954;flex-shrink:0;
+            font-size:24px;color:#1DB954;flex-shrink:0;
           }
           .sp-meta{flex:1;min-width:0;}
-          .sp-eye{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(29,185,84,.65);margin-bottom:3px;display:flex;align-items:center;gap:5px;}
+          .sp-eye{
+            font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+            color:rgba(29,185,84,.6);margin-bottom:4px;
+            display:flex;align-items:center;gap:5px;
+          }
           .sp-dot{width:5px;height:5px;border-radius:50%;background:#1DB954;animation:breathe 2s ease infinite;flex-shrink:0;}
-          .sp-title{font-size:14px;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-          .sp-artist{font-size:12px;color:rgba(255,255,255,.32);margin-top:1px;}
-          .sp-caret{font-size:12px;color:rgba(255,255,255,.22);transition:transform .25s cubic-bezier(.34,1.56,.64,1);flex-shrink:0;}
+          .sp-title{font-size:14px;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3;}
+          .sp-artist{font-size:11.5px;color:rgba(255,255,255,.3);margin-top:2px;}
+          .sp-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+          .sp-play-btn{
+            width:34px;height:34px;border-radius:50%;
+            background:#1DB954;
+            display:flex;align-items:center;justify-content:center;
+            font-size:12px;color:#000;
+            transition:transform .15s,background .13s;
+            flex-shrink:0;
+          }
+          .sp-card:hover .sp-play-btn{transform:scale(1.08);background:#1ed760;}
+          .sp-caret{font-size:12px;color:rgba(255,255,255,.2);transition:transform .25s cubic-bezier(.34,1.56,.64,1);}
           .sp-caret.open{transform:rotate(180deg);}
-          .sp-embed{border:1px solid #1e1e1e;border-top:none;border-radius:0 0 16px 16px;overflow:hidden;}
+          .sp-embed{overflow:hidden;}
 
           /* Footer */
           .foot{text-align:center;padding:4px 0;}
@@ -476,7 +506,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
       <div className="id-block s1">
         <div className="pname">{user.name}</div>
         <div className="badge-row">
-          {userAge && <span className="age-pill">{userAge}</span>}
+          {userAge && <span className="age-pill"><i className="fas fa-cake-candles"/>{userAge}</span>}
           {badgeLabel && (
             <span className="badge-pill">
               {badgeIcon && <i className={badgeIcon}/>}
@@ -490,12 +520,6 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
       <div className="content">
 
         {bio && <p className="bio-text s2">{bio}</p>}
-
-        {interests.length > 0 && (
-          <div className="int-tags s3">
-            {interests.map((t,i)=><span key={i} className="itag">{t}</span>)}
-          </div>
-        )}
 
         {socials.length > 0 && (
           <div className="soc-row s3">
@@ -535,26 +559,32 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
 
         {user.favSongTrackId && (
           <div className="sp-block s5">
-            <div className={`sp-trig${spOpen?" open":""}`}
-              onClick={()=>{setSpOpen(v=>!v);if(!spOpen)track(user.username,"spotify_play");}}>
-              <div className="sp-art"><i className="fab fa-spotify"/></div>
-              <div className="sp-meta">
-                <div className="sp-eye"><span className="sp-dot"/>Currently Vibing To</div>
-                <div className="sp-title">{user.favSong||"My Favourite Song"}</div>
-                {user.favArtist&&<div className="sp-artist">{user.favArtist}</div>}
+            <div className="sp-card">
+              <div className={`sp-trig${spOpen?" open":""}`}
+                onClick={()=>{setSpOpen(v=>!v);if(!spOpen)track(user.username,"spotify_play");}}>
+                <div className="sp-art"><i className="fab fa-spotify"/></div>
+                <div className="sp-meta">
+                  <div className="sp-eye"><span className="sp-dot"/>Currently Vibing To</div>
+                  <div className="sp-title">{user.favSong||"My Favourite Song"}</div>
+                  {user.favArtist&&<div className="sp-artist">{user.favArtist}</div>}
+                </div>
+                <div className="sp-right">
+                  <div className="sp-play-btn">
+                    <i className={spOpen?"fas fa-chevron-up":"fas fa-play"} style={{marginLeft:spOpen?0:2}}/>
+                  </div>
+                </div>
               </div>
-              <i className={`fas fa-chevron-down sp-caret${spOpen?" open":""}`}/>
+              {spOpen&&(
+                <div className="sp-embed">
+                  <iframe
+                    src={`https://open.spotify.com/embed/track/${user.favSongTrackId}?utm_source=generator&theme=0`}
+                    width="100%" height="380" frameBorder="0"
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    loading="lazy" style={{display:"block"}}
+                  />
+                </div>
+              )}
             </div>
-            {spOpen&&(
-              <div className="sp-embed">
-                <iframe
-                  src={`https://open.spotify.com/embed/track/${user.favSongTrackId}?utm_source=generator&theme=0`}
-                  width="100%" height="380" frameBorder="0"
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                  loading="lazy" style={{display:"block"}}
-                />
-              </div>
-            )}
           </div>
         )}
 
