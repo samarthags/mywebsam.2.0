@@ -141,8 +141,8 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           <title>Not Found | mywebsam</title>
           <meta name="robots" content="noindex"/>
           <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-          <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet"/>
-          <style>{`*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Plus Jakarta Sans',sans-serif;background:#080808;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;}`}</style>
+          <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+          <style>{`*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Sora',sans-serif;background:#0d0d0d;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;}`}</style>
         </Head>
         <div style={{textAlign:"center",padding:32}}>
           <div style={{width:80,height:80,borderRadius:"50%",background:"#111",border:"1px solid #222",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px",fontSize:32,color:"#333"}}>
@@ -191,23 +191,23 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         <meta name="twitter:description" content={bio||`${user.name}'s links on mywebsam`}/>
         <meta name="twitter:image"       content={avatarUrl}/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+        <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
         <style>{`
           *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
           html,body{min-height:100%;-webkit-font-smoothing:antialiased;}
           *{-webkit-tap-highlight-color:transparent;}
           a,button{outline:none;text-decoration:none;color:inherit;}
           body{
-            background:#0a0a0a;
+            background:#0d0d0d;
             color:#fff;
-            font-family:'Raleway',sans-serif;
+            font-family:'Sora',sans-serif;
             min-height:100vh;overflow-x:hidden;
           }
 
           @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
           @keyframes slideUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
           @keyframes breathe{0%,100%{opacity:.9;}50%{opacity:.4;}}
-          @keyframes softPulse{0%,100%{opacity:1;}50%{opacity:.72;}}
+          @keyframes shimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
 
           /* stagger helpers — smooth ease */
           .s1{animation:slideUp .6s .04s cubic-bezier(.16,1,.3,1) both;}
@@ -273,7 +273,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           }
           .pname{
             font-size:clamp(36px,10vw,58px);
-            font-family:'Raleway',sans-serif;
+            font-family:'Sora',sans-serif;
             font-weight:900;
             color:#fff;
             letter-spacing:-.03em;
@@ -295,14 +295,21 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .age-pill i{font-size:9px;opacity:.65;}
           .badge-pill{
             display:inline-flex;align-items:center;gap:6px;
-            background:rgba(255,255,255,.08);
-            border:1px solid rgba(255,255,255,.14);
-            border-radius:999px;padding:5px 15px;
-            font-size:12px;font-weight:700;
-            color:rgba(255,255,255,.62);
-            animation:softPulse 4s ease infinite;
+            background:linear-gradient(
+              90deg,
+              rgba(255,255,255,.06) 0%,
+              rgba(255,255,255,.14) 50%,
+              rgba(255,255,255,.06) 100%
+            );
+            background-size:200% auto;
+            border:1px solid rgba(255,255,255,.12);
+            border-radius:999px;padding:5px 16px;
+            font-size:12px;font-weight:600;
+            color:rgba(255,255,255,.65);
+            animation:shimmer 2.8s linear infinite;
+            letter-spacing:.01em;
           }
-          .badge-pill i{font-size:10px;opacity:.65;}
+          .badge-pill i{font-size:10px;opacity:.7;}
 
           /* ── CONTENT ── */
           .content{
@@ -314,7 +321,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           /* Bio */
           .bio-text{
             font-size:14px;line-height:1.8;
-            color:rgba(255,255,255,.48);
+            color:rgba(255,255,255,.52);
             text-align:center;
             margin-bottom:18px;
           }
@@ -324,7 +331,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .itag{
             padding:6px 15px;border-radius:999px;
             font-size:12px;font-weight:600;
-            color:rgba(255,255,255,.48);
+            color:rgba(255,255,255,.52);
             background:linear-gradient(180deg,#131313 0%,#0f0f0f 100%);
             border:1px solid #202020;
             transition:transform .2s cubic-bezier(.34,1.56,.64,1),color .13s,border-color .13s,box-shadow .18s;
@@ -341,8 +348,8 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
             width:46px;height:46px;border-radius:13px;
             display:flex;align-items:center;justify-content:center;
             font-size:17px;
-            background:linear-gradient(180deg,#161616 0%,#111 100%);
-            border:1px solid #222;
+            background:#141414;
+            border:1px solid #1e1e1e;
             transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .18s,border-color .15s;
             position:relative;
             box-shadow:0 1px 0 rgba(255,255,255,.04) inset;
@@ -357,7 +364,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
             display:flex;align-items:center;
             width:100%;min-height:62px;
             background:linear-gradient(180deg,#161616 0%,#111 100%);
-            border:1px solid #252525;border-radius:18px;
+            border:1px solid #1e1e1e;border-radius:16px;
             cursor:pointer;overflow:hidden;position:relative;
             transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .18s,border-color .15s;
             box-shadow:0 1px 0 rgba(255,255,255,.04) inset;
