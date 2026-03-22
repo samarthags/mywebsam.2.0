@@ -180,7 +180,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         <meta name="twitter:description" content={bio||`${user.name}'s links on mywebsam`}/>
         <meta name="twitter:image"       content={avatarUrl}/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
         <style>{`
           *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
           html,body{min-height:100%;-webkit-font-smoothing:antialiased;}
@@ -241,28 +241,29 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .hero-name{
             position:absolute;
             bottom:0;left:0;right:0;
-            padding:0 20px 20px;
+            padding:0 20px 36px;
             text-align:center;
             z-index:2;
           }
           .pname{
-            font-size:clamp(34px,9vw,52px);
-            font-weight:800;
+            font-family:'Cormorant Garamond',serif;
+            font-size:clamp(44px,12vw,68px);
+            font-weight:700;
             color:#fff;
-            letter-spacing:-0.03em;
+            letter-spacing:-0.01em;
             line-height:1.0;
-            text-shadow:0 2px 20px rgba(0,0,0,.5);
+            text-shadow:0 4px 32px rgba(0,0,0,.6);
           }
           .page-sub{
             display:flex;align-items:center;justify-content:center;
-            gap:10px;margin-top:7px;flex-wrap:wrap;
+            gap:10px;margin-top:8px;flex-wrap:wrap;
           }
-          .phandle{font-size:13px;color:rgba(255,255,255,0.55);font-weight:500;}
+          .phandle{font-size:13px;color:rgba(255,255,255,0.45);font-weight:500;letter-spacing:.02em;}
           .page{
-            font-size:13px;color:rgba(255,255,255,0.6);font-weight:500;
+            font-size:13px;color:rgba(255,255,255,0.45);font-weight:500;
             display:flex;align-items:center;gap:4px;
           }
-          .dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.3);}
+          .dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.25);}
 
           /* No photo placeholder */
           .hero-ph{
@@ -295,23 +296,29 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
             line-height:1.75;max-width:320px;margin:0 auto;
           }
 
-          /* ── Social icons — horizontal row ── */
+          /* ── Social icons — clean monochrome ── */
           .soc-row{
             display:flex;justify-content:center;
-            flex-wrap:wrap;gap:8px;
+            flex-wrap:wrap;gap:10px;
             margin-bottom:28px;
           }
           .soc-btn{
-            width:46px;height:46px;
-            border-radius:50%;
+            width:44px;height:44px;
+            border-radius:12px;
             display:flex;align-items:center;justify-content:center;
-            font-size:18px;
-            border:1px solid #222;
-            background:#111;
-            transition:transform .13s,background .13s,border-color .13s;
+            font-size:17px;
+            border:1px solid #2a2a2a;
+            background:#141414;
+            color:rgba(255,255,255,0.65) !important;
+            transition:transform .13s,background .13s,border-color .13s,color .13s;
           }
-          .soc-btn:hover{transform:scale(1.12);border-color:#333;}
-          .soc-btn:active{transform:scale(.92);}
+          .soc-btn:hover{
+            transform:translateY(-2px);
+            background:#1e1e1e;
+            border-color:#3a3a3a;
+            color:rgba(255,255,255,0.95) !important;
+          }
+          .soc-btn:active{transform:scale(.93);}
 
           /* ── Link buttons — white pill on black ── */
           .links{
@@ -348,42 +355,36 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
             font-size:12px;color:#ccc;flex-shrink:0;
           }
 
-          /* ── Spotify — embedded player ── */
+          /* ── Spotify ── */
           .sp-block{margin-bottom:28px;}
           .sp-header{
             display:flex;align-items:center;justify-content:space-between;
-            margin-bottom:12px;cursor:pointer;
+            cursor:pointer;
             padding:14px 16px;
-            background:#111;
-            border:1px solid #222;
+            background:#141414;
+            border:1px solid #2a2a2a;
             border-radius:16px;
             transition:background .14s,border-color .14s;
           }
-          .sp-header:hover{background:#161616;border-color:#2a2a2a;}
-          .sp-header.open{
-            border-radius:16px 16px 0 0;
-            border-bottom:none;
-            background:#111;
-          }
+          .sp-header:hover{background:#1a1a1a;border-color:#383838;}
+          .sp-header.open{border-radius:16px 16px 0 0;border-bottom:none;}
           .sp-left{display:flex;align-items:center;gap:12px;}
           .sp-ico{
-            width:40px;height:40px;border-radius:10px;
-            background:#1a2a1e;
+            width:42px;height:42px;border-radius:10px;
+            background:#121212;
+            border:1px solid #1DB954;
             display:flex;align-items:center;justify-content:center;
-            font-size:18px;color:#1DB954;flex-shrink:0;
+            font-size:20px;color:#1DB954;flex-shrink:0;
           }
           .sp-info{display:flex;flex-direction:column;}
           .sp-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#555;margin-bottom:2px;}
-          .sp-name{font-size:14px;font-weight:700;color:#fff;line-height:1.2;}
-          .sp-chevron{
-            font-size:13px;color:#555;
-            transition:transform .2s;flex-shrink:0;
-          }
+          .sp-name{font-size:14px;font-weight:700;color:#fff;line-height:1.3;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+          .sp-chevron{font-size:13px;color:#444;transition:transform .22s;flex-shrink:0;}
           .sp-chevron.open{transform:rotate(180deg);}
           .sp-embed{
             border-radius:0 0 16px 16px;
             overflow:hidden;
-            border:1px solid #222;
+            border:1px solid #2a2a2a;
             border-top:none;
           }
 
@@ -482,7 +483,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
               const m=PLAT[pl];
               return(
                 <a key={pl} href={m.u(val)} target="_blank" rel="noopener noreferrer"
-                  className="soc-btn" title={m.n} style={{color:m.c,background:m.bg}}>
+                  className="soc-btn" title={m.n}>
                   <i className={m.i}/>
                 </a>
               );
@@ -520,7 +521,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
               <div className="sp-embed">
                 <iframe
                   src={`https://open.spotify.com/embed/track/${user.favSongTrackId}?utm_source=generator&theme=0`}
-                  width="100%" height="152" frameBorder="0"
+                  width="100%" height="380" frameBorder="0"
                   allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                   loading="lazy" style={{display:"block"}}
                 />
