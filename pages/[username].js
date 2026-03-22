@@ -563,7 +563,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
                 <div className="lbtn-ic-wrap">
                   <div className="lbtn-ic">
                     {lnk.icon?.startsWith("data:")
-                      ? <img src={lnk.icon} style={{width:"100%",height:"100%",objectFit:"cover",display:"block",borderRadius:"50%"}} alt=""/>
+                      ? <img src={lnk.icon} style={{width:"100%",height:"100%",objectFit:"cover",display:"block",borderRadius:"10px"}} alt=""/>
                       : lnk.icon?.startsWith("fas ")||lnk.icon?.startsWith("fab ")
                         ? <i className={lnk.icon}/>
                         : <span style={{fontSize:17}}>{lnk.icon||"🔗"}</span>}
