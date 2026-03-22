@@ -219,42 +219,33 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .s7{animation:slideUp .6s .52s cubic-bezier(.16,1,.3,1) both;}
 
           /* ── HERO ── */
-          .hero-wrap{
-            position:relative;
-            width:100%;
-            /* hero + extended fade zone below it */
-          }
           .hero{
             position:relative;
             width:100%;
-            height:62vh;
+            height:58vh;
             min-height:300px;
-            max-height:520px;
+            max-height:500px;
             overflow:hidden;
+            animation:fadeIn .7s ease both;
           }
           .hero-img{
             width:100%;height:100%;
             object-fit:cover;
             object-position:center top;
             display:block;
-            animation:fadeIn .8s ease both;
           }
-          /* Gradient sits OUTSIDE overflow:hidden — covers bottom of photo AND spills below */
+          /* Deep gradient — color exactly = body #0d0d0d */
           .hero-fade{
-            position:absolute;
-            bottom:-60px;   /* extends 60px below the photo into the body */
-            left:0;right:0;
-            height:55%;     /* covers bottom 55% of photo + spills below */
-            pointer-events:none;
+            position:absolute;inset:0;pointer-events:none;
             background:linear-gradient(
               to bottom,
-              rgba(13,13,13,0)    0%,
-              rgba(13,13,13,.28)  35%,
-              rgba(13,13,13,.72)  62%,
-              rgba(13,13,13,.96)  82%,
-              rgba(13,13,13,1)    100%
+              rgba(13,13,13,0)   0%,
+              rgba(13,13,13,0)   18%,
+              rgba(13,13,13,.2)  40%,
+              rgba(13,13,13,.7)  65%,
+              rgba(13,13,13,.95) 85%,
+              rgba(13,13,13,1)   100%
             );
-            z-index:2;
           }
 
           /* No photo fallback */
@@ -270,13 +261,12 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
             font-size:40px;font-weight:800;color:#fff;
           }
 
-          /* ── IDENTITY — floats up into the gradient zone ── */
+          /* ── IDENTITY ── */
           .id-block{
             text-align:center;
-            padding:0 20px 0;
-            margin-top:-80px;   /* pulls name UP into the gradient area */
+            padding:14px 20px 0;
             position:relative;
-            z-index:5;
+            z-index:2;
           }
                     .pname{
             font-size:clamp(32px,9vw,52px);
@@ -365,15 +355,15 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .soc-btn:hover{transform:translateY(-3px) scale(1.05);border-color:#2e2e2e;box-shadow:0 8px 20px rgba(0,0,0,.45);}
           .soc-btn:active{transform:scale(.93);}
 
-          /* ── External Links — thin row style like Spotify card ── */
+          /* ── External Links — same card style as Spotify ── */
           .links-container{
             background:#111;
             border:1px solid #1c1c1c;
             border-radius:18px;
             overflow:hidden;
             margin-bottom:20px;
+            position:relative;
           }
-          /* thin accent line at top of container */
           .links-container::before{
             content:"";display:block;height:1px;
             background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
@@ -381,44 +371,46 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .links{display:flex;flex-direction:column;}
           .lbtn{
             display:flex;align-items:center;
-            width:100%;min-height:56px;
+            width:100%;
+            padding:13px 16px;
             background:transparent;
             border:none;
             border-bottom:1px solid rgba(255,255,255,.05);
-            cursor:pointer;overflow:hidden;position:relative;
-            transition:background .15s;
+            cursor:pointer;
+            transition:background .14s;
           }
           .lbtn:last-child{border-bottom:none;}
           .lbtn:hover{background:rgba(255,255,255,.04);}
-          .lbtn:active{background:rgba(255,255,255,.06);}
+          .lbtn:active{background:rgba(255,255,255,.07);}
           .lbtn-ic-wrap{
-            width:56px;min-height:56px;
+            width:42px;
             display:flex;align-items:center;justify-content:center;
             flex-shrink:0;
           }
           .lbtn-ic{
-            width:32px;height:32px;border-radius:50%;
+            width:36px;height:36px;border-radius:50%;
             overflow:hidden;
             display:flex;align-items:center;justify-content:center;
-            font-size:14px;color:rgba(255,255,255,.55);
-            background:rgba(255,255,255,.06);
-            border:1px solid rgba(255,255,255,.08);
+            font-size:15px;color:rgba(255,255,255,.55);
+            background:rgba(255,255,255,.07);
+            border:1px solid rgba(255,255,255,.09);
             flex-shrink:0;
             transition:color .13s;
           }
           .lbtn:hover .lbtn-ic{color:rgba(255,255,255,.85);}
           .lbtn-t{
             flex:1;
-            font-size:14px;font-weight:600;color:rgba(255,255,255,.82);
-            padding:0 12px;letter-spacing:-.01em;
+            font-size:14px;font-weight:600;
+            color:rgba(255,255,255,.82);
+            padding:0 12px;
+            letter-spacing:-.01em;
           }
           .lbtn-a{
-            width:42px;min-height:56px;
-            display:flex;align-items:center;justify-content:center;
-            font-size:10px;color:rgba(255,255,255,.15);flex-shrink:0;
-            transition:color .13s,transform .15s;
+            font-size:10px;color:rgba(255,255,255,.2);
+            transition:color .13s,transform .14s;
+            flex-shrink:0;
           }
-          .lbtn:hover .lbtn-a{color:rgba(255,255,255,.4);transform:translateX(2px);}
+          .lbtn:hover .lbtn-a{color:rgba(255,255,255,.45);transform:translateX(2px);}
 
           /* Spotify player card */
           .sp-block{margin-bottom:20px;}
@@ -519,11 +511,8 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
 
       {/* ── HERO ── */}
       {user.avatar ? (
-        <div className="hero-wrap">
-          <div className="hero">
-            <img src={user.avatar} alt={user.name} className="hero-img"/>
-          </div>
-          {/* Gradient OUTSIDE overflow:hidden so it blends seamlessly into body */}
+        <div className="hero">
+          <img src={user.avatar} alt={user.name} className="hero-img"/>
           <div className="hero-fade"/>
         </div>
       ) : (
@@ -532,7 +521,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         </div>
       )}
 
-      {/* ── Identity — pulled up into the gradient zone ── */}
+      {/* ── Identity ── */}
       <div className="id-block s1">
         <div className="pname">{user.name}</div>
         <div className="badge-row">
