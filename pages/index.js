@@ -123,16 +123,41 @@ const SM = {
 };
 
 const RI = {
-  student:"fas fa-graduation-cap",professional:"fas fa-briefcase",creator:"fas fa-camera",
-  artist:"fas fa-palette",musician:"fas fa-music",athlete:"fas fa-person-running",
-  traveler:"fas fa-plane",foodie:"fas fa-utensils",gamer:"fas fa-gamepad",
-  writer:"fas fa-pen-nib",entrepreneur:"fas fa-rocket",parent:"fas fa-heart",
-  coder:"fas fa-code",trader:"fas fa-chart-line",investor:"fas fa-coins",
-  designer:"fas fa-pen-ruler",teacher:"fas fa-chalkboard-teacher",doctor:"fas fa-user-doctor",
-  chef:"fas fa-hat-chef",architect:"fas fa-drafting-compass",photographer:"fas fa-aperture",
-  influencer:"fas fa-star",volunteer:"fas fa-hand-holding-heart",researcher:"fas fa-microscope",
-  lawyer:"fas fa-scale-balanced",engineer:"fas fa-screwdriver-wrench",nurse:"fas fa-user-nurse",
-  scientist:"fas fa-flask",filmmaker:"fas fa-film",model:"fas fa-person",other:"fas fa-star",
+  student:"fas fa-graduation-cap", software_dev:"fas fa-code",
+  web_dev:"fas fa-globe",          app_dev:"fas fa-mobile-screen",
+  data_sci:"fas fa-database",      ai_eng:"fas fa-robot",
+  devops:"fas fa-server",          cybersec:"fas fa-shield-halved",
+  coder:"fas fa-code",             trader:"fas fa-chart-line",
+  investor:"fas fa-coins",         crypto:"fas fa-bitcoin-sign",
+  banker:"fas fa-building-columns",accountant:"fas fa-calculator",
+  fin_analyst:"fas fa-chart-pie",  designer:"fas fa-pen-ruler",
+  ui_ux:"fas fa-swatchbook",       creator:"fas fa-camera",
+  artist:"fas fa-palette",         photographer:"fas fa-camera-retro",
+  filmmaker:"fas fa-film",         musician:"fas fa-music",
+  writer:"fas fa-pen-nib",         blogger:"fas fa-blog",
+  influencer:"fas fa-star",        podcaster:"fas fa-microphone",
+  streamer:"fab fa-twitch",        entrepreneur:"fas fa-rocket",
+  business:"fas fa-briefcase",     manager:"fas fa-people-group",
+  consultant:"fas fa-handshake",   marketer:"fas fa-bullhorn",
+  sales:"fas fa-tags",             lawyer:"fas fa-scale-balanced",
+  architect:"fas fa-drafting-compass",engineer:"fas fa-screwdriver-wrench",
+  researcher:"fas fa-microscope",  doctor:"fas fa-user-doctor",
+  nurse:"fas fa-user-nurse",       pharmacist:"fas fa-pills",
+  psychologist:"fas fa-brain",     teacher:"fas fa-chalkboard-user",
+  professor:"fas fa-user-tie",     lecturer:"fas fa-chalkboard",
+  scientist:"fas fa-flask",        athlete:"fas fa-person-running",
+  traveler:"fas fa-plane",         foodie:"fas fa-utensils",
+  chef:"fas fa-utensils",          farmer:"fas fa-seedling",
+  gamer:"fas fa-gamepad",          parent:"fas fa-heart",
+  volunteer:"fas fa-hands-holding-heart",model:"fas fa-person",
+  editor:"fas fa-film",           animator:"fas fa-wand-sparkles",
+  illustrator:"fas fa-pen-fancy",  copywriter:"fas fa-pen",
+  journalist:"fas fa-newspaper",   actor:"fas fa-masks-theater",
+  dancer:"fas fa-music",           comedian:"fas fa-face-grin-tears",
+  life_coach:"fas fa-comments",    nutritionist:"fas fa-apple-whole",
+  real_estate:"fas fa-house",      event_mgr:"fas fa-calendar-star",
+  pilot:"fas fa-plane-circle-check",electrician:"fas fa-bolt",
+  mechanic:"fas fa-wrench",        other:"fas fa-star",
 };
 
 const LI = [
@@ -148,34 +173,72 @@ const LI = [
 ];
 
 const SL = [
-  {n:"email",l:"Email",p:"your@email.com"},{n:"instagram",l:"Instagram",p:"@username"},
-  {n:"whatsapp",l:"WhatsApp",p:"+1234567890"},{n:"facebook",l:"Facebook",p:"username"},
-  {n:"youtube",l:"YouTube",p:"@channel"},{n:"twitter",l:"Twitter / X",p:"@username"},
-  {n:"tiktok",l:"TikTok",p:"@username"},{n:"snapchat",l:"Snapchat",p:"username"},
-  {n:"pinterest",l:"Pinterest",p:"username"},{n:"telegram",l:"Telegram",p:"@username"},
-  {n:"discord",l:"Discord",p:"username"},{n:"linkedin",l:"LinkedIn",p:"username"},
-  {n:"github",l:"GitHub",p:"username"},{n:"twitch",l:"Twitch",p:"username"},
-  {n:"spotify",l:"Spotify",p:"username"},{n:"reddit",l:"Reddit",p:"u/username"},
-  {n:"medium",l:"Medium",p:"@username"},{n:"devto",l:"DEV.to",p:"username"},
-  {n:"codepen",l:"CodePen",p:"username"},{n:"stackoverflow",l:"Stack Overflow",p:"user ID"},
-  {n:"behance",l:"Behance",p:"username"},{n:"dribbble",l:"Dribbble",p:"username"},
-  {n:"npm",l:"npm",p:"~username"},
+  {n:"email",     l:"Email",         p:"your@email.com"},
+  {n:"instagram", l:"Instagram",     p:"@username"},
+  {n:"whatsapp",  l:"WhatsApp",      p:"+1234567890"},
+  {n:"youtube",   l:"YouTube",       p:"@channel"},
+  {n:"facebook",  l:"Facebook",      p:"username"},
+  {n:"twitter",   l:"Twitter / X",   p:"@username"},
+  {n:"tiktok",    l:"TikTok",        p:"@username"},
+  {n:"snapchat",  l:"Snapchat",      p:"username"},
+  {n:"telegram",  l:"Telegram",      p:"@username"},
+  {n:"discord",   l:"Discord",       p:"username"},
+  {n:"linkedin",  l:"LinkedIn",      p:"username"},
+  {n:"github",    l:"GitHub",        p:"username"},
+  {n:"twitch",    l:"Twitch",        p:"username"},
+  {n:"spotify",   l:"Spotify",       p:"username"},
+  {n:"reddit",    l:"Reddit",        p:"u/username"},
+  {n:"pinterest", l:"Pinterest",     p:"username"},
+  {n:"medium",    l:"Medium",        p:"@username"},
+  {n:"codepen",   l:"CodePen",       p:"username"},
+  {n:"stackoverflow",l:"Stack Overflow",p:"user ID"},
+  {n:"behance",   l:"Behance",       p:"username"},
+  {n:"dribbble",  l:"Dribbble",      p:"username"},
 ];
 
 const STEPS = ["Basic","Vibe","Social","Links","Publish"];
 
 const ROLES = [
-  {v:"student",l:"Student"},{v:"coder",l:"Coder / Dev"},{v:"trader",l:"Trader"},
-  {v:"investor",l:"Investor"},{v:"designer",l:"Designer"},{v:"creator",l:"Creator"},
-  {v:"entrepreneur",l:"Entrepreneur"},{v:"professional",l:"Professional"},
-  {v:"teacher",l:"Teacher"},{v:"doctor",l:"Doctor"},{v:"nurse",l:"Nurse"},
-  {v:"engineer",l:"Engineer"},{v:"architect",l:"Architect"},{v:"researcher",l:"Researcher"},
-  {v:"scientist",l:"Scientist"},{v:"lawyer",l:"Lawyer"},{v:"chef",l:"Chef"},
-  {v:"photographer",l:"Photographer"},{v:"filmmaker",l:"Filmmaker"},
-  {v:"artist",l:"Artist"},{v:"musician",l:"Musician"},{v:"writer",l:"Writer"},
-  {v:"influencer",l:"Influencer"},{v:"athlete",l:"Athlete"},{v:"traveler",l:"Traveler"},
-  {v:"foodie",l:"Foodie"},{v:"gamer",l:"Gamer"},{v:"parent",l:"Parent"},
-  {v:"volunteer",l:"Volunteer"},{v:"model",l:"Model"},{v:"other",l:"Other"},
+  /* Tech & Finance */
+  {v:"coder",       l:"Coder"},        {v:"software_dev", l:"Software Dev"},
+  {v:"web_dev",     l:"Web Developer"},{v:"app_dev",      l:"App Developer"},
+  {v:"data_sci",    l:"Data Scientist"},{v:"ai_eng",      l:"AI Engineer"},
+  {v:"devops",      l:"DevOps"},       {v:"cybersec",     l:"Cyber Security"},
+  {v:"trader",      l:"Trader"},       {v:"investor",     l:"Investor"},
+  {v:"crypto",      l:"Crypto"},       {v:"banker",       l:"Banker"},
+  {v:"accountant",  l:"Accountant"},   {v:"fin_analyst",  l:"Fin. Analyst"},
+  /* Creative */
+  {v:"designer",    l:"Designer"},     {v:"ui_ux",        l:"UI/UX Designer"},
+  {v:"creator",     l:"Creator"},      {v:"artist",       l:"Artist"},
+  {v:"photographer",l:"Photographer"},{v:"filmmaker",    l:"Filmmaker"},
+  {v:"musician",    l:"Musician"},     {v:"writer",       l:"Writer"},
+  {v:"blogger",     l:"Blogger"},      {v:"influencer",   l:"Influencer"},
+  {v:"podcaster",   l:"Podcaster"},    {v:"streamer",     l:"Streamer"},
+  /* Professional */
+  {v:"entrepreneur",l:"Entrepreneur"},{v:"business",     l:"Business"},
+  {v:"manager",     l:"Manager"},      {v:"consultant",   l:"Consultant"},
+  {v:"marketer",    l:"Marketer"},     {v:"sales",        l:"Sales"},
+  {v:"lawyer",      l:"Lawyer"},       {v:"architect",    l:"Architect"},
+  {v:"engineer",    l:"Engineer"},     {v:"researcher",   l:"Researcher"},
+  /* Health & Education */
+  {v:"doctor",      l:"Doctor"},       {v:"nurse",        l:"Nurse"},
+  {v:"pharmacist",  l:"Pharmacist"},   {v:"psychologist", l:"Psychologist"},
+  {v:"teacher",     l:"Teacher"},      {v:"professor",    l:"Professor"},
+  {v:"lecturer",    l:"Lecturer"},     {v:"scientist",    l:"Scientist"},
+  /* Lifestyle */
+  {v:"student",     l:"Student"},      {v:"athlete",      l:"Athlete"},
+  {v:"traveler",    l:"Traveler"},     {v:"foodie",       l:"Foodie"},
+  {v:"chef",        l:"Chef"},         {v:"farmer",       l:"Farmer"},
+  {v:"gamer",       l:"Gamer"},        {v:"parent",       l:"Parent"},
+  {v:"volunteer",   l:"Volunteer"},    {v:"model",        l:"Model"},
+  {v:"editor",      l:"Editor"},      {v:"animator",     l:"Animator"},
+  {v:"illustrator", l:"Illustrator"},  {v:"copywriter",   l:"Copywriter"},
+  {v:"journalist",  l:"Journalist"},   {v:"actor",        l:"Actor"},
+  {v:"dancer",      l:"Dancer"},       {v:"comedian",     l:"Comedian"},
+  {v:"life_coach",  l:"Life Coach"},   {v:"nutritionist", l:"Nutritionist"},
+  {v:"real_estate", l:"Real Estate"},  {v:"event_mgr",    l:"Event Manager"},
+  {v:"pilot",       l:"Pilot"},        {v:"electrician",  l:"Electrician"},
+  {v:"mechanic",    l:"Mechanic"},     {v:"other",        l:"Other"},
 ];
 
 /* ─── Massive interest data ─── */
@@ -256,7 +319,7 @@ const ALL_SKILLS = [
 
 
 const EMPTY = {
-  username:"",name:"",dob:"",location:"",bio:"",avatar:"",
+  username:"",name:"",dob:"",avatar:"",
   socialProfiles:{},links:[],
   favSong:"",favArtist:"",favSongUrl:"",favSongTrackId:"",
   interests:{role:"",hobbies:[],sports:[],vibes:[],music:[],passions:[],skills:[]},
@@ -490,7 +553,8 @@ export default function ProfileCreator() {
   const [deleting,    setDeleting]    =useState(false);
   const [unameStatus, setUnameStatus] =useState("idle"); // idle | checking | available | taken | editing
   const [unameTimer,  setUnameTimer]  =useState(null);
-  const fileRef = useRef(null);
+  const fileRef     = useRef(null);
+  const linkIconRef  = useRef(null);
 
   /* ── Mount: read localStorage ── */
   useEffect(()=>{
@@ -578,13 +642,9 @@ export default function ProfileCreator() {
   /* ── Groq AI ── */
   const generateBio=async()=>{
     setAiLoad(true);
-    const rl=ROLES.find(r=>r.v===form.interests.role)?.l||"person";
-    const sp=form.interests.sports.slice(0,3).join(", ");
-    const hb=form.interests.hobbies.slice(0,3).join(", ");
-    const vb=form.interests.vibes.slice(0,3).join(", ");
-    const ms=form.interests.music.slice(0,3).join(", ");
-    const nm=form.name||"someone";
-    const lc=form.location||"";
+    const badge=ROLES.find(r=>r.v===form.interests.role)?.l||"";
+    const nm   =form.name||"someone";
+    const about=form.bio||"";   // what user typed in step 1
     try{
       const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{
         method:"POST",
@@ -592,10 +652,10 @@ export default function ProfileCreator() {
         body:JSON.stringify({
           model:"llama-3.1-8b-instant",
           messages:[
-            {role:"system",content:"You write short bios for personal profile pages. Output ONLY the final bio text — 2-3 warm casual first-person sentences. No thinking, no labels, no quotes, no explanations."},
-            {role:"user",content:`Bio for ${nm}${lc?`, from ${lc}`:""}, a ${rl}.${vb?` Vibe: ${vb}.`:""}${sp?` Sports: ${sp}.`:""}${hb?` Hobbies: ${hb}.`:""}${ms?` Music: ${ms}.`:""} Casual, warm, first person, no hashtags, no emojis.`},
+            {role:"system",content:"You write punchy, cool first-person bios for personal link-in-bio profiles. Output ONLY the bio — 2 sentences max. No quotes, no labels, no thinking tags, no hashtags, no emojis. Make it sound confident and natural."},
+            {role:"user",content:`Write a short bio for ${nm}${badge?`, a ${badge}`:""}. They described themselves as: "${about}". Make it cool, first-person, 1-2 sentences.`},
           ],
-          max_tokens:130,temperature:0.72,
+          max_tokens:100,temperature:0.78,
         }),
       });
       if(!res.ok)throw new Error(`${res.status}`);
@@ -605,7 +665,7 @@ export default function ProfileCreator() {
       else throw new Error("empty");
     }catch(e){
       const ex=[sp&&`love ${sp.split(",")[0].trim()}`,hb&&`enjoy ${hb.split(",")[0].trim()}`].filter(Boolean).join(" and ");
-      setGenBio(`I'm ${nm}${lc?`, based in ${lc}`:""} — a ${rl}. I ${ex||"love exploring new things"} and always chasing new experiences. Life's better when you're doing what you love!`);
+      setGenBio(`${nm}${badge?` is a ${badge}`:""} — ${about||"someone who loves what they do"}. ${nm} is always chasing the next opportunity and making things happen.`);
       setBioEdited(false);
     }finally{setAiLoad(false);}
   };
@@ -776,6 +836,29 @@ export default function ProfileCreator() {
               </div>
             )}
           </div>
+          {/* Analytics */}
+          <div className="card" style={{marginBottom:12}}>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:16}}>
+              <div style={{width:30,height:30,borderRadius:8,background:"#f0edff",color:AC,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13}}>
+                <i className="fas fa-chart-bar"/>
+              </div>
+              <div style={{fontWeight:700,fontSize:15,color:"#111827"}}>Analytics</div>
+              <span style={{fontSize:11,color:"#adb5c0",marginLeft:"auto"}}>All time</span>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10}}>
+              {[
+                {label:"Profile Views",   value:saved.analytics?.views||0,        icon:"fas fa-eye",        color:"#6C63FF",bg:"#f0edff"},
+                {label:"Link Clicks",     value:saved.analytics?.linkClicks||0,    icon:"fas fa-arrow-up-right-from-square",color:"#10b981",bg:"#ecfdf5"},
+                {label:"Spotify Plays",   value:saved.analytics?.spotifyPlays||0,  icon:"fab fa-spotify",    color:"#1DB954",bg:"#ecfdf5"},
+              ].map(s=>(
+                <div key={s.label} style={{background:s.bg,borderRadius:12,padding:"14px 10px",textAlign:"center"}}>
+                  <i className={s.icon} style={{color:s.color,fontSize:20,marginBottom:6,display:"block"}}/>
+                  <div style={{fontSize:22,fontWeight:800,color:"#111827",lineHeight:1}}>{s.value}</div>
+                  <div style={{fontSize:10,fontWeight:700,color:"#9ca3af",marginTop:4,letterSpacing:".04em",textTransform:"uppercase",lineHeight:1.3}}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
         <Footer/>
       </div>
@@ -938,14 +1021,17 @@ export default function ProfileCreator() {
                 <Lbl req>Full Name</Lbl>
                 <input className="inp" placeholder="Your full name" value={form.name} onChange={e=>setField("name",e.target.value)}/>
               </div>
-              <div className="g2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:14}}>
-                <div><Lbl>Date of Birth</Lbl><input className="inp" type="date" value={form.dob} onChange={e=>setField("dob",e.target.value)}/></div>
-                <div><Lbl>Location</Lbl><input className="inp" placeholder="City, Country" value={form.location} onChange={e=>setField("location",e.target.value)}/></div>
+              <div style={{marginBottom:14}}>
+                <Lbl>Date of Birth</Lbl>
+                <input className="inp" type="date" value={form.dob} onChange={e=>setField("dob",e.target.value)}/>
               </div>
               <div style={{marginBottom:14}}>
-                <Lbl>Short Bio <span style={{color:"#adb5c0",fontWeight:400,textTransform:"none",fontSize:11}}>(or generate with AI in step 2)</span></Lbl>
-                <textarea className="inp" rows={3} placeholder="Say something about yourself..." value={form.bio} onChange={e=>setField("bio",e.target.value)} style={{resize:"vertical",lineHeight:1.6}}/>
-                <div className={`cc${form.bio.length>180?" o":form.bio.length>140?" w":""}`}>{form.bio.length}/200</div>
+                <Lbl>Tell people about yourself <span style={{color:"#adb5c0",fontWeight:400,textTransform:"none",fontSize:11}}>(AI will turn this into a cool bio)</span></Lbl>
+                <input className="inp" placeholder="e.g. I build apps, trade stocks and love cricket" value={form.bio||""} onChange={e=>setField("bio",e.target.value)}/>
+                <div style={{fontSize:12,color:"#adb5c0",marginTop:5,display:"flex",alignItems:"center",gap:5}}>
+                  <i className="fas fa-wand-magic-sparkles" style={{color:AC,fontSize:11}}/>
+                  This will be used in step 2 to generate your AI bio
+                </div>
               </div>
               {/* Fav Song — Spotify Search + Embed */}
               <div>
@@ -1000,51 +1086,44 @@ export default function ProfileCreator() {
             <div className="card" style={{marginBottom:12}}>
               <SH icon="fas fa-face-smile" title="Your Vibe & Interests" sub="Search and pick — sports, hobbies, skills, passions and more."/>
 
-              {/* Roles */}
+              {/* Professional Badge */}
               <div style={{marginBottom:16}}>
-                <Lbl>I am a...</Lbl>
-                <div style={{display:"flex",flexWrap:"wrap",gap:7}}>
+                <Lbl>Your Badge <span style={{color:AC,fontWeight:500,textTransform:"none",fontSize:11,marginLeft:4}}>— shows on your profile</span></Lbl>
+                <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
                   {ROLES.map(r=>{
                     const on=form.interests.role===r.v;
                     return(
-                      <button key={r.v} type="button" className={`tag${on?" on":""}`} style={{borderRadius:10}} onClick={()=>setRole(r.v)}>
-                        <i className={RI[r.v]||"fas fa-star"} style={{width:13,textAlign:"center"}}/>{r.l}
+                      <button key={r.v} type="button"
+                        className={`tag${on?" on":""}`}
+                        style={{
+                          borderRadius:12,
+                          padding:"7px 14px",
+                          fontWeight:on?700:500,
+                          fontSize:13,
+                          boxShadow:on?"0 2px 12px rgba(108,99,255,.25)":undefined,
+                        }}
+                        onClick={()=>setRole(r.v)}>
+                        <i className={RI[r.v]||"fas fa-star"} style={{width:14,textAlign:"center",fontSize:12}}/>{r.l}
                       </button>
                     );
                   })}
                 </div>
               </div>
 
-              {/* Searchable sections */}
-              {[
-                {cat:"vibes",   label:"My Vibe",              items:ALL_VIBES},
-                {cat:"sports",  label:"Sports I Love",         items:ALL_SPORTS},
-                {cat:"hobbies", label:"Hobbies",               items:ALL_HOBBIES},
-                {cat:"music",   label:"Music I Love",          items:ALL_MUSIC},
-                {cat:"passions",label:"Things I Care About",   items:ALL_PASSIONS},
-                {cat:"skills",  label:"Skills & Tools",        items:ALL_SKILLS},
-              ].map((sec,idx)=>(
-                <div key={sec.cat}>
-                  <div className="divider"/>
-                  <SearchableTags
-                    label={sec.label}
-                    items={sec.items}
-                    selected={form.interests[sec.cat]}
-                    onToggle={(val)=>toggleTag(sec.cat,val)}
-                  />
-                </div>
-              ))}
-            </div>
+              
 
-            {/* AI bio */}
-            <div className="card">
+              <div className="divider" style={{margin:"20px 0"}}/>
+
+              {/* AI Bio — right here */}
               <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,flexWrap:"wrap"}}>
-                <Lbl>AI Bio Generator</Lbl>
+                <Lbl>Generate Your Bio</Lbl>
                 <div className="aibadge"><i className="fas fa-bolt"/> expo.1 · Groq AI</div>
               </div>
-              <p style={{fontSize:13,color:"#6b7280",lineHeight:1.6,marginBottom:12}}>Select your interests above, then generate a personalised bio.</p>
+              <p style={{fontSize:13,color:"#6b7280",lineHeight:1.6,marginBottom:12}}>
+                Based on what you wrote in step 1 — click to instantly generate your bio.
+              </p>
               <button type="button" className="btn btn-g" style={{width:"100%"}} onClick={generateBio} disabled={aiLoad}>
-                {aiLoad?<><i className="fas fa-spinner spin"/> Generating...</>:<><i className="fas fa-wand-magic-sparkles"/> Generate My Bio</>}
+                {aiLoad?<><i className="fas fa-spinner spin"/> Writing your bio...</>:<><i className="fas fa-wand-magic-sparkles"/> Generate My Bio</>}
               </button>
               {genBio&&(
                 <div style={{marginTop:14,borderTop:"1px solid #f0edff",paddingTop:14}}>
@@ -1100,12 +1179,49 @@ export default function ProfileCreator() {
                   <input className="inp" style={{flex:"0 0 138px",minWidth:0}} placeholder="Label" value={newLink.title} onChange={e=>setNewLink(p=>({...p,title:e.target.value}))}/>
                   <input className="inp" style={{flex:1,minWidth:130}} placeholder="https://..." value={newLink.url} onChange={e=>setNewLink(p=>({...p,url:e.target.value}))}/>
                 </div>
+                {/* Icon picker — FA icons, emoji, or custom image */}
                 <div style={{marginBottom:10}}>
-                  <button type="button" className="btn btn-gh" style={{fontSize:12,padding:"6px 12px"}} onClick={()=>setShowIconP(v=>!v)}>
-                    <i className={newLink.icon}/> Icon <i className={`fas fa-chevron-${showIconP?"up":"down"}`} style={{fontSize:10}}/>
-                  </button>
+                  {/* Current icon preview + 3 mode buttons */}
+                  <div style={{display:"flex",gap:8,marginBottom:8,alignItems:"center",flexWrap:"wrap"}}>
+                    {/* Preview */}
+                    <div style={{width:40,height:40,borderRadius:10,background:"#f0edff",border:"1.5px solid #e0dcff",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,overflow:"hidden"}}>
+                      {newLink.icon?.startsWith("data:")
+                        ? <img src={newLink.icon} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
+                        : newLink.icon?.startsWith("fas ")||newLink.icon?.startsWith("fab ")
+                          ? <i className={newLink.icon} style={{fontSize:17,color:AC}}/>
+                          : <span style={{fontSize:20}}>{newLink.icon||"🔗"}</span>}
+                    </div>
+                    {/* FA icon picker toggle */}
+                    <button type="button" className="btn btn-gh" style={{fontSize:12,padding:"6px 12px"}} onClick={()=>setShowIconP(v=>!v)}>
+                      <i className="fas fa-icons"/> Icons <i className={`fas fa-chevron-${showIconP?"up":"down"}`} style={{fontSize:10}}/>
+                    </button>
+                    {/* Emoji input */}
+                    <input className="inp" style={{width:68,fontSize:22,textAlign:"center",padding:"5px 8px",flexShrink:0}}
+                      placeholder="😊"
+                      maxLength={2}
+                      title="Type or paste an emoji"
+                      value={newLink.icon?.startsWith("fas ")||newLink.icon?.startsWith("fab ")||newLink.icon?.startsWith("data:")?"":(newLink.icon||"")}
+                      onChange={e=>{const v=e.target.value.trim();if(v)setNewLink(p=>({...p,icon:v}));}}
+                    />
+                    {/* Upload image from gallery */}
+                    <button type="button" className="btn btn-gh" style={{fontSize:12,padding:"6px 12px"}}
+                      onClick={()=>linkIconRef.current?.click()}>
+                      <i className="fas fa-image"/> Image
+                    </button>
+                    <input ref={linkIconRef} type="file" accept="image/*" style={{display:"none"}}
+                      onChange={e=>{
+                        const file=e.target.files[0];
+                        if(!file||!file.type.startsWith("image/"))return;
+                        const r=new FileReader();
+                        r.onload=ev=>setNewLink(p=>({...p,icon:ev.target.result}));
+                        r.readAsDataURL(file);
+                        e.target.value="";
+                      }}
+                    />
+                  </div>
+                  {/* FA icon grid */}
                   {showIconP&&(
-                    <div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:8,maxHeight:160,overflowY:"auto",padding:2}}>
+                    <div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:4,maxHeight:160,overflowY:"auto",padding:2}}>
                       {LI.map(ic=>(
                         <button key={ic} type="button"
                           style={{width:36,height:36,borderRadius:8,border:`1.5px solid ${newLink.icon===ic?"#6C63FF":"#e5e7eb"}`,background:newLink.icon===ic?"#f0edff":"#fff",color:newLink.icon===ic?"#6C63FF":"#6b7280",cursor:"pointer",fontSize:14,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}
@@ -1133,7 +1249,13 @@ export default function ProfileCreator() {
                           <button type="button" style={{background:"none",border:"none",fontSize:10,padding:"2px 4px",color:idx===0?"#e5e7eb":"#9ca3af",cursor:idx===0?"default":"pointer"}} onClick={()=>mvLink(idx,-1)}><i className="fas fa-chevron-up"/></button>
                           <button type="button" style={{background:"none",border:"none",fontSize:10,padding:"2px 4px",color:idx===form.links.length-1?"#e5e7eb":"#9ca3af",cursor:idx===form.links.length-1?"default":"pointer"}} onClick={()=>mvLink(idx,1)}><i className="fas fa-chevron-down"/></button>
                         </div>
-                        <div style={{width:32,height:32,borderRadius:8,background:"#f0edff",color:AC,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0}}><i className={lnk.icon}/></div>
+                        <div style={{width:36,height:36,borderRadius:8,background:"#f0edff",overflow:"hidden",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                          {lnk.icon?.startsWith("data:")
+                            ? <img src={lnk.icon} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
+                            : lnk.icon?.startsWith("fas ")||lnk.icon?.startsWith("fab ")
+                              ? <i className={lnk.icon} style={{fontSize:14,color:AC}}/>
+                              : <span style={{fontSize:18}}>{lnk.icon||"🔗"}</span>}
+                        </div>
                         <div style={{flex:1,minWidth:0}}>
                           <div style={{fontWeight:600,fontSize:14}}>{lnk.title}</div>
                           <div style={{fontSize:11,color:"#9ca3af",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{lnk.url}</div>
