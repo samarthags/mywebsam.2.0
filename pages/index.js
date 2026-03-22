@@ -372,16 +372,20 @@ function ShareSheet({url, onClose, onCopy}) {
 
 function Topbar({right}) {
   return (
-    <div className="topbar">
-      <a href="https://mywebsam.site/" target="_blank" rel="noreferrer" style={{display:"flex",alignItems:"center",gap:8,textDecoration:"none"}}>
-        <img src="/icon.png" alt="mywebsam" style={{width:32,height:32,borderRadius:8,objectFit:"contain"}}/>
-        <span style={{fontWeight:800,fontSize:15,color:"#111827",letterSpacing:"-0.01em"}}>mywebsam</span>
-      </a>
+    <div className="topbar" style={{justifyContent: right ? "flex-end" : "center"}}>
       {right}
     </div>
   );
 }
-const Footer = () => <div className="footer">Made with ❤️‍🔥 by <strong style={{color:"#374151"}}>Samartha GS</strong></div>;
+const Footer = () => (
+  <div className="footer" style={{padding:"16px 20px 28px",textAlign:"center"}}>
+    <div style={{fontSize:11,color:"#adb5c0",lineHeight:1.7,maxWidth:360,margin:"0 auto",background:"#f8f9fb",border:"1px solid #e9eaf0",borderRadius:10,padding:"10px 14px"}}>
+      <i className="fas fa-circle-info" style={{color:AC,marginRight:5,fontSize:12}}/>
+      You can <strong style={{color:"#374151"}}>edit</strong>, <strong style={{color:"#374151"}}>delete</strong> or <strong style={{color:"#374151"}}>view stats</strong> from <strong style={{color:"#374151"}}>this device and browser</strong> only.<br/>
+      <span style={{color:"#b0b7c3"}}>Do not clear browser data to keep access to your profile settings.</span>
+    </div>
+  </div>
+);
 
 /* ─── Searchable tag section ─── */
 function SearchableTags({label, items, selected, onToggle}) {
@@ -883,11 +887,6 @@ export default function ProfileCreator() {
         <Topbar/>
         <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:"32px 16px"}}>
           <div style={{maxWidth:420,width:"100%"}}>
-            <div style={{position:"relative",height:40,overflow:"hidden"}}>
-              {["#6C63FF","#10b981","#f59e0b","#ef4444","#0ea5e9","#ec4899","#f97316"].map((c,i)=>(
-                <div key={i} className="confetti" style={{background:c,left:`${8+i*13}%`,top:0,animationDelay:`${i*.1}s`}}/>
-              ))}
-            </div>
             <div className="card pop" style={{textAlign:"center",padding:"36px 24px"}}>
               <div className="sring"><i className="fas fa-check" style={{color:"#fff",fontSize:36}}/></div>
               <h2 style={{fontSize:24,fontWeight:800,marginBottom:8}}>{saved?.savedAt?"Profile Updated!":"Profile Created!"}</h2>
@@ -919,15 +918,14 @@ export default function ProfileCreator() {
   /* ════ FORM ════ */
   return(
     <div style={{minHeight:"100vh",background:"#f4f5f9",paddingBottom:48}}>
+      {typeof document!=="undefined"&&(document.title="Create Your Profile | mywebsam")}
       {showShare&&<ShareSheet url={getUrl()} onClose={()=>setShowShare(false)} onCopy={copyLink}/>}
       <Topbar right={
-        <div style={{display:"flex",alignItems:"center",gap:10}}>
-          {saved&&<button className="btn btn-gh" style={{fontSize:12,padding:"6px 12px"}} onClick={()=>setView("dashboard")}><i className="fas fa-arrow-left" style={{fontSize:11}}/> Dashboard</button>}
-          <span style={{fontSize:12,fontWeight:600,color:"#6b7280"}}>{score}%</span>
-          <div style={{width:52,height:5,background:"#e9eaf0",borderRadius:99,overflow:"hidden"}}>
-            <div style={{width:`${score}%`,height:"100%",background:score>=80?"#10b981":AC,borderRadius:99,transition:"width .4s"}}/>
-          </div>
-        </div>
+        saved ? (
+          <button className="btn btn-gh" style={{fontSize:12,padding:"6px 12px"}} onClick={()=>setView("dashboard")}>
+            <i className="fas fa-arrow-left" style={{fontSize:11}}/> Dashboard
+          </button>
+        ) : null
       }/>
 
       <div style={{maxWidth:600,margin:"0 auto",padding:"22px 14px 12px"}}>
