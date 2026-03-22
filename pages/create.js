@@ -466,7 +466,7 @@ function SpotifySearch({ value, trackId, onSelect, onClear }) {
         </div>
         <div style={{flex:1,minWidth:0}}>
           <div style={{fontWeight:700,fontSize:14,color:"#111827",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{value}</div>
-          <div style={{fontSize:12,color:"#6b7280",marginTop:1}}>on Spotify</div>
+          <div style={{fontSize:12,color:"#6b7280",marginTop:1}}>from Spotify by Samarth</div>
         </div>
         <button type="button" onClick={onClear}
           style={{background:"none",border:"none",cursor:"pointer",color:"#9ca3af",fontSize:16,padding:"4px",flexShrink:0}}>
@@ -1046,7 +1046,7 @@ export default function ProfileCreator() {
               </div>
               {/* Fav Song — Spotify Search + Embed */}
               <div>
-                <Lbl>Favourite Song <span style={{color:"#adb5c0",fontWeight:400,textTransform:"none",fontSize:11}}>(optional — search Spotify by Samarth)</span></Lbl>
+                <Lbl>Favourite Song <span style={{color:"#adb5c0",fontWeight:400,textTransform:"none",fontSize:11}}>(optional — search Spotify)</span></Lbl>
                 <SpotifySearch
                   value={form.favSong}
                   trackId={form.favSongTrackId}
@@ -1128,7 +1128,7 @@ export default function ProfileCreator() {
               {/* AI Bio — right here */}
               <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,flexWrap:"wrap"}}>
                 <Lbl>Generate Your Bio</Lbl>
-                <div className="aibadge"><i className="fas fa-bolt"/> expo.1 · SGS Model</div>
+                <div className="aibadge"><i className="fas fa-bolt"/> Expo.1 · SGS Model</div>
               </div>
               <p style={{fontSize:13,color:"#6b7280",lineHeight:1.6,marginBottom:12}}>
                 Based on what you wrote in step 1 — click to instantly generate your bio.
@@ -1139,7 +1139,7 @@ export default function ProfileCreator() {
               {genBio&&(
                 <div style={{marginTop:14,borderTop:"1px solid #f0edff",paddingTop:14}}>
                   <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8,flexWrap:"wrap",gap:6}}>
-                    <div className="aibadge"><i className="fas fa-robot"/> expo.1(SGS) Generated</div>
+                    <div className="aibadge"><i className="fas fa-bolt"/> Expo.1(SGS) Generated</div>
                     <button type="button" style={{background:"none",border:"none",fontSize:12,color:AC,cursor:"pointer",fontFamily:"inherit",fontWeight:600,padding:0}} onClick={generateBio} disabled={aiLoad}>
                       <i className="fas fa-redo" style={{marginRight:4,fontSize:10}}/>Regenerate
                     </button>
@@ -1294,7 +1294,7 @@ export default function ProfileCreator() {
               <div style={{display:"flex",gap:10}}>
                 <button type="button" className="btn btn-s" style={{flex:1}} onClick={()=>setStep(4)}><i className="fas fa-arrow-left" style={{fontSize:12}}/> Back</button>
                 <button type="button" className="btn btn-p" style={{flex:2}} onClick={handlePublish} disabled={submitting||!form.username||!form.name}>
-                  {submitting?<><i className="fas fa-spinner spin"/> {saved?"Updating...":"Publishing..."}</>:<><i className="fas fa-rocket"/> {saved?"Update Profile":"Publish Profile"}</>}
+                  {submitting?<><i className="fas fa-spinner spin"/> {saved?"Updating...":"Creating..."}</>:<><i className="fas fa-rocket"/> {saved?"Update Profile":"Create Profile"}</>}
                 </button>
               </div>
               {(!form.username||!form.name)&&<div style={{marginTop:10,fontSize:13,color:"#ef4444",textAlign:"center"}}><i className="fas fa-triangle-exclamation" style={{marginRight:5}}/>Username and name are required.</div>}
