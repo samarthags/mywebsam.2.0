@@ -188,7 +188,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         <meta name="twitter:description" content={bio||`${user.name}'s links on mywebsam`}/>
         <meta name="twitter:image"       content={avatarUrl}/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
         <style>{`
           *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
           html,body{min-height:100%;-webkit-font-smoothing:antialiased;}
@@ -197,7 +197,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           body{
             background:#0a0a0a;
             color:#fff;
-            font-family:'Plus Jakarta Sans',sans-serif;
+            font-family:'DM Sans',sans-serif;
             min-height:100vh;overflow-x:hidden;
           }
 
@@ -215,15 +215,16 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .s6{animation:slideUp .55s .46s cubic-bezier(.22,.68,0,1.1) both;}
           .s7{animation:slideUp .55s .54s cubic-bezier(.22,.68,0,1.1) both;}
 
-          /* ── HERO — centered, full-width photo filling top half ── */
+          /* ── HERO — full width, smooth blend into page ── */
           .hero{
             position:relative;
             width:100%;
-            height:58vh;
-            min-height:320px;
-            max-height:520px;
+            height:60vh;
+            min-height:300px;
+            max-height:500px;
             overflow:hidden;
-            animation:fadeIn .6s ease both;
+            animation:fadeIn .7s ease both;
+            /* No bottom clip so gradient bleeds into body */
           }
           .hero-img{
             width:100%;
@@ -232,16 +233,18 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
             object-position:center top;
             display:block;
           }
-          /* smooth gradient fade to pure black — no hard cut */
+          /* smooth gradient fade — matches body exactly */
           .hero-fade{
             position:absolute;inset:0;pointer-events:none;
             background:linear-gradient(
               to bottom,
-              rgba(5,5,5,0)    0%,
-              rgba(5,5,5,0)    25%,
-              rgba(5,5,5,.35)  52%,
-              rgba(5,5,5,.88)  76%,
-              rgba(5,5,5,1)    100%
+              rgba(10,10,10,0)   0%,
+              rgba(10,10,10,0)   20%,
+              rgba(10,10,10,.15) 38%,
+              rgba(10,10,10,.55) 58%,
+              rgba(10,10,10,.88) 76%,
+              rgba(10,10,10,1)   90%,
+              rgba(10,10,10,1)   100%
             );
           }
 
@@ -261,13 +264,14 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           /* ── IDENTITY ── */
           .id-block{
             text-align:center;
-            padding:16px 20px 0;
+            padding:10px 20px 0;
           }
           .pname{
-            font-size:clamp(28px,7.5vw,46px);
-            font-weight:800;
+            font-size:clamp(30px,8vw,50px);
+            font-family:'DM Serif Display',serif;
+            font-weight:400;
             color:#fff;
-            letter-spacing:-0.025em;
+            letter-spacing:-.01em;
             line-height:1.05;
             margin-bottom:10px;
           }
@@ -299,7 +303,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .content{
             max-width:460px;
             margin:0 auto;
-            padding:14px 18px 72px;
+            padding:12px 16px 64px;
           }
 
           /* Bio */
@@ -307,7 +311,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
             font-size:14px;line-height:1.8;
             color:rgba(255,255,255,.48);
             text-align:center;
-            margin-bottom:22px;
+            margin-bottom:18px;
           }
 
           /* Interest tags */
@@ -326,7 +330,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           /* Social icons */
           .soc-row{
             display:flex;justify-content:center;flex-wrap:wrap;gap:9px;
-            margin-bottom:24px;
+            margin-bottom:20px;
           }
           .soc-btn{
             width:46px;height:46px;border-radius:13px;
@@ -343,7 +347,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .soc-btn:active{transform:scale(.93);}
 
           /* Link buttons */
-          .links{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+          .links{display:flex;flex-direction:column;gap:9px;margin-bottom:20px;}
           .lbtn{
             display:flex;align-items:center;
             width:100%;min-height:62px;
@@ -386,9 +390,9 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .lbtn:hover .lbtn-a{color:rgba(255,255,255,.45);transform:translateX(3px);}
 
           /* Spotify player card */
-          .sp-block{margin-bottom:24px;}
+          .sp-block{margin-bottom:20px;}
           .sp-card{
-            background:linear-gradient(135deg,#0d1f15 0%,#0a1410 100%);
+            background:#111;
             border:1px solid rgba(255,255,255,.08);
             border-radius:18px;overflow:hidden;
             cursor:pointer;
@@ -431,7 +435,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .sp-card:hover .sp-play-btn{transform:scale(1.08);background:rgba(255,255,255,.2);}
           .sp-caret{font-size:12px;color:rgba(255,255,255,.2);transition:transform .25s cubic-bezier(.34,1.56,.64,1);}
           .sp-caret.open{transform:rotate(180deg);}
-          .sp-embed{overflow:hidden;}
+          .sp-embed{overflow:hidden;display:block;line-height:0;font-size:0;}
 
           /* Footer */
           .foot{text-align:center;padding:8px 0 4px;}
@@ -456,11 +460,14 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .sfab:active{transform:scale(.93);}
 
           @media(max-width:420px){
-            .hero{height:54vh;}
-            .pname{font-size:30px;}
-            .content{padding:16px 14px 64px;}
-            .lbtn{min-height:56px;border-radius:14px;}
+            .hero{height:56vh;}
+            .pname{font-size:28px;}
+            .content{padding:10px 14px 56px;}
+            .lbtn{min-height:54px;border-radius:14px;}
+            .lbtn-t{font-size:14px;}
             .soc-btn{width:42px;height:42px;font-size:16px;border-radius:11px;}
+            .sp-trig{padding:12px 14px;}
+            .badge-row{gap:6px;}
           }
         `}</style>
       </Head>
@@ -563,7 +570,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
                     src={`https://open.spotify.com/embed/track/${user.favSongTrackId}?utm_source=generator&theme=0&autoplay=1`}
                     width="100%" height="380" frameBorder="0"
                     allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                    loading="lazy" style={{display:"block"}}
+                    loading="lazy" style={{display:"block",verticalAlign:"bottom"}}
                   />
                 </div>
               )}
