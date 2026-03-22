@@ -378,11 +378,14 @@ function Topbar({right}) {
   );
 }
 const Footer = () => (
-  <div className="footer" style={{padding:"16px 20px 28px",textAlign:"center"}}>
-    <div style={{fontSize:11,color:"#adb5c0",lineHeight:1.7,maxWidth:360,margin:"0 auto",background:"#f8f9fb",border:"1px solid #e9eaf0",borderRadius:10,padding:"10px 14px"}}>
+  <div className="footer" style={{padding:"16px 20px 32px",textAlign:"center"}}>
+    <div style={{fontSize:11,color:"#adb5c0",lineHeight:1.7,maxWidth:360,margin:"0 auto 14px",background:"#f8f9fb",border:"1px solid #e9eaf0",borderRadius:10,padding:"10px 14px"}}>
       <i className="fas fa-circle-info" style={{color:AC,marginRight:5,fontSize:12}}/>
       You can <strong style={{color:"#374151"}}>edit</strong>, <strong style={{color:"#374151"}}>delete</strong> or <strong style={{color:"#374151"}}>view stats</strong> from <strong style={{color:"#374151"}}>this device and browser</strong> only.<br/>
       <span style={{color:"#b0b7c3"}}>Do not clear browser data to keep access to your profile settings.</span>
+    </div>
+    <div style={{fontSize:12,color:"#b0b7c3",fontWeight:500}}>
+      Developed by <strong style={{color:"#6b7280",fontWeight:700}}>Samartha GS</strong>
     </div>
   </div>
 );
@@ -918,7 +921,6 @@ export default function ProfileCreator() {
   /* ════ FORM ════ */
   return(
     <div style={{minHeight:"100vh",background:"#f4f5f9",paddingBottom:48}}>
-      {typeof document!=="undefined"&&(document.title="Create Your Profile | mywebsam")}
       {showShare&&<ShareSheet url={getUrl()} onClose={()=>setShowShare(false)} onCopy={copyLink}/>}
       <Topbar right={
         saved ? (
