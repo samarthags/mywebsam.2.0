@@ -390,11 +390,11 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
             flex-shrink:0;
           }
           .lbtn-ic{
-            width:36px;height:36px;border-radius:10px;
+            width:50px;height:50px;border-radius:10px;
             overflow:hidden;
             display:flex;align-items:center;justify-content:center;
-            font-size:15px;color:rgba(255,255,255,.55);
-            background:rgba(255,255,255,.07);
+            font-size:24px;color:rgba(255,255,255,.55);
+            background:rgba(255,255,255,.05);
             border:1px solid rgba(255,255,255,.09);
             flex-shrink:0;
             transition:color .13s;
