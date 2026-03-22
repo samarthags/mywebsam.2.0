@@ -583,7 +583,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
             <div className="sp-card">
               <div className={`sp-trig${spOpen?" open":""}`}
                 onClick={()=>{setSpOpen(v=>!v);if(!spOpen)track(user.username,"spotify_play");}}>
-                <div className="sp-art"><i className="fab fa-music"/></div>
+                <div className="sp-art"><i className="fab fa-headphones"/></div>
                 <div className="sp-meta">
                   <div className="sp-eye"><span className="sp-dot"/>Favourite one</div>
                   <div className="sp-title">{user.favSong||"My Favourite Song"}</div>
