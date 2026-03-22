@@ -922,7 +922,7 @@ export default function ProfileCreator() {
   /* ════ FORM ════ */
   return(
     <div style={{minHeight:"100vh",background:"#f4f5f9",paddingBottom:48}}>
-      <Head><title>Create Your Profile | mywebsam</title></Head>
+      <Head><title>Create Your Profile | MyWebSam</title></Head>
       {showShare&&<ShareSheet url={getUrl()} onClose={()=>setShowShare(false)} onCopy={copyLink}/> }
       <Topbar right={
         saved ? (
@@ -1046,7 +1046,7 @@ export default function ProfileCreator() {
               </div>
               {/* Fav Song — Spotify Search + Embed */}
               <div>
-                <Lbl>Favourite Song <span style={{color:"#adb5c0",fontWeight:400,textTransform:"none",fontSize:11}}>(optional — search Spotify)</span></Lbl>
+                <Lbl>Favourite Song <span style={{color:"#adb5c0",fontWeight:400,textTransform:"none",fontSize:11}}>(optional — search Spotify by Samarth)</span></Lbl>
                 <SpotifySearch
                   value={form.favSong}
                   trackId={form.favSongTrackId}
@@ -1095,7 +1095,7 @@ export default function ProfileCreator() {
         {step===2&&(
           <div className="fu">
             <div className="card" style={{marginBottom:12}}>
-              <SH icon="fas fa-face-smile" title="Your Vibe & Interests" sub="Search and pick — sports, hobbies, skills, passions and more."/>
+              <SH icon="fas fa-face-smile" title="Choose Your Favourite Badge" sub=""/>
 
               {/* Professional Badge */}
               <div style={{marginBottom:16}}>
@@ -1128,18 +1128,18 @@ export default function ProfileCreator() {
               {/* AI Bio — right here */}
               <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,flexWrap:"wrap"}}>
                 <Lbl>Generate Your Bio</Lbl>
-                <div className="aibadge"><i className="fas fa-bolt"/> expo.1 · Groq AI</div>
+                <div className="aibadge"><i className="fas fa-bolt"/> expo.1 · SGS Model</div>
               </div>
               <p style={{fontSize:13,color:"#6b7280",lineHeight:1.6,marginBottom:12}}>
                 Based on what you wrote in step 1 — click to instantly generate your bio.
               </p>
               <button type="button" className="btn btn-g" style={{width:"100%"}} onClick={generateBio} disabled={aiLoad}>
-                {aiLoad?<><i className="fas fa-spinner spin"/> Writing your bio...</>:<><i className="fas fa-wand-magic-sparkles"/> Generate My Bio</>}
+                {aiLoad?<><i className="fas fa-spinner spin"/> Writing your bio...</>:<><i className="fas fa-wand-magic-sparkles"/> Generate</>}
               </button>
               {genBio&&(
                 <div style={{marginTop:14,borderTop:"1px solid #f0edff",paddingTop:14}}>
                   <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8,flexWrap:"wrap",gap:6}}>
-                    <div className="aibadge"><i className="fas fa-robot"/> expo.1 Generated</div>
+                    <div className="aibadge"><i className="fas fa-robot"/> expo.1(SGS) Generated</div>
                     <button type="button" style={{background:"none",border:"none",fontSize:12,color:AC,cursor:"pointer",fontFamily:"inherit",fontWeight:600,padding:0}} onClick={generateBio} disabled={aiLoad}>
                       <i className="fas fa-redo" style={{marginRight:4,fontSize:10}}/>Regenerate
                     </button>
@@ -1183,7 +1183,7 @@ export default function ProfileCreator() {
         {step===4&&(
           <div className="fu">
             <div className="card" style={{marginBottom:12}}>
-              <SH icon="fas fa-link" title="Your Links" sub="Portfolio, shop, blog, project — anything."/>
+              <SH icon="fas fa-link" title="Your Links" sub="Videos you like on youTube or instagram, shop, blog, links, promotions, project — anything."/>
               <div style={{background:"#f8f7ff",border:"1.5px solid #ede9ff",borderRadius:12,padding:14,marginBottom:16}}>
                 <Lbl>Add a Link</Lbl>
                 <div style={{display:"flex",gap:8,marginBottom:8,flexWrap:"wrap"}}>
