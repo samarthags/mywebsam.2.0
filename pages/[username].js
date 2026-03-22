@@ -4,31 +4,31 @@ import { useState } from "react";
 import clientPromise from "../lib/mongodb";
 
 const PLAT = {
-  email:        { i:"fas fa-envelope",      c:"#EA4335", bg:"#2a1a1a", u:(v)=>`mailto:${v}`,                                    n:"Email" },
-  whatsapp:     { i:"fab fa-whatsapp",       c:"#25D366", bg:"#1a2a1e", u:(v)=>`https://wa.me/${v.replace(/\D/g,"")}`,          n:"WhatsApp" },
-  instagram:    { i:"fab fa-instagram",      c:"#E4405F", bg:"#2a1a20", u:(v)=>`https://instagram.com/${v.replace("@","")}`,    n:"Instagram" },
-  facebook:     { i:"fab fa-facebook-f",     c:"#1877F2", bg:"#1a1e2a", u:(v)=>`https://facebook.com/${v}`,                     n:"Facebook" },
-  github:       { i:"fab fa-github",         c:"#fff",    bg:"#1e1e1e", u:(v)=>`https://github.com/${v}`,                       n:"GitHub" },
-  snapchat:     { i:"fab fa-snapchat",       c:"#FFE700", bg:"#2a2a14", u:(v)=>`https://snapchat.com/add/${v}`,                 n:"Snapchat" },
-  youtube:      { i:"fab fa-youtube",        c:"#FF0000", bg:"#2a1a1a", u:(v)=>`https://youtube.com/${v}`,                      n:"YouTube" },
-  twitter:      { i:"fab fa-x-twitter",      c:"#fff",    bg:"#1a1a1a", u:(v)=>`https://twitter.com/${v.replace("@","")}`,      n:"Twitter" },
-  linkedin:     { i:"fab fa-linkedin-in",    c:"#0A66C2", bg:"#1a1e28", u:(v)=>`https://linkedin.com/in/${v}`,                  n:"LinkedIn" },
-  tiktok:       { i:"fab fa-tiktok",         c:"#fff",    bg:"#1a1a1a", u:(v)=>`https://tiktok.com/@${v.replace("@","")}`,      n:"TikTok" },
-  discord:      { i:"fab fa-discord",        c:"#5865F2", bg:"#1c1a2a", u:(v)=>`https://discord.com/users/${v}`,                n:"Discord" },
-  telegram:     { i:"fab fa-telegram",       c:"#26A5E4", bg:"#1a2228", u:(v)=>`https://t.me/${v.replace("@","")}`,             n:"Telegram" },
-  twitch:       { i:"fab fa-twitch",         c:"#9146FF", bg:"#1e1a2a", u:(v)=>`https://twitch.tv/${v}`,                        n:"Twitch" },
-  spotify:      { i:"fab fa-spotify",        c:"#1DB954", bg:"#1a2a1e", u:(v)=>`https://open.spotify.com/user/${v}`,            n:"Spotify" },
-  pinterest:    { i:"fab fa-pinterest",      c:"#E60023", bg:"#2a1a1a", u:(v)=>`https://pinterest.com/${v}`,                    n:"Pinterest" },
-  reddit:       { i:"fab fa-reddit-alien",   c:"#FF4500", bg:"#2a1e1a", u:(v)=>`https://reddit.com/user/${v}`,                  n:"Reddit" },
-  medium:       { i:"fab fa-medium",         c:"#fff",    bg:"#1e1e1e", u:(v)=>`https://medium.com/${v.replace("@","")}`,       n:"Medium" },
-  devto:        { i:"fab fa-dev",            c:"#fff",    bg:"#1e1e1e", u:(v)=>`https://dev.to/${v}`,                           n:"DEV.to" },
-  behance:      { i:"fab fa-behance",        c:"#1769FF", bg:"#1a1e2a", u:(v)=>`https://behance.net/${v}`,                      n:"Behance" },
-  dribbble:     { i:"fab fa-dribbble",       c:"#ea4c89", bg:"#2a1a22", u:(v)=>`https://dribbble.com/${v}`,                     n:"Dribbble" },
-  threads:      { i:"fab fa-threads",        c:"#fff",    bg:"#1a1a1a", u:(v)=>`https://threads.net/${v.replace("@","")}`,      n:"Threads" },
-  bluesky:      { i:"fas fa-cloud",          c:"#1185FE", bg:"#1a1e2a", u:(v)=>`https://bsky.app/profile/${v.replace("@","")}`, n:"Bluesky" },
-  npm:          { i:"fab fa-npm",            c:"#CC3534", bg:"#2a1a1a", u:(v)=>`https://npmjs.com/~${v.replace("~","")}`,       n:"npm" },
-  codepen:      { i:"fab fa-codepen",        c:"#fff",    bg:"#1a1a1a", u:(v)=>`https://codepen.io/${v}`,                       n:"CodePen" },
-  stackoverflow:{ i:"fab fa-stack-overflow", c:"#F58025", bg:"#2a1e1a", u:(v)=>`https://stackoverflow.com/users/${v}`,          n:"Stack Overflow" },
+  email:        { i:"fas fa-envelope",      c:"#EA4335", u:(v)=>`mailto:${v}`,                                    n:"Email" },
+  whatsapp:     { i:"fab fa-whatsapp",       c:"#25D366", u:(v)=>`https://wa.me/${v.replace(/\D/g,"")}`,          n:"WhatsApp" },
+  instagram:    { i:"fab fa-instagram",      c:"#E4405F", u:(v)=>`https://instagram.com/${v.replace("@","")}`,    n:"Instagram" },
+  facebook:     { i:"fab fa-facebook-f",     c:"#1877F2", u:(v)=>`https://facebook.com/${v}`,                     n:"Facebook" },
+  github:       { i:"fab fa-github",         c:"#ccc",    u:(v)=>`https://github.com/${v}`,                       n:"GitHub" },
+  snapchat:     { i:"fab fa-snapchat",       c:"#FFE700", u:(v)=>`https://snapchat.com/add/${v}`,                 n:"Snapchat" },
+  youtube:      { i:"fab fa-youtube",        c:"#FF0000", u:(v)=>`https://youtube.com/${v}`,                      n:"YouTube" },
+  twitter:      { i:"fab fa-x-twitter",      c:"#ccc",    u:(v)=>`https://twitter.com/${v.replace("@","")}`,      n:"Twitter" },
+  linkedin:     { i:"fab fa-linkedin-in",    c:"#0A66C2", u:(v)=>`https://linkedin.com/in/${v}`,                  n:"LinkedIn" },
+  tiktok:       { i:"fab fa-tiktok",         c:"#ccc",    u:(v)=>`https://tiktok.com/@${v.replace("@","")}`,      n:"TikTok" },
+  discord:      { i:"fab fa-discord",        c:"#5865F2", u:(v)=>`https://discord.com/users/${v}`,                n:"Discord" },
+  telegram:     { i:"fab fa-telegram",       c:"#26A5E4", u:(v)=>`https://t.me/${v.replace("@","")}`,             n:"Telegram" },
+  twitch:       { i:"fab fa-twitch",         c:"#9146FF", u:(v)=>`https://twitch.tv/${v}`,                        n:"Twitch" },
+  spotify:      { i:"fab fa-spotify",        c:"#1DB954", u:(v)=>`https://open.spotify.com/user/${v}`,            n:"Spotify" },
+  pinterest:    { i:"fab fa-pinterest",      c:"#E60023", u:(v)=>`https://pinterest.com/${v}`,                    n:"Pinterest" },
+  reddit:       { i:"fab fa-reddit-alien",   c:"#FF4500", u:(v)=>`https://reddit.com/user/${v}`,                  n:"Reddit" },
+  medium:       { i:"fab fa-medium",         c:"#ccc",    u:(v)=>`https://medium.com/${v.replace("@","")}`,       n:"Medium" },
+  devto:        { i:"fab fa-dev",            c:"#ccc",    u:(v)=>`https://dev.to/${v}`,                           n:"DEV.to" },
+  behance:      { i:"fab fa-behance",        c:"#1769FF", u:(v)=>`https://behance.net/${v}`,                      n:"Behance" },
+  dribbble:     { i:"fab fa-dribbble",       c:"#ea4c89", u:(v)=>`https://dribbble.com/${v}`,                     n:"Dribbble" },
+  threads:      { i:"fab fa-threads",        c:"#ccc",    u:(v)=>`https://threads.net/${v.replace("@","")}`,      n:"Threads" },
+  bluesky:      { i:"fas fa-cloud",          c:"#1185FE", u:(v)=>`https://bsky.app/profile/${v.replace("@","")}`, n:"Bluesky" },
+  npm:          { i:"fab fa-npm",            c:"#CC3534", u:(v)=>`https://npmjs.com/~${v.replace("~","")}`,       n:"npm" },
+  codepen:      { i:"fab fa-codepen",        c:"#ccc",    u:(v)=>`https://codepen.io/${v}`,                       n:"CodePen" },
+  stackoverflow:{ i:"fab fa-stack-overflow", c:"#F58025", u:(v)=>`https://stackoverflow.com/users/${v}`,          n:"Stack Overflow" },
 };
 
 function calcAge(dob) {
@@ -39,6 +39,7 @@ function calcAge(dob) {
   return a > 0 ? a : null;
 }
 
+/* ─── Share Sheet ─── */
 function ShareSheet({ url, name, onClose }) {
   const [copied, setCopied] = useState(false);
   const enc = encodeURIComponent;
@@ -53,62 +54,39 @@ function ShareSheet({ url, name, onClose }) {
     setCopied(true); setTimeout(() => setCopied(false), 2200);
   }
   const opts = [
-    { l:"Copy Link", ic:"fas fa-copy",        bg:"#1e1e2e",fg:"#a78bfa", fn:doCopy },
-    { l:"WhatsApp",  ic:"fab fa-whatsapp",    bg:"#1a2a1e",fg:"#25D366", fn:()=>window.open(`https://wa.me/?text=${enc(name+" "+url)}`) },
-    { l:"Telegram",  ic:"fab fa-telegram",    bg:"#1a2228",fg:"#26A5E4", fn:()=>window.open(`https://t.me/share/url?url=${enc(url)}&text=${enc(name)}`) },
-    { l:"Twitter",   ic:"fab fa-x-twitter",   bg:"#1a1a1a",fg:"#fff",    fn:()=>window.open(`https://twitter.com/intent/tweet?text=${enc(name+" "+url)}`) },
-    { l:"Facebook",  ic:"fab fa-facebook-f",  bg:"#1a1e2a",fg:"#1877F2", fn:()=>window.open(`https://facebook.com/sharer/sharer.php?u=${enc(url)}`) },
-    { l:"LinkedIn",  ic:"fab fa-linkedin-in", bg:"#1a1e28",fg:"#0A66C2", fn:()=>window.open(`https://linkedin.com/sharing/share-offsite/?url=${enc(url)}`) },
-    { l:"Reddit",    ic:"fab fa-reddit-alien",bg:"#2a1e1a",fg:"#FF4500", fn:()=>window.open(`https://reddit.com/submit?url=${enc(url)}`) },
-    { l:"Email",     ic:"fas fa-envelope",    bg:"#2a1a1a",fg:"#EA4335", fn:()=>window.open(`mailto:?subject=${enc(name)}&body=${enc(url)}`) },
-    { l:"SMS",       ic:"fas fa-comment-sms", bg:"#1a2a1e",fg:"#1DB954", fn:()=>window.open(`sms:?body=${enc(url)}`) },
+    { l:"Copy Link", ic:"fas fa-copy",         bg:"#1a1a2a", fg:"#a78bfa", fn:doCopy },
+    { l:"WhatsApp",  ic:"fab fa-whatsapp",      bg:"#0d1f15", fg:"#25D366", fn:()=>window.open(`https://wa.me/?text=${enc(name+" "+url)}`) },
+    { l:"Telegram",  ic:"fab fa-telegram",      bg:"#0d1820", fg:"#26A5E4", fn:()=>window.open(`https://t.me/share/url?url=${enc(url)}&text=${enc(name)}`) },
+    { l:"Twitter",   ic:"fab fa-x-twitter",     bg:"#111",    fg:"#fff",    fn:()=>window.open(`https://twitter.com/intent/tweet?text=${enc(name+" "+url)}`) },
+    { l:"Facebook",  ic:"fab fa-facebook-f",    bg:"#0d1220", fg:"#1877F2", fn:()=>window.open(`https://facebook.com/sharer/sharer.php?u=${enc(url)}`) },
+    { l:"LinkedIn",  ic:"fab fa-linkedin-in",   bg:"#0a1520", fg:"#0A66C2", fn:()=>window.open(`https://linkedin.com/sharing/share-offsite/?url=${enc(url)}`) },
+    { l:"Reddit",    ic:"fab fa-reddit-alien",  bg:"#1f1208", fg:"#FF4500", fn:()=>window.open(`https://reddit.com/submit?url=${enc(url)}`) },
+    { l:"Email",     ic:"fas fa-envelope",      bg:"#1f0d0d", fg:"#EA4335", fn:()=>window.open(`mailto:?subject=${enc(name)}&body=${enc(url)}`) },
+    { l:"SMS",       ic:"fas fa-comment-sms",   bg:"#0d1f15", fg:"#1DB954", fn:()=>window.open(`sms:?body=${enc(url)}`) },
   ];
   return (
-    <div onClick={onClose}
-      style={{position:"fixed",inset:0,background:"rgba(0,0,0,.7)",zIndex:1000,
-              display:"flex",alignItems:"flex-end",justifyContent:"center",
-              backdropFilter:"blur(4px)"}}>
-      <div onClick={e=>e.stopPropagation()}
-        style={{background:"#111",border:"1px solid #222",
-                borderRadius:"24px 24px 0 0",width:"100%",maxWidth:520,
-                paddingBottom:44,animation:"sUp .26s cubic-bezier(.34,1.4,.64,1) both"}}>
-        <style>{`@keyframes sUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}`}</style>
+    <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.72)",zIndex:1000,display:"flex",alignItems:"flex-end",justifyContent:"center",backdropFilter:"blur(6px)"}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:"#0f0f0f",border:"1px solid #1e1e1e",borderRadius:"24px 24px 0 0",width:"100%",maxWidth:520,paddingBottom:44,animation:"ssUp .28s cubic-bezier(.34,1.4,.64,1) both"}}>
+        <style>{`@keyframes ssUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}`}</style>
         <div style={{display:"flex",justifyContent:"center",padding:"14px 0 8px"}}>
-          <div style={{width:40,height:4,borderRadius:2,background:"#333"}}/>
+          <div style={{width:40,height:4,borderRadius:2,background:"#2a2a2a"}}/>
         </div>
-        <div style={{padding:"8px 20px 16px",borderBottom:"1px solid #222",
-                     display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <div style={{padding:"8px 20px 16px",borderBottom:"1px solid #1e1e1e",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <div>
-            <div style={{fontWeight:800,fontSize:16,color:"#fff"}}>Share Profile</div>
-            <div style={{fontSize:11,color:"#555",marginTop:2,maxWidth:260,
-                         overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{url}</div>
+            <div style={{fontWeight:800,fontSize:15,color:"#fff"}}>Share Profile</div>
+            <div style={{fontSize:11,color:"#444",marginTop:2,maxWidth:260,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{url}</div>
           </div>
-          <button onClick={onClose}
-            style={{width:34,height:34,borderRadius:"50%",background:"#222",border:"none",
-                    fontSize:17,color:"#666",cursor:"pointer",display:"flex",
-                    alignItems:"center",justifyContent:"center",
-                    outline:"none",WebkitTapHighlightColor:"transparent"}}>×</button>
+          <button onClick={onClose} style={{width:34,height:34,borderRadius:"50%",background:"#1a1a1a",border:"1px solid #2a2a2a",fontSize:17,color:"#555",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",outline:"none",WebkitTapHighlightColor:"transparent"}}>×</button>
         </div>
-        <div style={{padding:"16px 10px 0",display:"flex",flexWrap:"wrap",
-                     gap:8,justifyContent:"center"}}>
+        <div style={{padding:"14px 10px 0",display:"flex",flexWrap:"wrap",gap:8,justifyContent:"center"}}>
           {opts.map(o=>(
-            <button key={o.l} onClick={o.fn}
-              style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,
-                      width:72,padding:"10px 4px",border:"none",background:"transparent",
-                      cursor:"pointer",borderRadius:14,outline:"none",
-                      WebkitTapHighlightColor:"transparent",transition:"background .12s"}}
-              onMouseEnter={e=>e.currentTarget.style.background="#1a1a1a"}
+            <button key={o.l} onClick={o.fn} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,width:72,padding:"10px 4px",border:"none",background:"transparent",cursor:"pointer",borderRadius:14,outline:"none",WebkitTapHighlightColor:"transparent",transition:"background .12s"}}
+              onMouseEnter={e=>e.currentTarget.style.background="#161616"}
               onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-              <div style={{width:52,height:52,borderRadius:14,background:o.bg,color:o.fg,
-                           display:"flex",alignItems:"center",justifyContent:"center",fontSize:22}}>
-                {o.l==="Copy Link"&&copied
-                  ?<i className="fas fa-check" style={{color:"#1DB954"}}/>
-                  :<i className={o.ic}/>}
+              <div style={{width:52,height:52,borderRadius:14,background:o.bg,color:o.fg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,border:"1px solid rgba(255,255,255,.05)"}}>
+                {o.l==="Copy Link"&&copied?<i className="fas fa-check" style={{color:"#1DB954"}}/>:<i className={o.ic}/>}
               </div>
-              <span style={{fontSize:10.5,fontWeight:600,color:"#888",
-                            textAlign:"center",lineHeight:1.2}}>
-                {o.l==="Copy Link"&&copied?"Copied!":o.l}
-              </span>
+              <span style={{fontSize:10.5,fontWeight:600,color:"#555",textAlign:"center",lineHeight:1.2}}>{o.l==="Copy Link"&&copied?"Copied!":o.l}</span>
             </button>
           ))}
         </div>
@@ -117,10 +95,12 @@ function ShareSheet({ url, name, onClose }) {
   );
 }
 
+/* ─── Main page ─── */
 export default function ProfilePage({ user, pageUrl, avatarUrl }) {
   const [shareOpen, setShareOpen] = useState(false);
   const [spOpen,    setSpOpen]    = useState(false);
 
+  /* 404 */
   if (!user) {
     return (
       <>
@@ -128,22 +108,16 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           <title>Not Found | mywebsam</title>
           <meta name="robots" content="noindex"/>
           <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-          <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
-          <style>{`*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Plus Jakarta Sans',sans-serif;background:#0a0a0a;color:#fff;}`}</style>
+          <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet"/>
+          <style>{`*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Plus Jakarta Sans',sans-serif;background:#080808;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;}`}</style>
         </Head>
-        <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",
-                     alignItems:"center",justifyContent:"center",padding:24,textAlign:"center"}}>
-          <div style={{width:80,height:80,borderRadius:"50%",background:"#1a1a1a",
-                       border:"2px solid #333",display:"flex",alignItems:"center",
-                       justifyContent:"center",marginBottom:20,fontSize:32,color:"#555"}}>
+        <div style={{textAlign:"center",padding:32}}>
+          <div style={{width:80,height:80,borderRadius:"50%",background:"#111",border:"1px solid #222",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px",fontSize:32,color:"#333"}}>
             <i className="fas fa-user-slash"/>
           </div>
-          <h1 style={{fontSize:22,fontWeight:800,marginBottom:8,color:"#fff"}}>Profile Not Found</h1>
-          <p style={{color:"#666",marginBottom:28,lineHeight:1.6}}>This username doesn't exist yet.</p>
-          <a href="/" style={{background:"#fff",color:"#000",padding:"12px 28px",borderRadius:999,
-                              fontWeight:800,fontSize:14,display:"inline-flex",alignItems:"center",
-                              gap:8,textDecoration:"none",outline:"none",
-                              WebkitTapHighlightColor:"transparent"}}>
+          <h1 style={{fontSize:22,fontWeight:800,marginBottom:8}}>Profile Not Found</h1>
+          <p style={{color:"#444",marginBottom:28}}>This username doesn't exist yet.</p>
+          <a href="/" style={{background:"#fff",color:"#000",padding:"12px 28px",borderRadius:999,fontWeight:800,fontSize:14,display:"inline-flex",alignItems:"center",gap:8,outline:"none",WebkitTapHighlightColor:"transparent"}}>
             <i className="fas fa-plus"/> Create Your Profile
           </a>
         </div>
@@ -155,18 +129,17 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
   const socials   = Object.entries(user.socialProfiles||{}).filter(([,v])=>v?.trim()).filter(([k])=>PLAT[k]);
   const interests = Object.values(user.interests||{}).flat().filter(v=>v&&typeof v==="string").slice(0,14);
   const bio       = user.aboutme||user.bio||"";
-  const title     = `${user.name} | mywebsam`;
+  const ptitle    = `${user.name} | mywebsam`;
 
   return (
     <>
       <Head>
-        <title>{title}</title>
+        <title>{ptitle}</title>
         <meta name="description"         content={bio||`${user.name}'s profile on mywebsam`}/>
         <meta name="viewport"            content="width=device-width,initial-scale=1"/>
-        <meta name="theme-color"         content="#0a0a0a"/>
-        {/* OG — avatarUrl is real https:// URL via /api/avatar/[username] — works on WhatsApp/Instagram */}
+        <meta name="theme-color"         content="#080808"/>
         <meta property="og:type"         content="profile"/>
-        <meta property="og:title"        content={title}/>
+        <meta property="og:title"        content={ptitle}/>
         <meta property="og:description"  content={bio||`${user.name}'s links on mywebsam`}/>
         <meta property="og:url"          content={pageUrl}/>
         <meta property="og:site_name"    content="mywebsam"/>
@@ -174,262 +147,219 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         <meta property="og:image:width"  content="400"/>
         <meta property="og:image:height" content="400"/>
         <meta property="og:image:type"   content="image/jpeg"/>
-        {/* Twitter */}
         <meta name="twitter:card"        content="summary_large_image"/>
-        <meta name="twitter:title"       content={title}/>
+        <meta name="twitter:title"       content={ptitle}/>
         <meta name="twitter:description" content={bio||`${user.name}'s links on mywebsam`}/>
         <meta name="twitter:image"       content={avatarUrl}/>
+        {/* Font Awesome + Google Fonts */}
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
         <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
         <style>{`
           *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-          html,body{min-height:100%;-webkit-font-smoothing:antialiased;}
+          html,body{min-height:100%;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
           *{-webkit-tap-highlight-color:transparent;}
           a,button{outline:none;text-decoration:none;color:inherit;}
+          body{background:#080808;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
 
-          /* ── Pure black background ── */
-          body{
-            background:#0a0a0a;
-            color:#fff;
-            font-family:'Plus Jakarta Sans',sans-serif;
-            min-height:100vh;
-          }
+          @keyframes heroReveal{from{opacity:0;transform:scale(1.03);}to{opacity:1;transform:scale(1);}}
+          @keyframes slideUp{from{opacity:0;transform:translateY(26px);}to{opacity:1;transform:translateY(0);}}
+          @keyframes breathe{0%,100%{opacity:1;}50%{opacity:.5;}}
+          .a0{animation:heroReveal .8s cubic-bezier(.22,.68,0,1) both;}
+          .a1{animation:slideUp .6s .08s cubic-bezier(.22,.68,0,1.12) both;}
+          .a2{animation:slideUp .6s .16s cubic-bezier(.22,.68,0,1.12) both;}
+          .a3{animation:slideUp .6s .24s cubic-bezier(.22,.68,0,1.12) both;}
+          .a4{animation:slideUp .6s .32s cubic-bezier(.22,.68,0,1.12) both;}
+          .a5{animation:slideUp .6s .40s cubic-bezier(.22,.68,0,1.12) both;}
+          .a6{animation:slideUp .6s .48s cubic-bezier(.22,.68,0,1.12) both;}
 
-          /* ── Animations ── */
-          @keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
-          @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-          @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.6;}}
-          .a0{animation:fadeIn .6s ease both;}
-          .a1{animation:fadeUp .5s .05s ease both;}
-          .a2{animation:fadeUp .5s .12s ease both;}
-          .a3{animation:fadeUp .5s .19s ease both;}
-          .a4{animation:fadeUp .5s .26s ease both;}
-          .a5{animation:fadeUp .5s .33s ease both;}
-          .a6{animation:fadeUp .5s .40s ease both;}
-
-          /* ── HERO — half screen photo ── */
+          /* ── HERO ── */
           .hero{
-            position:relative;
-            width:100%;
-            height:55vh;
-            min-height:280px;
-            max-height:480px;
+            position:relative;width:100%;
+            height:62vh;min-height:340px;max-height:540px;
             overflow:hidden;
-            flex-shrink:0;
           }
-          .hero-img{
-            width:100%;height:100%;
-            object-fit:cover;
-            object-position:center 15%;
-            display:block;
+          .hero img{
+            width:100%;height:100%;object-fit:cover;
+            object-position:center 12%;display:block;
           }
-          /* 3-stop gradient: transparent → partial → full black */
-          .hero-gradient{
-            position:absolute;
-            inset:0;
-            background:linear-gradient(
-              to bottom,
-              rgba(10,10,10,0)    0%,
-              rgba(10,10,10,0)    35%,
-              rgba(10,10,10,0.4)  60%,
-              rgba(10,10,10,0.82) 80%,
-              rgba(10,10,10,1)    100%
-            );
-            pointer-events:none;
+          .hero-grad{
+            position:absolute;inset:0;pointer-events:none;
+            background:linear-gradient(to bottom,
+              rgba(8,8,8,0) 0%,rgba(8,8,8,0) 22%,
+              rgba(8,8,8,.18) 46%,rgba(8,8,8,.72) 70%,
+              rgba(8,8,8,.96) 88%,rgba(8,8,8,1) 100%);
           }
-          /* Name sits at the bottom of hero, ON the photo */
-          .hero-name{
-            position:absolute;
-            bottom:0;left:0;right:0;
-            padding:0 20px 36px;
-            text-align:center;
-            z-index:2;
+          .hero-vig{
+            position:absolute;inset:0;pointer-events:none;
+            background:radial-gradient(ellipse at 50% 0%,transparent 50%,rgba(0,0,0,.3) 100%);
+          }
+          .hero-id{
+            position:absolute;bottom:0;left:0;right:0;
+            padding:0 24px 34px;text-align:center;z-index:5;
           }
           .pname{
-            font-family:'Cormorant Garamond',serif;
-            font-size:clamp(44px,12vw,68px);
-            font-weight:700;
-            color:#fff;
-            letter-spacing:-0.01em;
-            line-height:1.0;
-            text-shadow:0 4px 32px rgba(0,0,0,.6);
+            font-family:'Cormorant Garamond',Georgia,serif;
+            font-size:clamp(54px,14.5vw,86px);
+            font-weight:700;color:#fff;
+            letter-spacing:-.02em;line-height:.95;
+            text-shadow:0 2px 0 rgba(255,255,255,.04),0 6px 48px rgba(0,0,0,.9);
+            margin-bottom:11px;
           }
-          .page-sub{
+          .id-row{
             display:flex;align-items:center;justify-content:center;
-            gap:10px;margin-top:8px;flex-wrap:wrap;
+            gap:9px;flex-wrap:wrap;
           }
-          .phandle{font-size:13px;color:rgba(255,255,255,0.45);font-weight:500;letter-spacing:.02em;}
-          .page{
-            font-size:13px;color:rgba(255,255,255,0.45);font-weight:500;
-            display:flex;align-items:center;gap:4px;
+          .handle{font-size:13px;color:rgba(255,255,255,.38);font-weight:500;letter-spacing:.04em;}
+          .age-pill{
+            display:inline-flex;align-items:center;justify-content:center;
+            background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+            border-radius:999px;padding:3px 11px;
+            font-size:12px;font-weight:600;color:rgba(255,255,255,.45);
           }
-          .dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.25);}
 
-          /* No photo placeholder */
+          /* No photo */
           .hero-ph{
-            width:100%;height:55vh;min-height:280px;max-height:480px;
-            background:#111;
-            display:flex;align-items:center;justify-content:center;
-            flex-direction:column;gap:12px;position:relative;
+            width:100%;height:62vh;min-height:340px;max-height:540px;
+            background:#0c0c0c;display:flex;align-items:center;
+            justify-content:center;flex-direction:column;gap:18px;
           }
           .av-ph{
-            width:96px;height:96px;border-radius:50%;
-            background:#222;border:2px solid #333;
+            width:104px;height:104px;border-radius:50%;
+            background:#141414;border:1.5px solid #222;
             display:flex;align-items:center;justify-content:center;
-            font-size:38px;font-weight:800;color:#fff;
+            font-family:'Cormorant Garamond',serif;
+            font-size:44px;font-weight:700;color:#fff;
           }
 
-          /* ── Content below hero ── */
-          .content{
-            max-width:480px;
-            margin:0 auto;
-            padding:20px 18px 80px;
-          }
+          /* ── CONTENT ── */
+          .content{max-width:456px;margin:0 auto;padding:22px 18px 80px;}
 
           /* Bio */
-          .bio-block{
-            text-align:center;
-            margin-bottom:24px;
-          }
-          .bio-text{
-            font-size:14px;color:rgba(255,255,255,0.55);
-            line-height:1.75;max-width:320px;margin:0 auto;
-          }
+          .bio-block{text-align:center;margin-bottom:26px;}
+          .bio-text{font-size:14px;color:rgba(255,255,255,.38);line-height:1.82;max-width:300px;margin:0 auto;}
 
-          /* ── Social icons — clean monochrome ── */
-          .soc-row{
-            display:flex;justify-content:center;
-            flex-wrap:wrap;gap:10px;
-            margin-bottom:28px;
-          }
+          /* ── SOCIAL ICONS ── */
+          .soc-row{display:flex;justify-content:center;flex-wrap:wrap;gap:9px;margin-bottom:28px;}
           .soc-btn{
-            width:44px;height:44px;
-            border-radius:12px;
+            width:46px;height:46px;border-radius:13px;
             display:flex;align-items:center;justify-content:center;
             font-size:17px;
-            border:1px solid #2a2a2a;
-            background:#141414;
-            color:rgba(255,255,255,0.65) !important;
-            transition:transform .13s,background .13s,border-color .13s,color .13s;
-          }
-          .soc-btn:hover{
-            transform:translateY(-2px);
-            background:#1e1e1e;
-            border-color:#3a3a3a;
-            color:rgba(255,255,255,0.95) !important;
-          }
-          .soc-btn:active{transform:scale(.93);}
-
-          /* ── Link buttons — white pill on black ── */
-          .links{
-            display:flex;flex-direction:column;
-            gap:10px;margin-bottom:28px;
-          }
-          .lbtn{
-            display:flex;align-items:center;
-            width:100%;min-height:56px;
-            background:#fff;
-            border-radius:999px;
-            cursor:pointer;
-            transition:transform .14s,background .14s,box-shadow .14s;
-            overflow:hidden;
+            background:#111;border:1px solid #1c1c1c;
+            color:rgba(255,255,255,.5);
+            transition:transform .2s cubic-bezier(.34,1.56,.64,1),background .15s,border-color .15s,color .15s,box-shadow .15s;
             position:relative;
           }
-          .lbtn:hover{transform:scale(1.015);box-shadow:0 8px 28px rgba(255,255,255,.12);background:#f5f5f5;}
+          .soc-btn::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,rgba(255,255,255,.04),transparent);pointer-events:none;}
+          .soc-btn:hover{transform:translateY(-5px) scale(1.06);background:#181818;border-color:#2c2c2c;color:rgba(255,255,255,.88);box-shadow:0 10px 28px rgba(0,0,0,.6);}
+          .soc-btn:active{transform:scale(.92);}
+
+          /* ── EXTERNAL LINK BUTTONS ── */
+          .links{display:flex;flex-direction:column;gap:11px;margin-bottom:28px;}
+          .lbtn{
+            display:flex;align-items:center;
+            width:100%;min-height:62px;
+            background:#111;border:1px solid #1c1c1c;border-radius:18px;
+            cursor:pointer;overflow:hidden;position:relative;
+            transition:transform .2s cubic-bezier(.34,1.56,.64,1),background .15s,border-color .15s,box-shadow .15s;
+          }
+          .lbtn::before{content:"";position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(to bottom,rgba(255,255,255,.04),transparent);pointer-events:none;z-index:1;}
+          .lbtn:hover{transform:translateY(-3px) scale(1.008);background:#181818;border-color:#2c2c2c;box-shadow:0 14px 40px rgba(0,0,0,.55);}
           .lbtn:active{transform:scale(.98);}
           .lbtn-ic{
-            width:56px;height:56px;
+            width:62px;min-height:62px;
             display:flex;align-items:center;justify-content:center;
-            font-size:16px;color:#666;flex-shrink:0;
-            border-right:1px solid rgba(0,0,0,0.08);
+            font-size:17px;color:rgba(255,255,255,.38);
+            flex-shrink:0;border-right:1px solid #181818;
+            transition:color .15s;z-index:2;
           }
+          .lbtn:hover .lbtn-ic{color:rgba(255,255,255,.75);}
           .lbtn-t{
             flex:1;text-align:center;
-            font-size:15px;font-weight:700;
-            color:#111;padding:0 14px;
-            letter-spacing:-0.01em;
+            font-size:15px;font-weight:700;color:#f0f0f0;
+            padding:0 14px;letter-spacing:-.01em;z-index:2;
           }
           .lbtn-a{
-            width:44px;height:56px;
+            width:46px;min-height:62px;
             display:flex;align-items:center;justify-content:center;
-            font-size:12px;color:#ccc;flex-shrink:0;
+            font-size:11px;color:rgba(255,255,255,.15);
+            flex-shrink:0;z-index:2;
+            transition:color .15s,transform .18s;
           }
+          .lbtn:hover .lbtn-a{color:rgba(255,255,255,.45);transform:translateX(3px);}
 
-          /* ── Spotify ── */
+          /* ── SPOTIFY ── */
           .sp-block{margin-bottom:28px;}
-          .sp-header{
-            display:flex;align-items:center;justify-content:space-between;
-            cursor:pointer;
-            padding:14px 16px;
-            background:#141414;
-            border:1px solid #2a2a2a;
-            border-radius:16px;
-            transition:background .14s,border-color .14s;
+          .sp-trig{
+            display:flex;align-items:center;gap:14px;padding:14px 16px;
+            background:#111;border:1px solid #1c1c1c;border-radius:18px;cursor:pointer;
+            position:relative;overflow:hidden;
+            transition:background .15s,border-color .15s,box-shadow .15s;
           }
-          .sp-header:hover{background:#1a1a1a;border-color:#383838;}
-          .sp-header.open{border-radius:16px 16px 0 0;border-bottom:none;}
-          .sp-left{display:flex;align-items:center;gap:12px;}
-          .sp-ico{
-            width:42px;height:42px;border-radius:10px;
-            background:#121212;
-            border:1px solid #1DB954;
+          .sp-trig::before{content:"";position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(to bottom,rgba(255,255,255,.03),transparent);pointer-events:none;}
+          .sp-trig:hover{background:#181818;border-color:#2c2c2c;box-shadow:0 8px 28px rgba(0,0,0,.45);}
+          .sp-trig.open{border-radius:18px 18px 0 0;border-bottom-color:transparent;}
+          .sp-art{
+            width:50px;height:50px;border-radius:11px;
+            background:#0d1f15;border:1px solid rgba(29,185,84,.18);
             display:flex;align-items:center;justify-content:center;
-            font-size:20px;color:#1DB954;flex-shrink:0;
+            font-size:22px;color:#1DB954;flex-shrink:0;overflow:hidden;
           }
-          .sp-info{display:flex;flex-direction:column;}
-          .sp-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#555;margin-bottom:2px;}
-          .sp-name{font-size:14px;font-weight:700;color:#fff;line-height:1.3;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-          .sp-chevron{font-size:13px;color:#444;transition:transform .22s;flex-shrink:0;}
-          .sp-chevron.open{transform:rotate(180deg);}
-          .sp-embed{
-            border-radius:0 0 16px 16px;
-            overflow:hidden;
-            border:1px solid #2a2a2a;
-            border-top:none;
+          .sp-art img{width:100%;height:100%;object-fit:cover;}
+          .sp-meta{flex:1;min-width:0;}
+          .sp-eyebrow{
+            font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+            color:rgba(29,185,84,.65);margin-bottom:4px;
+            display:flex;align-items:center;gap:5px;
           }
+          .sp-dot{width:5px;height:5px;border-radius:50%;background:#1DB954;animation:breathe 2s ease infinite;}
+          .sp-title{font-size:14.5px;font-weight:700;color:#fff;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+          .sp-artist{font-size:12px;color:rgba(255,255,255,.32);margin-top:2px;}
+          .sp-caret{font-size:12px;color:rgba(255,255,255,.22);transition:transform .25s cubic-bezier(.34,1.56,.64,1);flex-shrink:0;}
+          .sp-caret.open{transform:rotate(180deg);}
+          .sp-embed{border:1px solid #1c1c1c;border-top:none;border-radius:0 0 18px 18px;overflow:hidden;}
 
-          /* ── Interests ── */
+          /* ── INTERESTS ── */
           .int-block{margin-bottom:28px;}
-          .sec-label{
-            font-size:10px;font-weight:700;
-            letter-spacing:.1em;text-transform:uppercase;
-            color:#444;margin-bottom:12px;text-align:center;
-          }
+          .sec-lbl{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#2e2e2e;margin-bottom:12px;text-align:center;}
           .int-tags{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;}
           .itag{
-            padding:7px 14px;border-radius:999px;
-            font-size:12px;font-weight:600;color:#fff;
-            background:#111;border:1px solid #222;
-            transition:background .12s,border-color .12s;
+            padding:7px 15px;border-radius:999px;
+            font-size:12px;font-weight:600;color:rgba(255,255,255,.42);
+            background:#111;border:1px solid #1c1c1c;
+            transition:background .14s,border-color .14s,color .14s,transform .18s cubic-bezier(.34,1.56,.64,1);
           }
-          .itag:hover{background:#1a1a1a;border-color:#333;}
+          .itag:hover{background:#181818;border-color:#2c2c2c;color:rgba(255,255,255,.82);transform:translateY(-2px);}
 
-          /* ── Footer ── */
+          /* ── FOOTER ── */
           .foot{text-align:center;padding:4px 0;}
-          .foot-logo{display:inline-flex;align-items:center;gap:5px;margin-bottom:3px;}
-          .foot a{font-size:12px;color:#444;font-weight:700;}
-          .foot a:hover{color:#888;}
-          .foot-sub{font-size:11px;color:#333;}
+          .foot-logo{display:inline-flex;align-items:center;gap:5px;margin-bottom:4px;}
+          .foot a{font-size:12px;color:#282828;font-weight:700;}
+          .foot a:hover{color:#484848;}
+          .foot-sub{font-size:11px;color:#222;}
 
-          /* ── Share FAB ── */
+          /* ── SHARE FAB ── */
           .sfab{
             position:fixed;top:16px;right:16px;
             width:44px;height:44px;border-radius:50%;
-            background:rgba(255,255,255,0.1);
-            border:1px solid rgba(255,255,255,0.15);
-            backdrop-filter:blur(10px);
+            background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+            backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
             display:flex;align-items:center;justify-content:center;
-            font-size:16px;color:#fff;cursor:pointer;z-index:80;
-            transition:background .14s,transform .12s;
+            font-size:15px;color:rgba(255,255,255,.6);
+            cursor:pointer;z-index:80;
+            transition:background .15s,transform .14s,color .15s;
           }
-          .sfab:hover{background:rgba(255,255,255,0.18);transform:scale(1.07);}
-          .sfab:active{transform:scale(.93);}
+          .sfab:hover{background:rgba(255,255,255,.14);color:#fff;transform:scale(1.08);}
+          .sfab:active{transform:scale(.92);}
 
-          @media(max-width:440px){
-            .hero{height:52vh;}
-            .pname{font-size:32px;}
-            .lbtn-t{font-size:14px;}
+          @media(max-width:420px){
+            .hero{height:58vh;}
+            .pname{font-size:48px;}
             .content{padding:18px 14px 64px;}
+            .lbtn{min-height:58px;border-radius:16px;}
+            .lbtn-ic{width:58px;min-height:58px;}
+            .lbtn-a{width:42px;min-height:58px;}
+            .soc-btn{width:42px;height:42px;font-size:16px;border-radius:12px;}
+            .sp-trig{padding:13px 14px;}
           }
         `}</style>
       </Head>
@@ -439,51 +369,51 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         <i className="fas fa-share-nodes"/>
       </button>
 
-      {/* ── HERO — half screen ── */}
-      {user.avatar?(
+      {/* ── HERO ── */}
+      {user.avatar ? (
         <div className="hero a0">
-          <img src={user.avatar} alt={user.name} className="hero-img"/>
-          <div className="hero-gradient"/>
-          {/* Name + handle ON the photo at bottom */}
-          <div className="hero-name">
+          <img src={user.avatar} alt={user.name}/>
+          <div className="hero-grad"/>
+          <div className="hero-vig"/>
+          <div className="hero-id">
             <div className="pname a1">{user.name}</div>
-            <div className="page-sub a2">
-              <span className="phandle">@{user.username}</span>
-              {userAge&&<><div className="dot"/><span className="page">{userAge}</span></>}
+            <div className="id-row a2">
+              <span className="handle">@{user.username}</span>
+              {userAge && <span className="age-pill">{userAge}</span>}
             </div>
           </div>
         </div>
-      ):(
+      ) : (
         <div className="hero-ph a0">
           <div className="av-ph">{user.name?.charAt(0)?.toUpperCase()||"?"}</div>
-          <div className="hero-name" style={{position:"relative",bottom:"auto",padding:"12px 20px 0"}}>
-            <div className="pname">{user.name}</div>
-            <div className="page-sub">
-              <span className="phandle">@{user.username}</span>
-              {userAge&&<><div className="dot"/><span className="page">{userAge}</span></>}
+          <div style={{textAlign:"center",padding:"0 22px"}}>
+            <div className="pname a1" style={{fontSize:"clamp(44px,12vw,68px)"}}>{user.name}</div>
+            <div className="id-row a2">
+              <span className="handle">@{user.username}</span>
+              {userAge && <span className="age-pill">{userAge}</span>}
             </div>
           </div>
         </div>
       )}
 
-      {/* ── Below hero ── */}
+      {/* ── CONTENT ── */}
       <div className="content">
 
         {/* Bio */}
-        {bio&&(
+        {bio && (
           <div className="bio-block a2">
             <p className="bio-text">{bio}</p>
           </div>
         )}
 
         {/* Social icons */}
-        {socials.length>0&&(
+        {socials.length > 0 && (
           <div className="soc-row a3">
-            {socials.map(([pl,val])=>{
-              const m=PLAT[pl];
-              return(
+            {socials.map(([pl, val]) => {
+              const m = PLAT[pl];
+              return (
                 <a key={pl} href={m.u(val)} target="_blank" rel="noopener noreferrer"
-                  className="soc-btn" title={m.n}>
+                  className="soc-btn" title={m.n} style={{color:m.c}}>
                   <i className={m.i}/>
                 </a>
               );
@@ -491,33 +421,37 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           </div>
         )}
 
-        {/* Link buttons — white on black */}
-        {(user.links||[]).length>0&&(
+        {/* External link buttons */}
+        {(user.links||[]).length > 0 && (
           <div className="links a4">
-            {user.links.map((lnk,i)=>(
+            {user.links.map((lnk, i) => (
               <a key={lnk.id||i} href={lnk.url} target="_blank" rel="noopener noreferrer" className="lbtn">
                 <div className="lbtn-ic"><i className={lnk.icon||"fas fa-link"}/></div>
                 <div className="lbtn-t">{lnk.title}</div>
-                <div className="lbtn-a"><i className="fas fa-chevron-right"/></div>
+                <div className="lbtn-a"><i className="fas fa-arrow-up-right-from-square"/></div>
               </a>
             ))}
           </div>
         )}
 
-        {/* Spotify — tap header to expand/collapse embed */}
-        {user.favSongTrackId&&(
+        {/* Spotify — tap to expand square embed */}
+        {user.favSongTrackId && (
           <div className="sp-block a5">
-            <div className={`sp-header${spOpen?" open":""}`} onClick={()=>setSpOpen(v=>!v)}>
-              <div className="sp-left">
-                <div className="sp-ico"><i className="fab fa-spotify"/></div>
-                <div className="sp-info">
-                  <span className="sp-label">Currently Vibing To</span>
-                  <span className="sp-name">{user.favSong||"My Favourite Song"}</span>
-                </div>
+            <div className={`sp-trig${spOpen?" open":""}`} onClick={()=>setSpOpen(v=>!v)}>
+              <div className="sp-art">
+                <i className="fab fa-spotify"/>
               </div>
-              <i className={`fas fa-chevron-down sp-chevron${spOpen?" open":""}`}/>
+              <div className="sp-meta">
+                <div className="sp-eyebrow">
+                  <span className="sp-dot"/>
+                  Currently Vibing To
+                </div>
+                <div className="sp-title">{user.favSong||"My Favourite Song"}</div>
+                {user.favArtist && <div className="sp-artist">{user.favArtist}</div>}
+              </div>
+              <i className={`fas fa-chevron-down sp-caret${spOpen?" open":""}`}/>
             </div>
-            {spOpen&&(
+            {spOpen && (
               <div className="sp-embed">
                 <iframe
                   src={`https://open.spotify.com/embed/track/${user.favSongTrackId}?utm_source=generator&theme=0`}
@@ -531,11 +465,11 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         )}
 
         {/* Interests */}
-        {interests.length>0&&(
+        {interests.length > 0 && (
           <div className="int-block a5">
-            <div className="sec-label">Interests</div>
+            <div className="sec-lbl">Interests</div>
             <div className="int-tags">
-              {interests.map((t,i)=><span key={i} className="itag">{t}</span>)}
+              {interests.map((t,i) => <span key={i} className="itag">{t}</span>)}
             </div>
           </div>
         )}
@@ -543,7 +477,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         {/* Footer */}
         <div className="foot a6">
           <div className="foot-logo">
-            <img src="/icon.png" alt="mywebsam" style={{width:16,height:16,borderRadius:4,verticalAlign:"middle",opacity:.5}}/>
+            <img src="/icon.png" alt="mywebsam" style={{width:16,height:16,borderRadius:4,verticalAlign:"middle",opacity:.4}}/>
             <a href="/"><strong>mywebsam</strong></a>
           </div>
           <div className="foot-sub">Your link in bio — <a href="/">Create yours free</a></div>
@@ -551,7 +485,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
 
       </div>
 
-      {shareOpen&&<ShareSheet url={pageUrl} name={user.name} onClose={()=>setShareOpen(false)}/>}
+      {shareOpen && <ShareSheet url={pageUrl} name={user.name} onClose={()=>setShareOpen(false)}/>}
     </>
   );
 }
@@ -593,10 +527,10 @@ export async function getServerSideProps({ params, req }) {
       }
     };
   } catch(e) {
-    console.error("[username page]",e);
-    const host  = req?.headers?.host||"mywebsammu.vercel.app";
-    const proto = host.startsWith("localhost")?"http":"https";
+    console.error("[username page]", e);
+    const host  = req?.headers?.host || "mywebsammu.vercel.app";
+    const proto = host.startsWith("localhost") ? "http" : "https";
     const base  = `${proto}://${host}`;
-    return { props:{user:null,pageUrl:`${base}/${params.username}`,avatarUrl:`${base}/api/avatar/${params.username}`} };
+    return { props: { user:null, pageUrl:`${base}/${params.username}`, avatarUrl:`${base}/api/avatar/${params.username}` } };
   }
 }
