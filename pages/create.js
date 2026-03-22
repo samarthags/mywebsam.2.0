@@ -1038,7 +1038,7 @@ export default function ProfileCreator() {
               </div>
               <div style={{marginBottom:14}}>
                 <Lbl>Tell people about yourself <span style={{color:"#adb5c0",fontWeight:400,textTransform:"none",fontSize:11}}>(AI will turn this into a cool bio)</span></Lbl>
-                <input className="inp" placeholder="e.g. I build apps, trade stocks and love cricket" value={form.bio||""} onChange={e=>setField("bio",e.target.value)}/>
+                <input className="inp" placeholder="e.g. I love in coding, Singer, Volleyball Player...." value={form.bio||""} onChange={e=>setField("bio",e.target.value)}/>
                 <div style={{fontSize:12,color:"#adb5c0",marginTop:5,display:"flex",alignItems:"center",gap:5}}>
                   <i className="fas fa-wand-magic-sparkles" style={{color:AC,fontSize:11}}/>
                   This will be used in step 2 to generate your AI bio
