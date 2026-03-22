@@ -7,7 +7,7 @@ const SITE_URL = "https://mywebsam.site";
 const OG_IMAGE  = `${SITE_URL}/og.png`;  // place a 1200×630 image at /public/og.png
 
 // Rotating words for the hero
-const WORDS = ["Create", "Publish", "Share", "Analyse", "Shine"];
+const WORDS = ["Create", "Link", "Share", "Analyse", "Connect","Explore"];
 
 export default function Landing() {
   const [visible,  setVisible]  = useState(false);
@@ -63,7 +63,7 @@ export default function Landing() {
     <>
       <Head>
         {/* ── Primary ── */}
-        <title>mywebsam — Your Link in Bio, Free Forever</title>
+        <title>Mywebsam — Your Link in Bio, Free Forever</title>
         <meta name="description"        content="Create your personal link-in-bio profile page in seconds. Add your photo, professional badge, socials, links, Spotify song and an AI-written bio — all at one URL. Free forever. No account needed."/>
         <meta name="keywords"           content="link in bio, linktree alternative, personal profile page, link in bio free, mywebsam, samartha gs, bio link, social links, spotify profile"/>
         <meta name="author"             content="Samartha GS"/>
@@ -393,12 +393,12 @@ export default function Landing() {
 
       {/* ── FOOTER ── */}
       <footer>
-        <div className="ft-name">mywebsam</div>
-        <div className="ft-dev">Developed by <strong>Samartha GS</strong></div>
+        <div className="ft-name">mywebsam all rights recived</div>
+        <div className="ft-dev">Developed by <strong>Samartha Gs</strong></div>
         <div className="ft-links">
           <a href="/create">Create Profile</a>
           <span className="ft-sep">·</span>
-          <a href="https://mywebsam.site">mywebsam.site</a>
+          <a href="https://mywebsam.site/samarthags">demo profile</a>
         </div>
       </footer>
     </>
