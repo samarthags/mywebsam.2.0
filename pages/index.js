@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
+import Head from "next/head";
 
 /* ─── SSR-safe style injection ─── */
 let _stylesLoaded = false;
@@ -921,7 +922,8 @@ export default function ProfileCreator() {
   /* ════ FORM ════ */
   return(
     <div style={{minHeight:"100vh",background:"#f4f5f9",paddingBottom:48}}>
-      {showShare&&<ShareSheet url={getUrl()} onClose={()=>setShowShare(false)} onCopy={copyLink}/>}
+      <Head><title>Create Your Profile | mywebsam</title></Head>
+      {showShare&&<ShareSheet url={getUrl()} onClose={()=>setShowShare(false)} onCopy={copyLink}/> }
       <Topbar right={
         saved ? (
           <button className="btn btn-gh" style={{fontSize:12,padding:"6px 12px"}} onClick={()=>setView("dashboard")}>
