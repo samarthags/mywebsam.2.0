@@ -81,16 +81,32 @@ function ShareSheet({ url, name, onClose }) {
     }
     setCopied(true); setTimeout(()=>setCopied(false),2200);
   }
+  const instaCopy = async ()=>{
+    try{await navigator.clipboard.writeText(url);}catch(_){
+      const el=document.createElement("textarea");el.value=url;el.style.cssText="position:fixed;opacity:0;";
+      document.body.appendChild(el);el.select();document.execCommand("copy");document.body.removeChild(el);
+    }
+    alert("Link copied! Paste it in your Instagram bio or story.");
+  };
+  const snapCopy = async ()=>{
+    try{await navigator.clipboard.writeText(url);}catch(_){
+      const el=document.createElement("textarea");el.value=url;el.style.cssText="position:fixed;opacity:0;";
+      document.body.appendChild(el);el.select();document.execCommand("copy");document.body.removeChild(el);
+    }
+    alert("Link copied! Paste it in your Snapchat.");
+  };
   const opts = [
-    {l:"Copy Link",ic:"fas fa-copy",       bg:"#1a1a2a",fg:"#a78bfa",fn:doCopy},
-    {l:"WhatsApp", ic:"fab fa-whatsapp",   bg:"#0d1f15",fg:"#25D366",fn:()=>window.open(`https://wa.me/?text=${enc(name+" "+url)}`)},
-    {l:"Telegram", ic:"fab fa-telegram",   bg:"#0d1820",fg:"#26A5E4",fn:()=>window.open(`https://t.me/share/url?url=${enc(url)}&text=${enc(name)}`)},
-    {l:"Twitter",  ic:"fab fa-x-twitter",  bg:"#111",   fg:"#fff",   fn:()=>window.open(`https://twitter.com/intent/tweet?text=${enc(name+" "+url)}`)},
-    {l:"Facebook", ic:"fab fa-facebook-f", bg:"#0d1220",fg:"#1877F2",fn:()=>window.open(`https://facebook.com/sharer/sharer.php?u=${enc(url)}`)},
-    {l:"LinkedIn", ic:"fab fa-linkedin-in",bg:"#0a1520",fg:"#0A66C2",fn:()=>window.open(`https://linkedin.com/sharing/share-offsite/?url=${enc(url)}`)},
-    {l:"Reddit",   ic:"fab fa-reddit-alien",bg:"#1f1208",fg:"#FF4500",fn:()=>window.open(`https://reddit.com/submit?url=${enc(url)}`)},
-    {l:"Email",    ic:"fas fa-envelope",   bg:"#1f0d0d",fg:"#EA4335",fn:()=>window.open(`mailto:?subject=${enc(name)}&body=${enc(url)}`)},
-    {l:"SMS",      ic:"fas fa-comment-sms",bg:"#0d1f15",fg:"#1DB954",fn:()=>window.open(`sms:?body=${enc(url)}`)},
+    {l:"Copy Link", ic:"fas fa-copy",          bg:"#1a1a2a",fg:"#a78bfa",fn:doCopy},
+    {l:"WhatsApp",  ic:"fab fa-whatsapp",       bg:"#0d1f15",fg:"#25D366",fn:()=>window.open(`https://wa.me/?text=${enc(name+" "+url)}`)},
+    {l:"Instagram", ic:"fab fa-instagram",      bg:"#2a0d1a",fg:"#E4405F",fn:instaCopy},
+    {l:"Snapchat",  ic:"fab fa-snapchat",       bg:"#2a2a00",fg:"#FFE700",fn:snapCopy},
+    {l:"Telegram",  ic:"fab fa-telegram",       bg:"#0d1820",fg:"#26A5E4",fn:()=>window.open(`https://t.me/share/url?url=${enc(url)}&text=${enc(name)}`)},
+    {l:"Twitter",   ic:"fab fa-x-twitter",      bg:"#111",   fg:"#fff",   fn:()=>window.open(`https://twitter.com/intent/tweet?text=${enc(name+" "+url)}`)},
+    {l:"Facebook",  ic:"fab fa-facebook-f",     bg:"#0d1220",fg:"#1877F2",fn:()=>window.open(`https://facebook.com/sharer/sharer.php?u=${enc(url)}`)},
+    {l:"LinkedIn",  ic:"fab fa-linkedin-in",    bg:"#0a1520",fg:"#0A66C2",fn:()=>window.open(`https://linkedin.com/sharing/share-offsite/?url=${enc(url)}`)},
+    {l:"Reddit",    ic:"fab fa-reddit-alien",   bg:"#1f1208",fg:"#FF4500",fn:()=>window.open(`https://reddit.com/submit?url=${enc(url)}`)},
+    {l:"Email",     ic:"fas fa-envelope",       bg:"#1f0d0d",fg:"#EA4335",fn:()=>window.open(`mailto:?subject=${enc(name)}&body=${enc(url)}`)},
+    {l:"SMS",       ic:"fas fa-comment-sms",    bg:"#0d1f15",fg:"#1DB954",fn:()=>window.open(`sms:?body=${enc(url)}`)},
   ];
   return (
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.72)",zIndex:1000,display:"flex",alignItems:"flex-end",justifyContent:"center",backdropFilter:"blur(6px)"}}>
@@ -191,7 +207,12 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           html,body{min-height:100%;-webkit-font-smoothing:antialiased;}
           *{-webkit-tap-highlight-color:transparent;}
           a,button{outline:none;text-decoration:none;color:inherit;}
-          body{background:#080808;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+          body{
+            background:#080808;
+            color:#fff;
+            font-family:'Plus Jakarta Sans',sans-serif;
+            min-height:100vh;overflow-x:hidden;
+          }
 
           @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
           @keyframes slideUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
@@ -302,13 +323,15 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           /* Interest tags */
           .int-tags{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-bottom:24px;}
           .itag{
-            padding:6px 14px;border-radius:999px;
+            padding:6px 15px;border-radius:999px;
             font-size:12px;font-weight:600;
-            color:rgba(255,255,255,.5);
-            background:#111;border:1px solid #1e1e1e;
-            transition:background .13s,color .13s,border-color .13s,transform .18s cubic-bezier(.34,1.56,.64,1);
+            color:rgba(255,255,255,.48);
+            background:linear-gradient(180deg,#131313 0%,#0f0f0f 100%);
+            border:1px solid #202020;
+            transition:transform .2s cubic-bezier(.34,1.56,.64,1),color .13s,border-color .13s,box-shadow .18s;
+            box-shadow:0 1px 0 rgba(255,255,255,.03) inset;
           }
-          .itag:hover{background:#1a1a1a;border-color:#2d2d2d;color:rgba(255,255,255,.85);transform:translateY(-2px);}
+          .itag:hover{color:rgba(255,255,255,.82);border-color:#2e2e2e;transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.4);}
 
           /* Social icons */
           .soc-row{
@@ -319,34 +342,46 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
             width:46px;height:46px;border-radius:13px;
             display:flex;align-items:center;justify-content:center;
             font-size:18px;
-            background:#111;border:1px solid #1e1e1e;
-            transition:transform .18s cubic-bezier(.34,1.56,.64,1),background .13s,border-color .13s,box-shadow .13s;
+            background:linear-gradient(180deg,#141414 0%,#0f0f0f 100%);
+            border:1px solid #222;
+            transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .18s,border-color .15s;
             position:relative;
+            box-shadow:0 1px 0 rgba(255,255,255,.04) inset;
           }
-          .soc-btn::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,rgba(255,255,255,.05),transparent);pointer-events:none;}
-          .soc-btn:hover{transform:translateY(-4px) scale(1.07);background:#181818;border-color:#2c2c2c;box-shadow:0 10px 26px rgba(0,0,0,.55);}
+          .soc-btn::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);pointer-events:none;border-radius:inherit;}
+          .soc-btn:hover{transform:translateY(-5px) scale(1.08);border-color:#333;box-shadow:0 12px 28px rgba(0,0,0,.6);}
           .soc-btn:active{transform:scale(.93);}
 
           /* Link buttons */
           .links{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
           .lbtn{
             display:flex;align-items:center;
-            width:100%;min-height:60px;
-            background:#111;border:1px solid #1e1e1e;border-radius:16px;
+            width:100%;min-height:62px;
+            background:linear-gradient(180deg,#141414 0%,#101010 100%);
+            border:1px solid #222;border-radius:18px;
             cursor:pointer;overflow:hidden;position:relative;
-            transition:transform .18s cubic-bezier(.34,1.56,.64,1),background .13s,border-color .13s,box-shadow .13s;
+            transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .18s,border-color .15s;
+            box-shadow:0 1px 0 rgba(255,255,255,.04) inset;
           }
-          .lbtn::before{content:"";position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(to bottom,rgba(255,255,255,.04),transparent);pointer-events:none;}
-          .lbtn:hover{transform:translateY(-3px) scale(1.01);background:#181818;border-color:#2c2c2c;box-shadow:0 12px 34px rgba(0,0,0,.5);}
+          .lbtn::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);pointer-events:none;}
+          .lbtn:hover{transform:translateY(-3px) scale(1.012);border-color:#333;box-shadow:0 16px 40px rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.06) inset;}
           .lbtn:active{transform:scale(.98);}
-          .lbtn-ic{
-            width:60px;min-height:60px;overflow:hidden;
+          .lbtn-ic-wrap{
+            width:60px;min-height:60px;
             display:flex;align-items:center;justify-content:center;
-            font-size:17px;color:rgba(255,255,255,.38);
             flex-shrink:0;border-right:1px solid #181818;
-            transition:color .13s;
           }
-          .lbtn:hover .lbtn-ic{color:rgba(255,255,255,.75);}
+          .lbtn-ic{
+            width:36px;height:36px;border-radius:50%;
+            overflow:hidden;
+            display:flex;align-items:center;justify-content:center;
+            font-size:16px;color:rgba(255,255,255,.5);
+            background:rgba(255,255,255,.07);
+            border:1px solid rgba(255,255,255,.1);
+            flex-shrink:0;
+            transition:color .13s,background .13s,border-color .13s;
+          }
+          .lbtn:hover .lbtn-ic{color:rgba(255,255,255,.9);background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.18);}
           .lbtn-t{
             flex:1;text-align:center;
             font-size:15px;font-weight:700;color:#f0f0f0;
@@ -393,18 +428,19 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .foot a:hover{color:#454545;}
           .foot-sub{font-size:11px;color:#1e1e1e;}
 
-          /* Share FAB */
+          /* Share FAB — square like social icons */
           .sfab{
             position:fixed;top:16px;right:16px;
-            width:44px;height:44px;border-radius:50%;
-            background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
-            backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+            width:46px;height:46px;border-radius:13px;
+            background:#111;border:1px solid #1e1e1e;
             display:flex;align-items:center;justify-content:center;
-            font-size:15px;color:rgba(255,255,255,.65);cursor:pointer;z-index:80;
-            transition:background .13s,transform .13s,color .13s;
+            font-size:17px;color:rgba(255,255,255,.6);cursor:pointer;z-index:80;
+            transition:transform .18s cubic-bezier(.34,1.56,.64,1),background .13s,border-color .13s,box-shadow .13s;
+            position:fixed;
           }
-          .sfab:hover{background:rgba(255,255,255,.16);color:#fff;transform:scale(1.08);}
-          .sfab:active{transform:scale(.92);}
+          .sfab::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,rgba(255,255,255,.06),transparent);pointer-events:none;}
+          .sfab:hover{transform:translateY(-3px) scale(1.07);background:#181818;border-color:#2c2c2c;color:#fff;box-shadow:0 8px 22px rgba(0,0,0,.5);}
+          .sfab:active{transform:scale(.93);}
 
           @media(max-width:420px){
             .hero{height:54vh;}
@@ -481,12 +517,14 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
               <a key={lnk.id||i} href={lnk.url} target="_blank" rel="noopener noreferrer"
                 className="lbtn"
                 onClick={()=>track(user.username,"link_click")}>
-                <div className="lbtn-ic">
-                  {lnk.icon?.startsWith("data:")
-                    ? <img src={lnk.icon} style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}} alt=""/>
-                    : lnk.icon?.startsWith("fas ")||lnk.icon?.startsWith("fab ")
-                      ? <i className={lnk.icon}/>
-                      : <span style={{fontSize:20}}>{lnk.icon||"🔗"}</span>}
+                <div className="lbtn-ic-wrap">
+                  <div className="lbtn-ic">
+                    {lnk.icon?.startsWith("data:")
+                      ? <img src={lnk.icon} style={{width:"100%",height:"100%",objectFit:"cover",display:"block",borderRadius:"50%"}} alt=""/>
+                      : lnk.icon?.startsWith("fas ")||lnk.icon?.startsWith("fab ")
+                        ? <i className={lnk.icon}/>
+                        : <span style={{fontSize:17}}>{lnk.icon||"🔗"}</span>}
+                  </div>
                 </div>
                 <div className="lbtn-t">{lnk.title}</div>
                 <div className="lbtn-a"><i className="fas fa-arrow-up-right-from-square"/></div>
