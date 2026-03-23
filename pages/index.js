@@ -24,8 +24,8 @@ export default function Landing() {
 
   const features = [
     { icon: "fas fa-link",                title: "Link in Bio",        desc: "One clean URL with your photo, socials, links and your story — all in one place." },
-    { icon: "fas fa-id-badge",            title: "Professional Badge", desc: "Coder, Designer, Trader, Doctor — own your role with a clean identity badge." },
-    { icon: "fab fa-spotify",             title: "Spotify Widget",     desc: "Pin the song you're listening to right on your profile." },
+    { icon: "fas fa-id-badge",            title: "Professional Badge", desc: "Coder, Designer, Trader, Editor ,Singer, Artist — own your role with a clean identity badge." },
+    { icon: "fab fa-spotify",             title: "Spotify Widget",     desc: "Pin  you're favorite song right on your profile." },
     { icon: "fas fa-wand-magic-sparkles", title: "AI Bio Writer",      desc: "Write one sentence about yourself. The AI turns it into a full bio, in your voice." },
     { icon: "fas fa-share-nodes",         title: "Share Anywhere",     desc: "WhatsApp, Instagram, Telegram — one link works everywhere." },
     { icon: "fas fa-chart-line",          title: "Simple Analytics",   desc: "See how many people visit your profile and which links they tap." },
@@ -41,7 +41,7 @@ export default function Landing() {
     { q: "Is linkitin free?",             a: "Yes, completely free. No hidden plans, no credit card, no catch." },
     { q: "Do I need to make an account?", a: "No. No account, no email. Your profile is saved on your device." },
     { q: "Does it work on mobile?",       a: "Yes — built for mobile first. Build and share from your phone." },
-    { q: "What is a link in bio?",        a: "It's one URL you put in your Instagram or TikTok bio that shows all your important links in one page." },
+    { q: "What is a link in bio?",        a: "It's one URL you put in your Instagram or X or any social media bio that shows all your important links in one page." },
   ];
 
   const jsonLd = [
@@ -543,7 +543,7 @@ export default function Landing() {
       {/* FOOTER */}
       <footer>
         <div className="ft-logo">linkitin</div>
-        <div className="ft-dev">Developed by <strong>Samartha GS</strong></div>
+        <div className="ft-dev">Developed by <strong>Samartha Gs</strong></div>
         <div className="ft-links">
           <a href="/">© {new Date().getFullYear()} linkitin</a>
           <span className="ft-sep">·</span>
