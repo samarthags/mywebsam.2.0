@@ -2,13 +2,12 @@
 import clientPromise from "../../lib/mongodb";
 import crypto from "crypto";
 
-// ─── Cloudinary upload helper ────────────────────────────────────────────────
-// Uploads a base64 data-URI to Cloudinary and returns the secure CDN URL.
-// No SDK needed — plain fetch + HMAC signature.
 async function uploadToCloudinary(base64DataUri, folder = "linkitin") {
   const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = process.env;
+
   if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
-    throw new Error("Cloudinary env vars not configured");
+    console.warn("[Cloudinary] env vars missing — skipping upload");
+    return base64DataUri; // fallback: store as-is if not configured
   }
 
   const timestamp    = Math.floor(Date.now() / 1000);
@@ -18,27 +17,23 @@ async function uploadToCloudinary(base64DataUri, folder = "linkitin") {
     .update(paramsToSign)
     .digest("hex");
 
-  const formData = new FormData();
-  formData.append("file",      base64DataUri);
-  formData.append("timestamp", String(timestamp));
-  formData.append("api_key",   CLOUDINARY_API_KEY);
-  formData.append("signature", signature);
-  formData.append("folder",    folder);
+  // URLSearchParams works reliably in Next.js API routes (no FormData issues)
+  const body = new URLSearchParams();
+  body.append("file",      base64DataUri);
+  body.append("timestamp", String(timestamp));
+  body.append("api_key",   CLOUDINARY_API_KEY);
+  body.append("signature", signature);
+  body.append("folder",    folder);
 
   const res  = await fetch(
     `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-    { method: "POST", body: formData }
+    { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body }
   );
   const json = await res.json();
-
-  if (!res.ok || json.error) {
-    throw new Error(json.error?.message || "Cloudinary upload failed");
-  }
-  return json.secure_url; // https://res.cloudinary.com/…
+  if (!res.ok || json.error) throw new Error(json.error?.message || "Cloudinary upload failed");
+  return json.secure_url;
 }
 
-// If value is a raw base64 data-URI → upload it and return CDN URL.
-// If it's already a normal URL or empty → return unchanged.
 async function maybeUpload(value, folder) {
   if (value && value.startsWith("data:image/")) {
     return await uploadToCloudinary(value, folder);
@@ -46,12 +41,10 @@ async function maybeUpload(value, folder) {
   return value || "";
 }
 
-// ─── Body size limit: allow base64 payloads ───────────────────────────────────
 export const config = {
   api: { bodyParser: { sizeLimit: "8mb" } },
 };
 
-// ─── Handler ──────────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
 
@@ -59,7 +52,7 @@ export default async function handler(req, res) {
     username, name, dob, location, bio, aboutme,
     avatar, socialProfiles, links, interests,
     favSong, favArtist, favSongUrl, favSongTrackId,
-    _isEditing,   // true = user is updating their own profile
+    _isEditing,
   } = req.body;
 
   if (!username || !name) {
@@ -73,7 +66,7 @@ export default async function handler(req, res) {
   const uname = username.toLowerCase();
 
   try {
-    // ── 1. Upload any base64 blobs to Cloudinary BEFORE touching the DB ────────
+    // Upload any base64 images to Cloudinary before saving to DB
     const safeAvatar = await maybeUpload(avatar, "linkitin/avatars");
 
     const safeLinks = await Promise.all(
@@ -83,7 +76,6 @@ export default async function handler(req, res) {
       }))
     );
 
-    // ── 2. DB upsert ────────────────────────────────────────────────────────────
     const client = await clientPromise;
     const db     = client.db(process.env.DB_NAME);
 
@@ -103,9 +95,9 @@ export default async function handler(req, res) {
           location:       location       || "",
           bio:            bio            || "",
           aboutme:        aboutme        || "",
-          avatar:         safeAvatar,      // ← Cloudinary URL, never base64
+          avatar:         safeAvatar,
           socialProfiles: socialProfiles || {},
-          links:          safeLinks,       // ← link icons also CDN URLs
+          links:          safeLinks,
           interests:      interests      || {},
           favSong:        favSong        || "",
           favArtist:      favArtist      || "",
