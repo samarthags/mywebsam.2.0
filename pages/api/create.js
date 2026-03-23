@@ -2,31 +2,32 @@
 import clientPromise from "../../lib/mongodb";
 import crypto from "crypto";
 
-async function uploadToCloudinary(base64DataUri, folder = "linkitin") {
+async function uploadToCloudinary(base64DataUri, folder) {
   const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = process.env;
 
   if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
     console.warn("[Cloudinary] env vars missing — skipping upload");
-    return base64DataUri; // fallback: store as-is if not configured
+    return base64DataUri;
   }
 
-  const timestamp    = Math.floor(Date.now() / 1000);
+  const timestamp = Math.floor(Date.now() / 1000);
+
+  // Sort params alphabetically — Cloudinary requires strict alphabetical order
   const paramsToSign = `folder=${folder}&timestamp=${timestamp}`;
-  const signature    = crypto
-    .createHmac("sha256", CLOUDINARY_API_SECRET)
+  const signature = crypto
+    .createHmac("sha256", CLOUDINARY_API_SECRET.trim())
     .update(paramsToSign)
     .digest("hex");
 
-  // URLSearchParams works reliably in Next.js API routes (no FormData issues)
   const body = new URLSearchParams();
   body.append("file",      base64DataUri);
   body.append("timestamp", String(timestamp));
-  body.append("api_key",   CLOUDINARY_API_KEY);
+  body.append("api_key",   CLOUDINARY_API_KEY.trim());
   body.append("signature", signature);
   body.append("folder",    folder);
 
   const res  = await fetch(
-    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME.trim()}/image/upload`,
     { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body }
   );
   const json = await res.json();
@@ -66,13 +67,13 @@ export default async function handler(req, res) {
   const uname = username.toLowerCase();
 
   try {
-    // Upload any base64 images to Cloudinary before saving to DB
-    const safeAvatar = await maybeUpload(avatar, "linkitin/avatars");
+    // Use simple folder names — no slashes to avoid signature issues
+    const safeAvatar = await maybeUpload(avatar, "linkitin_avatars");
 
     const safeLinks = await Promise.all(
       (links || []).map(async (lnk) => ({
         ...lnk,
-        icon: await maybeUpload(lnk.icon, "linkitin/link-icons"),
+        icon: await maybeUpload(lnk.icon, "linkitin_icons"),
       }))
     );
 
