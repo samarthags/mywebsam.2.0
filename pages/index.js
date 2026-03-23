@@ -1,13 +1,13 @@
-// pages/index.js — mywebsam Landing Page
+// pages/index.js — linkitin Landing Page
 // Domain root → this page. "Create Profile" → /create
 import Head from "next/head";
 import { useEffect, useState } from "react";
 
-const SITE_URL = "https://mywebsam.site";
+const SITE_URL = "https://linkitin.site";
 const OG_IMAGE  = `${SITE_URL}/icon.png`;  // WhatsApp / OG preview image
 
 // Rotating words for the hero
-const WORDS = ["Create", "Link", "Share", "Analyse", "Connect","Explore"];
+const WORDS = ["Create it", "Link in", "Share it ", "Analyse it", "Connect in","Explore it"];
 
 export default function Landing() {
   const [visible,  setVisible]  = useState(false);
@@ -40,7 +40,7 @@ export default function Landing() {
   ];
 
   const steps = [
-    { n:"01", t:"Pick your username",     d:"Your profile lives at mywebsam.site/you" },
+    { n:"01", t:"Pick your username",     d:"Your profile lives at linkitin.site/you" },
     { n:"02", t:"Add badge, links & song", d:"Photo, socials, external links, Spotify, AI bio" },
     { n:"03", t:"Go live instantly",      d:"Publish and share — no account needed" },
   ];
@@ -49,26 +49,26 @@ export default function Landing() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "mywebsam",
+    "name": "linkitin",
     "url": SITE_URL,
     "description": "Create your personal link-in-bio profile page. Add socials, links, Spotify song, professional badge and AI-written bio.",
     "applicationCategory": "SocialNetworkingApplication",
     "operatingSystem": "Web",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
     "author": { "@type": "Person", "name": "Samartha GS" },
-    "publisher": { "@type": "Organization", "name": "mywebsam", "url": SITE_URL },
+    "publisher": { "@type": "Organization", "name": "linkitin", "url": SITE_URL },
   };
 
   return (
     <>
       <Head>
         {/* ── Primary ── */}
-        <title>Mywebsam — Your Link in Bio, Free Forever</title>
+        <title>Linkitin — Your Link in Bio, Free Forever</title>
         <meta name="description"        content="Create your personal link-in-bio profile page in seconds. Add your photo, professional badge, socials, links, Spotify song and an AI-written bio — all at one URL. Free forever. No account needed."/>
-        <meta name="keywords"           content="link in bio, linktree alternative, personal profile page, link in bio free, mywebsam, samartha gs, bio link, social links, spotify profile"/>
+        <meta name="keywords"           content="link in bio, linktree alternative, personal profile page, link in bio free, linkitin, samartha gs, bio link, social links, spotify profile"/>
         <meta name="author"             content="Samartha GS"/>
         <meta name="creator"            content="Samartha GS"/>
-        <meta name="publisher"          content="mywebsam"/>
+        <meta name="publisher"          content="linkitin"/>
         <meta name="robots"             content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
         <meta name="viewport"           content="width=device-width,initial-scale=1"/>
         <meta name="theme-color"        content="#0d0d0d"/>
@@ -84,22 +84,22 @@ export default function Landing() {
 
         {/* ── Open Graph (WhatsApp, Facebook, LinkedIn previews) ── */}
         <meta property="og:type"          content="website"/>
-        <meta property="og:site_name"     content="mywebsam"/>
-        <meta property="og:title"         content="mywebsam — Your Link in Bio, Free Forever"/>
+        <meta property="og:site_name"     content="linkitin"/>
+        <meta property="og:title"         content="linkitin — Your Link in Bio, Free Forever"/>
         <meta property="og:description"   content="Create your personal link-in-bio profile. Add socials, Spotify, badge and AI bio — all at one URL. Free forever."/>
         <meta property="og:url"           content={SITE_URL}/>
         <meta property="og:image"         content={OG_IMAGE}/>
         <meta property="og:image:width"   content="512"/>
         <meta property="og:image:height"  content="512"/>
-        <meta property="og:image:alt"     content="mywebsam — Create your link in bio"/>
+        <meta property="og:image:alt"     content="linkitin — Create your link in bio"/>
         <meta property="og:locale"        content="en_US"/>
 
         {/* ── Twitter Card ── */}
         <meta name="twitter:card"         content="summary"/>
-        <meta name="twitter:title"        content="mywebsam — Your Link in Bio"/>
+        <meta name="twitter:title"        content="linkitin — Your Link in Bio"/>
         <meta name="twitter:description"  content="Create your personal profile page — socials, links, Spotify, AI bio. Free forever."/>
         <meta name="twitter:image"        content={OG_IMAGE}/>
-        <meta name="twitter:creator"      content="@mywebsam"/>
+        <meta name="twitter:creator"      content="@linkitin"/>
 
         {/* ── Structured Data (Google Rich Results) ── */}
         <script
@@ -316,9 +316,9 @@ export default function Landing() {
       {/* ── HERO ── */}
       <div className={`hero ${visible ? "vis" : ""}`}>
 
-        {/* mywebsam + changing word */}
+        {/* linkitin + changing word */}
         <div className="brand-line a1">
-          <span className="brand-static">mywebsam</span>
+          <span className="brand-static">linkitin</span>
         </div>
         <div className="brand-line a2" style={{marginBottom:24}}>
           <span className="word-wrap">
@@ -398,7 +398,7 @@ export default function Landing() {
         <div className="ft-links">
           <a href="/">all rights recieved</a>
           <span className="ft-sep">·</span>
-          <a href="https://mywebsam.site/samarthags">demo profile</a>
+          <a href="https://linkitin.site/samarthags">demo profile</a>
         </div>
       </footer>
     </>
