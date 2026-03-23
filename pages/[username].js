@@ -107,7 +107,7 @@ function ShareSheet({ url, name, onClose }) {
             <div style={{fontWeight:800,fontSize:15,color:"#fff"}}>Share</div>
             <div style={{fontSize:11,color:"#444",marginTop:2,maxWidth:260,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{url}</div>
           </div>
-          <button onClick={onClose} style={{width:34,height:34,borderRadius:"50%",background:"#1a1a1a",border:"1px solid #2a2a2a",fontSize:17,color:"#555",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",outline:"none",WebkitTapHighlightColor:"transparent"}}>Ã—</button>
+          <button onClick={onClose} style={{width:34,height:34,borderRadius:"50%",background:"#1a1a1a",border:"1px solid #2a2a2a",fontSize:17,color:"#555",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",outline:"none",WebkitTapHighlightColor:"transparent"}}>×</button>
         </div>
         <div style={{padding:"14px 10px 0",display:"flex",flexWrap:"wrap",gap:8,justifyContent:"center"}}>
           {opts.map(o=>(
@@ -210,7 +210,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           @keyframes breathe{0%,100%{opacity:.9;}50%{opacity:.4;}}
           @keyframes shimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
 
-          /* stagger helpers â€” smooth ease */
+          /* stagger helpers — smooth ease */
           .s1{animation:slideUp .6s .04s cubic-bezier(.16,1,.3,1) both;}
           .s2{animation:slideUp .6s .12s cubic-bezier(.16,1,.3,1) both;}
           .s3{animation:slideUp .6s .20s cubic-bezier(.16,1,.3,1) both;}
@@ -219,7 +219,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .s6{animation:slideUp .6s .44s cubic-bezier(.16,1,.3,1) both;}
           .s7{animation:slideUp .6s .52s cubic-bezier(.16,1,.3,1) both;}
 
-          /* â”€â”€ HERO â”€â”€ */
+          /* ── HERO ── */
           .hero{
             position:relative;
             width:100%;
@@ -235,7 +235,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
             object-position:center top;
             display:block;
           }
-          /* Deep gradient â€” color exactly = body #0d0d0d */
+          /* Deep gradient — color exactly = body #0d0d0d */
           .hero-fade{
             position:absolute;inset:0;pointer-events:none;
             background:linear-gradient(
@@ -262,7 +262,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
             font-size:40px;font-weight:800;color:#fff;
           }
 
-          /* â”€â”€ IDENTITY â”€â”€ */
+          /* ── IDENTITY ── */
           .id-block{
             text-align:center;
             padding:14px 20px 0;
@@ -278,7 +278,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
             line-height:1.05;
             margin-bottom:10px;
           }
-          /* badge row â€” no @handle */
+          /* badge row — no @handle */
           .badge-row{
             display:flex;align-items:center;justify-content:center;
             flex-wrap:wrap;gap:8px;margin-bottom:4px;
@@ -309,7 +309,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           }
           .badge-pill i{font-size:10px;opacity:.7;}
 
-          /* â”€â”€ CONTENT â”€â”€ */
+          /* ── CONTENT ── */
           .content{
             max-width:460px;
             margin:0 auto;
@@ -356,7 +356,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .soc-btn:hover{transform:translateY(-3px) scale(1.05);border-color:#2e2e2e;box-shadow:0 8px 20px rgba(0,0,0,.45);}
           .soc-btn:active{transform:scale(.93);}
 
-          /* â”€â”€ External Links â€” same card style as Spotify â”€â”€ */
+          /* ── External Links — same card style as Spotify ── */
           .links-container{
             margin-bottom:20px;
             position:relative;
@@ -466,7 +466,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           }
           .foot-cta:hover{color:#555;}
 
-          /* Share FAB â€” square like social icons */
+          /* Share FAB — square like social icons */
           .sfab{
             position:fixed;top:16px;right:16px;
             width:46px;height:46px;border-radius:13px;
@@ -501,7 +501,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         <i className="fas fa-share-nodes"/>
       </button>
 
-      {/* â”€â”€ HERO â”€â”€ */}
+      {/* ── HERO ── */}
       {user.avatar ? (
         <div className="hero">
           <img src={user.avatar} alt={user.name} className="hero-img"/>
@@ -513,7 +513,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         </div>
       )}
 
-      {/* â”€â”€ Identity â”€â”€ */}
+      {/* ── Identity ── */}
       <div className="id-block s1">
         <div className="pname">{user.name}</div>
         <div className="badge-row">
@@ -527,7 +527,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         </div>
       </div>
 
-      {/* â”€â”€ CONTENT â”€â”€ */}
+      {/* ── CONTENT ── */}
       <div className="content">
 
         {bio && <p className="bio-text s2">{bio}</p>}
@@ -559,7 +559,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
                       ? <img src={lnk.icon} style={{width:"100%",height:"100%",objectFit:"cover",display:"block",borderRadius:"10px"}} alt=""/>
                       : lnk.icon?.startsWith("fas ")||lnk.icon?.startsWith("fab ")
                         ? <i className={lnk.icon}/>
-                        : <span style={{fontSize:17}}>{lnk.icon||"ðŸ”—"}</span>}
+                        : <span style={{fontSize:17}}>{lnk.icon||"🔗"}</span>}
                   </div>
                 </div>
                 <div className="lbtn-t">{lnk.title}</div>
@@ -602,7 +602,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         )}
 
         <div className="foot s7">
-          <a href="/" className="foot-cta">Create your own profile â€” it's free</a>
+          <a href="/" className="foot-cta">Create your own profile — it's free</a>
         </div>
 
       </div>
