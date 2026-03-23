@@ -475,7 +475,7 @@ function SpotifySearch({ value, trackId, onSelect, onClear }) {
         </div>
         <div style={{flex:1,minWidth:0}}>
           <div style={{fontWeight:700,fontSize:14,color:"#111827",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{value}</div>
-          <div style={{fontSize:12,color:"#6b7280",marginTop:1}}>from Spotify by Samarth</div>
+          <div style={{fontSize:12,color:"#6b7280",marginTop:1}}>from Spotify</div>
         </div>
         <button type="button" onClick={onClear}
           style={{background:"none",border:"none",cursor:"pointer",color:"#9ca3af",fontSize:16,padding:"4px",flexShrink:0}}>
@@ -605,8 +605,11 @@ export default function ProfileCreator() {
   /* ── Load into edit form ── */
   const startEdit = useCallback((p)=>{
     setForm({
+      ...EMPTY,
       username:p.username||"",name:p.name||"",dob:p.dob||"",
       location:p.location||"",bio:p.bio||"",avatar:p.avatar||"",
+      favSong:p.favSong||"",favArtist:p.favArtist||"",
+      favSongUrl:p.favSongUrl||"",favSongTrackId:p.favSongTrackId||"",
       socialProfiles:p.socialProfiles||{},links:p.links||[],
       interests:p.interests||EMPTY.interests,
     });
@@ -689,6 +692,8 @@ export default function ProfileCreator() {
       if(txt.length>10){setGenBio(txt);setBioEdited(false);}
       else throw new Error("empty");
     }catch(e){
+      const sp=(form.interests?.sports||[]).join(", ");
+      const hb=(form.interests?.hobbies||[]).join(", ");
       const ex=[sp&&`love ${sp.split(",")[0].trim()}`,hb&&`enjoy ${hb.split(",")[0].trim()}`].filter(Boolean).join(" and ");
       setGenBio(`${nm}${badge?` is a ${badge}`:""} — ${about||"someone who loves what they do"}. ${nm} is always chasing the next opportunity and making things happen.`);
       setBioEdited(false);
