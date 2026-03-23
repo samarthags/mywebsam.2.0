@@ -1183,7 +1183,7 @@ export default function ProfileCreator() {
         {step===4&&(
           <div className="fu">
             <div className="card" style={{marginBottom:12}}>
-              <SH icon="fas fa-link" title="Your Links" sub="Videos you like on youTube or instagram, shop, blog, links, promotions, project — anything."/>
+              <SH icon="fas fa-link" title="Your Links" sub="Videos you like on youtube or instagram, shop, blog, links, promotions, project — anything."/>
               <div style={{background:"#f8f7ff",border:"1.5px solid #ede9ff",borderRadius:12,padding:14,marginBottom:16}}>
                 <Lbl>Add a Link</Lbl>
                 <div style={{display:"flex",gap:8,marginBottom:8,flexWrap:"wrap"}}>
