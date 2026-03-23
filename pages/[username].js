@@ -139,6 +139,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
       <>
         <Head>
           <title>Not Found | linkitin</title>
+        <link rel="icon" href="/icon.png" type="image/png" />
           <meta name="robots" content="noindex"/>
           <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
           <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
@@ -175,6 +176,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
     <>
       <Head>
         <title>{ptitle}</title>
+        <link rel="icon" href="/icon.png" type="image/png" />
         <meta name="description"         content={metaDesc}/>
         <meta name="viewport"            content="width=device-width,initial-scale=1"/>
         <meta name="theme-color"         content="#080808"/>
