@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 const SITE_URL = "https://linkitin.site";
 const OG_IMAGE  = `${SITE_URL}/icon.png`;  // WhatsApp / OG preview image
 
-// Rotating words for the hero
-const WORDS = ["Create it", "Link it", "Share it ", "Analyse it", "Connect with it","Explore it"];
+const WORDS = ["Your links.", "Your story.", "Your brand.", "Your vibe.", "Your world."];
+
 
 export default function Landing() {
   const [visible,  setVisible]  = useState(false);
@@ -316,7 +316,7 @@ export default function Landing() {
       {/* ── HERO ── */}
       <div className={`hero ${visible ? "vis" : ""}`}>
 
-        {/* linkitin + changing word */}
+        {/* Linkitin + changing word */}
         <div className="brand-line a1">
           <span className="brand-static">linkitin</span>
         </div>
