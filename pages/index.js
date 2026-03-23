@@ -161,9 +161,10 @@ export default function Landing() {
           /* ── HERO ── */
           .hero {
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            padding: 60px 20px 72px;
+            padding: 32px 20px 32px;
             text-align: center;
             position: relative;
           }
@@ -189,7 +190,7 @@ export default function Landing() {
             font-size: 11px; font-weight: 600;
             color: rgba(255,255,255,.28);
             letter-spacing: .05em; text-transform: uppercase;
-            margin-bottom: 36px;
+            margin-bottom: 24px;
           }
           .dot {
             width: 5px; height: 5px; border-radius: 50%;
@@ -203,7 +204,7 @@ export default function Landing() {
             line-height: 1.0;
             letter-spacing: -.045em;
             color: #fff;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
           }
 
           .word-row {
@@ -211,7 +212,7 @@ export default function Landing() {
             font-weight: 800;
             line-height: 1.0;
             letter-spacing: -.04em;
-            margin-bottom: 32px;
+            margin-bottom: 22px;
           }
           .word-wrap { display: inline-block; min-width: 180px; }
           .changing-word {
@@ -230,14 +231,14 @@ export default function Landing() {
             color: rgba(255,255,255,.4);
             font-weight: 300;
             max-width: 400px;
-            margin: 0 auto 18px;
+            margin: 0 auto 14px;
             line-height: 1.8;
           }
 
           .pills {
             display: flex; flex-wrap: wrap;
             align-items: center; justify-content: center;
-            gap: 6px; margin-bottom: 40px;
+            gap: 6px; margin-bottom: 28px;
           }
           .pill {
             padding: 4px 11px;
@@ -429,7 +430,7 @@ export default function Landing() {
 
           /* ── MOBILE TWEAKS ── */
           @media (max-width: 420px) {
-            .hero { padding: 52px 16px 64px; }
+            .hero { padding: 28px 16px 28px; }
             .wrap { padding: 64px 16px; }
             .cta-box { padding: 38px 18px; }
             .feat-grid { border-radius: 14px; }
