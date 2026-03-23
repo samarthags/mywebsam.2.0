@@ -1,43 +1,34 @@
 // pages/api/create.js
 import clientPromise from "../../lib/mongodb";
-import crypto from "crypto";
 
-async function uploadToCloudinary(base64DataUri, folder) {
-  const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = process.env;
+async function uploadToCloudinary(base64DataUri) {
+  const cloud  = process.env.CLOUDINARY_CLOUD_NAME?.trim();
+  const preset = process.env.CLOUDINARY_UPLOAD_PRESET?.trim();
 
-  if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
-    console.warn("[Cloudinary] env vars missing — skipping upload");
-    return base64DataUri;
+  if (!cloud || !preset) {
+    console.warn("[Cloudinary] CLOUDINARY_CLOUD_NAME or CLOUDINARY_UPLOAD_PRESET missing");
+    return base64DataUri; // fallback — store as-is
   }
 
-  const timestamp = Math.floor(Date.now() / 1000);
-
-  // Sort params alphabetically — Cloudinary requires strict alphabetical order
-  const paramsToSign = `folder=${folder}&timestamp=${timestamp}`;
-  const signature = crypto
-    .createHmac("sha256", CLOUDINARY_API_SECRET.trim())
-    .update(paramsToSign)
-    .digest("hex");
-
   const body = new URLSearchParams();
-  body.append("file",      base64DataUri);
-  body.append("timestamp", String(timestamp));
-  body.append("api_key",   CLOUDINARY_API_KEY.trim());
-  body.append("signature", signature);
-  body.append("folder",    folder);
+  body.append("file",           base64DataUri);
+  body.append("upload_preset",  preset);
 
   const res  = await fetch(
-    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME.trim()}/image/upload`,
+    `https://api.cloudinary.com/v1_1/${cloud}/image/upload`,
     { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body }
   );
   const json = await res.json();
-  if (!res.ok || json.error) throw new Error(json.error?.message || "Cloudinary upload failed");
+
+  if (!res.ok || json.error) {
+    throw new Error(json.error?.message || "Cloudinary upload failed");
+  }
   return json.secure_url;
 }
 
-async function maybeUpload(value, folder) {
+async function maybeUpload(value) {
   if (value && value.startsWith("data:image/")) {
-    return await uploadToCloudinary(value, folder);
+    return await uploadToCloudinary(value);
   }
   return value || "";
 }
@@ -67,13 +58,13 @@ export default async function handler(req, res) {
   const uname = username.toLowerCase();
 
   try {
-    // Use simple folder names — no slashes to avoid signature issues
-    const safeAvatar = await maybeUpload(avatar, "linkitin_avatars");
+    // Upload any base64 images to Cloudinary before saving to DB
+    const safeAvatar = await maybeUpload(avatar);
 
     const safeLinks = await Promise.all(
       (links || []).map(async (lnk) => ({
         ...lnk,
-        icon: await maybeUpload(lnk.icon, "linkitin_icons"),
+        icon: await maybeUpload(lnk.icon),
       }))
     );
 
