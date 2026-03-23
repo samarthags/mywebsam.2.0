@@ -1,17 +1,17 @@
 // pages/index.js — linkitin Landing Page
 import Head from "next/head";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 const SITE_URL = "https://linkitin.site";
-const OG_IMAGE = `${SITE_URL}/og-image.png`;
+const OG_IMAGE  = `${SITE_URL}/og-image.png`;
 
 const WORDS = ["Your links.", "Your story.", "Your brand.", "Your identity.", "Your world."];
 
 export default function Landing() {
   const [visible, setVisible] = useState(false);
   const [wordIdx, setWordIdx] = useState(0);
-  const [fade, setFade] = useState(true);
-  const [scrolled, setScrolled] = useState(false);
+  const [fade,    setFade]    = useState(true);
+  const [scrolled,setScrolled]= useState(false);
 
   useEffect(() => { setTimeout(() => setVisible(true), 60); }, []);
 
@@ -30,12 +30,12 @@ export default function Landing() {
   }, []);
 
   const features = [
-    { icon: "fas fa-link",                 title: "Link in Bio",         desc: "One clean URL that holds your photo, socials, links and your story — all in one place." },
-    { icon: "fas fa-id-badge",             title: "Professional Badge",  desc: "Coder, Designer, Trader, Doctor — own your role with a clean identity badge." },
-    { icon: "fab fa-spotify",             title: "Spotify Widget",      desc: "Pin the song you're listening to right on your profile." },
-    { icon: "fas fa-wand-magic-sparkles", title: "AI Bio Writer",       desc: "Write one sentence about yourself. The AI turns it into a full bio, in your voice." },
-    { icon: "fas fa-share-nodes",         title: "Share Anywhere",      desc: "WhatsApp, Instagram, Telegram — one link works everywhere." },
-    { icon: "fas fa-chart-line",          title: "Simple Analytics",    desc: "See how many people visit your profile and which links they tap." },
+    { icon: "fas fa-link",                 title: "Link in Bio",        desc: "One clean URL with your photo, socials, links and your story — all in one place." },
+    { icon: "fas fa-id-badge",             title: "Professional Badge", desc: "Coder, Designer, Trader, Doctor — own your role with a clean identity badge." },
+    { icon: "fab fa-spotify",              title: "Spotify Widget",     desc: "Pin the song you're listening to right on your profile." },
+    { icon: "fas fa-wand-magic-sparkles",  title: "AI Bio Writer",      desc: "Write one sentence about yourself. The AI turns it into a full bio, in your voice." },
+    { icon: "fas fa-share-nodes",          title: "Share Anywhere",     desc: "WhatsApp, Instagram, Telegram — one link works everywhere." },
+    { icon: "fas fa-chart-line",           title: "Simple Analytics",   desc: "See how many people visit your profile and which links they tap." },
   ];
 
   const steps = [
@@ -45,10 +45,10 @@ export default function Landing() {
   ];
 
   const faqs = [
-    { q: "Is linkitin free?",               a: "Yes, completely free. No hidden plans, no credit card, no catch." },
-    { q: "Do I need to make an account?",   a: "No. No account, no email. Your profile is saved on your device." },
-    { q: "Does it work on mobile?",         a: "Yes — built for mobile first. Build and share from your phone." },
-    { q: "What is a link in bio?",          a: "It's one URL you put in your Instagram or TikTok bio that shows all your important links in one page." },
+    { q: "Is linkitin free?",              a: "Yes, completely free. No hidden plans, no credit card, no catch." },
+    { q: "Do I need to make an account?",  a: "No. No account, no email. Your profile is saved on your device." },
+    { q: "Does it work on mobile?",        a: "Yes — built for mobile first. Build and share from your phone." },
+    { q: "What is a link in bio?",         a: "It's one URL you put in your Instagram or TikTok bio that shows all your important links in one page." },
   ];
 
   const jsonLd = [
@@ -77,7 +77,7 @@ export default function Landing() {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
+        { "@type": "ListItem", "position": 1, "name": "Home",           "item": SITE_URL },
         { "@type": "ListItem", "position": 2, "name": "Create Profile", "item": `${SITE_URL}/create` },
       ]
     }
@@ -89,40 +89,40 @@ export default function Landing() {
         <title>Linkitin — Free Link in Bio | Create Your Profile Page</title>
         <meta name="description" content="Create your free link in bio profile page. Add your photo, badge, social links, Spotify song and AI-written bio — all at one URL. No account needed. Free forever." />
         <meta name="keywords" content="link in bio, free link in bio, linktree alternative, bio link page, personal profile page, linkitin, instagram bio link, link in bio tool, AI bio generator, spotify profile link" />
-        <meta name="author" content="Samartha GS" />
-        <meta name="creator" content="Samartha GS" />
-        <meta name="publisher" content="linkitin" />
-        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-        <meta name="googlebot" content="index, follow" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#0c0b09" />
-        <meta name="language" content="English" />
+        <meta name="author"       content="Samartha GS" />
+        <meta name="creator"      content="Samartha GS" />
+        <meta name="publisher"    content="linkitin" />
+        <meta name="robots"       content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        <meta name="googlebot"    content="index, follow" />
+        <meta name="viewport"     content="width=device-width, initial-scale=1" />
+        <meta name="theme-color"  content="#0d0d0d" />
+        <meta name="language"     content="English" />
         <meta name="revisit-after" content="3 days" />
         <link rel="canonical" href={SITE_URL} />
 
-        <link rel="icon" type="image/png" sizes="32x32" href="/icon.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/icon.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/icon.png" />
-        <link rel="shortcut icon" href="/icon.png" />
+        <link rel="icon"             type="image/png" sizes="32x32" href="/icon.png" />
+        <link rel="icon"             type="image/png" sizes="16x16" href="/icon.png" />
+        <link rel="apple-touch-icon" sizes="180x180"                href="/icon.png" />
+        <link rel="shortcut icon"                                    href="/icon.png" />
         <meta name="msapplication-TileImage" content="/icon.png" />
-        <meta name="msapplication-TileColor" content="#0c0b09" />
+        <meta name="msapplication-TileColor" content="#0d0d0d" />
 
-        <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="linkitin" />
-        <meta property="og:title" content="linkitin — Free Link in Bio | Create Your Profile Page" />
+        <meta property="og:type"        content="website" />
+        <meta property="og:site_name"   content="linkitin" />
+        <meta property="og:title"       content="linkitin — Free Link in Bio | Create Your Profile Page" />
         <meta property="og:description" content="Create your free link in bio profile. Add socials, Spotify, badge and AI bio — all at one URL. No account needed." />
-        <meta property="og:url" content={SITE_URL} />
-        <meta property="og:image" content={OG_IMAGE} />
-        <meta property="og:image:width" content="1200" />
+        <meta property="og:url"         content={SITE_URL} />
+        <meta property="og:image"       content={OG_IMAGE} />
+        <meta property="og:image:width"  content="1200" />
         <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content="linkitin — Create your free link in bio page" />
-        <meta property="og:locale" content="en_US" />
+        <meta property="og:image:alt"   content="linkitin — Create your free link in bio page" />
+        <meta property="og:locale"      content="en_US" />
 
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@linkitin" />
-        <meta name="twitter:title" content="linkitin — Your Free Link in Bio" />
+        <meta name="twitter:card"        content="summary_large_image" />
+        <meta name="twitter:site"        content="@linkitin" />
+        <meta name="twitter:title"       content="linkitin — Your Free Link in Bio" />
         <meta name="twitter:description" content="One URL for your socials, links, Spotify and AI bio. Free, no account needed." />
-        <meta name="twitter:image" content={OG_IMAGE} />
+        <meta name="twitter:image"       content={OG_IMAGE} />
 
         {jsonLd.map((schema, i) => (
           <script key={i} type="application/ld+json"
@@ -131,7 +131,7 @@ export default function Landing() {
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
         <style>{`
@@ -140,46 +140,34 @@ export default function Landing() {
           * { -webkit-tap-highlight-color: transparent; }
           a, button { outline: none; text-decoration: none; color: inherit; cursor: pointer; }
 
-          :root {
-            --bg:       #0c0b09;
-            --surface:  #141310;
-            --surface2: #1a1815;
-            --border:   #242018;
-            --border2:  #2e2a22;
-            --text:     #ede8df;
-            --muted:    rgba(237,232,223,0.48);
-            --dimmer:   rgba(237,232,223,0.24);
-            --warm:     #c8a97a;
-            --warm-lt:  #dfc49a;
-          }
-
           body {
-            font-family: 'Nunito', sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: 'Sora', sans-serif;
+            background: #0d0d0d;
+            color: #fff;
             min-height: 100vh;
             overflow-x: hidden;
           }
 
+          /* ── ANIMATIONS ── */
           @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(24px); }
+            from { opacity: 0; transform: translateY(22px); }
             to   { opacity: 1; transform: translateY(0); }
           }
           @keyframes shimmer {
             0%   { background-position: -200% center; }
             100% { background-position:  200% center; }
           }
-          @keyframes wordIn  { from { opacity:0; transform:translateY(8px); }  to { opacity:1; transform:translateY(0); } }
-          @keyframes wordOut { from { opacity:1; transform:translateY(0); }     to { opacity:0; transform:translateY(-8px); } }
-          @keyframes glow    { 0%,100% { opacity:.45; } 50% { opacity:1; } }
+          @keyframes wordIn  { from { opacity: 0; transform: translateY(8px);  } to { opacity: 1; transform: translateY(0);    } }
+          @keyframes wordOut { from { opacity: 1; transform: translateY(0);     } to { opacity: 0; transform: translateY(-8px); } }
+          @keyframes blink   { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
 
-          .vis .a1 { animation: fadeUp .75s .06s cubic-bezier(.16,1,.3,1) both; }
-          .vis .a2 { animation: fadeUp .75s .15s cubic-bezier(.16,1,.3,1) both; }
-          .vis .a3 { animation: fadeUp .75s .24s cubic-bezier(.16,1,.3,1) both; }
-          .vis .a4 { animation: fadeUp .75s .33s cubic-bezier(.16,1,.3,1) both; }
-          .vis .a5 { animation: fadeUp .75s .42s cubic-bezier(.16,1,.3,1) both; }
+          .vis .a1 { animation: fadeUp .7s .05s cubic-bezier(.16,1,.3,1) both; }
+          .vis .a2 { animation: fadeUp .7s .14s cubic-bezier(.16,1,.3,1) both; }
+          .vis .a3 { animation: fadeUp .7s .23s cubic-bezier(.16,1,.3,1) both; }
+          .vis .a4 { animation: fadeUp .7s .32s cubic-bezier(.16,1,.3,1) both; }
+          .vis .a5 { animation: fadeUp .7s .41s cubic-bezier(.16,1,.3,1) both; }
 
-          /* NAV */
+          /* ── NAV ── */
           nav {
             position: fixed; top: 0; left: 0; right: 0; z-index: 100;
             display: flex; align-items: center; justify-content: space-between;
@@ -187,374 +175,358 @@ export default function Landing() {
             transition: background .3s, backdrop-filter .3s;
           }
           nav.scrolled {
-            background: rgba(12,11,9,0.86);
+            background: rgba(13,13,13,.88);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #1c1c1c;
           }
           .nav-logo {
-            font-family: 'Lora', serif;
-            font-style: italic;
-            font-size: 22px;
-            letter-spacing: -.01em;
-            color: var(--text);
+            font-size: 20px; font-weight: 800;
+            letter-spacing: -.03em; color: #fff;
           }
-          .nav-logo b { font-style: normal; color: var(--warm); font-weight: 500; }
           .nav-btn {
-            padding: 10px 24px;
-            background: var(--warm);
-            color: #0c0b09;
-            font-family: 'Nunito', sans-serif;
-            font-size: 13.5px; font-weight: 700;
+            padding: 10px 22px;
+            background: #fff; color: #0d0d0d;
+            font-family: 'Sora', sans-serif;
+            font-size: 13px; font-weight: 700;
             border-radius: 100px;
             transition: opacity .15s, transform .15s;
           }
-          .nav-btn:hover { opacity: .84; transform: scale(1.02); }
+          .nav-btn:hover { opacity: .85; transform: scale(1.02); }
 
-          /* HERO */
+          /* ── HERO ── */
           .hero {
             min-height: 100vh;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            padding: 150px 28px 110px;
+            padding: 150px 24px 110px;
             text-align: center;
             position: relative;
           }
           .hero::before {
             content: "";
-            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-            width: 700px; height: 500px;
-            background: radial-gradient(ellipse, rgba(200,169,122,0.05) 0%, transparent 68%);
+            position: absolute; top: -10%; left: 50%; transform: translateX(-50%);
+            width: 640px; height: 640px;
+            background: radial-gradient(circle, rgba(255,255,255,.025) 0%, transparent 65%);
             pointer-events: none;
           }
           .hero::after {
             content: "";
-            position: absolute; bottom: 0; left: 10%; right: 10%;
+            position: absolute; bottom: 0; left: 8%; right: 8%;
             height: 1px;
-            background: linear-gradient(90deg, transparent, var(--border2), transparent);
+            background: linear-gradient(90deg, transparent, #222, transparent);
           }
 
-          .hero-eyebrow {
+          /* eyebrow */
+          .eyebrow {
             display: inline-flex; align-items: center; gap: 8px;
             padding: 6px 16px;
-            border: 1px solid var(--border2);
+            border: 1px solid #222;
             border-radius: 100px;
-            font-size: 12px; font-weight: 600;
-            color: var(--dimmer);
+            font-size: 11.5px; font-weight: 600;
+            color: rgba(255,255,255,.3);
             letter-spacing: .05em; text-transform: uppercase;
             margin-bottom: 48px;
           }
           .dot {
             width: 6px; height: 6px; border-radius: 50%;
-            background: var(--warm);
-            animation: glow 2.4s ease-in-out infinite;
+            background: #fff; opacity: .5;
+            animation: blink 2.4s ease-in-out infinite;
           }
 
+          /* headline */
           .headline {
-            font-family: 'Lora', serif;
-            font-size: clamp(42px, 9.5vw, 84px);
-            font-weight: 500;
-            line-height: 1.08;
-            letter-spacing: -.035em;
-            color: var(--text);
-            margin-bottom: 22px;
+            font-size: clamp(44px, 10vw, 88px);
+            font-weight: 800;
+            line-height: 1.0;
+            letter-spacing: -.045em;
+            color: #fff;
+            margin-bottom: 20px;
           }
-          .headline em { font-style: italic; color: var(--warm); }
 
+          /* rotating word */
           .word-row {
-            font-family: 'Lora', serif;
-            font-size: clamp(34px, 7vw, 66px);
-            font-style: italic;
-            font-weight: 400;
-            line-height: 1.1;
-            letter-spacing: -.028em;
-            margin-bottom: 44px;
-            color: var(--muted);
+            font-size: clamp(36px, 8vw, 72px);
+            font-weight: 800;
+            line-height: 1.0;
+            letter-spacing: -.04em;
+            margin-bottom: 40px;
           }
           .word-wrap { display: inline-block; min-width: 220px; }
           .changing-word {
             display: inline-block;
-            background: linear-gradient(90deg, var(--warm) 0%, var(--warm-lt) 50%, var(--warm) 100%);
+            background: linear-gradient(90deg, rgba(255,255,255,.38) 0%, #fff 45%, rgba(255,255,255,.38) 100%);
             background-size: 200% auto;
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: shimmer 3.8s linear infinite;
+            animation: shimmer 3.5s linear infinite;
           }
-          .changing-word.fade-in  { animation: wordIn  .22s ease forwards, shimmer 3.8s linear infinite; }
+          .changing-word.fade-in  { animation: wordIn  .22s ease forwards, shimmer 3.5s linear infinite; }
           .changing-word.fade-out { animation: wordOut .22s ease forwards; }
 
+          /* sub */
           .hero-sub {
-            font-size: clamp(15px, 2vw, 18px);
-            color: var(--muted);
+            font-size: clamp(14px, 2vw, 17px);
+            color: rgba(255,255,255,.42);
             font-weight: 300;
             max-width: 460px;
-            margin: 0 auto 24px;
+            margin: 0 auto 22px;
             line-height: 1.8;
           }
 
+          /* pills */
           .pills {
             display: flex; flex-wrap: wrap;
             align-items: center; justify-content: center;
-            gap: 8px; margin-bottom: 56px;
+            gap: 8px; margin-bottom: 52px;
           }
           .pill {
             padding: 5px 13px;
-            border: 1px solid var(--border2);
+            border: 1px solid #232323;
             border-radius: 100px;
-            font-size: 12px; font-weight: 600;
-            color: var(--dimmer);
+            font-size: 11.5px; font-weight: 600;
+            color: rgba(255,255,255,.22);
             display: flex; align-items: center; gap: 5px;
           }
-          .pill i { font-size: 9px; color: var(--warm); }
+          .pill i { font-size: 9px; color: rgba(255,255,255,.4); }
 
+          /* cta buttons */
           .cta-row {
             display: flex; align-items: center; justify-content: center;
             flex-wrap: wrap; gap: 12px;
-            margin-bottom: 80px;
+            margin-bottom: 72px;
           }
           .btn-main {
             display: inline-flex; align-items: center; gap: 9px;
-            padding: 16px 34px;
-            background: var(--text);
-            color: #0c0b09;
-            font-family: 'Nunito', sans-serif;
-            font-size: 15px; font-weight: 700;
+            padding: 15px 32px;
+            background: #fff; color: #0d0d0d;
+            font-family: 'Sora', sans-serif;
+            font-size: 14.5px; font-weight: 700;
             border-radius: 100px;
             transition: opacity .15s, transform .15s, box-shadow .15s;
           }
-          .btn-main:hover { opacity: .9; transform: scale(1.025); box-shadow: 0 8px 28px rgba(237,232,223,.1); }
+          .btn-main:hover { opacity: .9; transform: scale(1.025); box-shadow: 0 8px 30px rgba(255,255,255,.1); }
           .btn-ghost {
             display: inline-flex; align-items: center; gap: 8px;
-            padding: 15px 28px;
+            padding: 14px 26px;
             background: transparent;
-            color: var(--muted);
-            font-family: 'Nunito', sans-serif;
-            font-size: 14px; font-weight: 600;
+            color: rgba(255,255,255,.4);
+            font-family: 'Sora', sans-serif;
+            font-size: 13.5px; font-weight: 600;
             border-radius: 100px;
-            border: 1px solid var(--border2);
+            border: 1px solid #252525;
             transition: border-color .15s, color .15s, transform .15s;
           }
-          .btn-ghost:hover { border-color: rgba(237,232,223,.28); color: var(--text); transform: scale(1.02); }
+          .btn-ghost:hover { border-color: rgba(255,255,255,.25); color: #fff; transform: scale(1.02); }
 
-          /* profile card */
+          /* profile mini card */
           .profile-card {
             display: flex; align-items: center; gap: 16px;
-            padding: 18px 24px;
-            background: var(--surface);
-            border: 1px solid var(--border2);
-            border-radius: 22px;
+            padding: 18px 22px;
+            background: #111;
+            border: 1px solid #1e1e1e;
+            border-radius: 20px;
             max-width: 340px; margin: 0 auto;
             text-align: left;
           }
           .p-avatar {
-            width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
-            background: linear-gradient(135deg, var(--warm) 0%, #8c6230 100%);
+            width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0;
+            background: #252525;
+            border: 1px solid #2e2e2e;
             display: flex; align-items: center; justify-content: center;
-            font-family: 'Lora', serif; font-style: italic;
-            font-size: 20px; color: #fff;
+            font-size: 18px; font-weight: 800; color: rgba(255,255,255,.7);
+            letter-spacing: -.02em;
           }
-          .p-url  { font-size: 11.5px; color: var(--dimmer); margin-bottom: 3px; }
-          .p-name { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
+          .p-url  { font-size: 11px; color: rgba(255,255,255,.22); margin-bottom: 3px; }
+          .p-name { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: -.02em; }
           .p-badge {
             display: inline-flex; align-items: center; gap: 4px;
-            margin-top: 6px; padding: 3px 10px;
-            background: rgba(200,169,122,.1);
-            border: 1px solid rgba(200,169,122,.2);
+            margin-top: 5px; padding: 3px 9px;
+            background: rgba(255,255,255,.05);
+            border: 1px solid #2a2a2a;
             border-radius: 100px;
-            font-size: 10px; color: var(--warm-lt); font-weight: 700;
+            font-size: 10px; color: rgba(255,255,255,.4); font-weight: 700;
           }
           .p-icons { display: flex; gap: 6px; margin-top: 10px; }
           .p-icon {
             width: 26px; height: 26px; border-radius: 8px;
-            background: var(--surface2); border: 1px solid var(--border);
+            background: #181818; border: 1px solid #222;
             display: flex; align-items: center; justify-content: center;
-            font-size: 10px; color: var(--dimmer);
+            font-size: 10px; color: rgba(255,255,255,.25);
           }
 
-          /* LAYOUT */
+          /* ── SECTIONS ── */
           .section {
-            max-width: 980px; margin: 0 auto;
-            padding: 108px 28px;
+            max-width: 960px; margin: 0 auto;
+            padding: 104px 24px;
             position: relative; z-index: 1;
           }
           .divider {
-            max-width: 980px; margin: 0 auto;
-            height: 1px; background: var(--border);
+            max-width: 960px; margin: 0 auto;
+            height: 1px; background: #191919;
           }
           .sec-eye {
             text-align: center;
-            font-size: 11px; font-weight: 700;
+            font-size: 10.5px; font-weight: 700;
             letter-spacing: .13em; text-transform: uppercase;
-            color: var(--warm); margin-bottom: 16px;
+            color: rgba(255,255,255,.25);
+            margin-bottom: 14px;
           }
           .sec-h {
             text-align: center;
-            font-family: 'Lora', serif;
-            font-size: clamp(28px, 5vw, 42px);
-            font-weight: 500;
-            letter-spacing: -.035em; line-height: 1.15;
-            color: var(--text); margin-bottom: 14px;
+            font-size: clamp(26px, 5.5vw, 40px);
+            font-weight: 800;
+            letter-spacing: -.04em; line-height: 1.1;
+            color: #fff; margin-bottom: 12px;
           }
-          .sec-h em { font-style: italic; color: var(--warm); }
           .sec-sub {
             text-align: center;
-            font-size: 15px; color: var(--muted);
+            font-size: 14.5px; color: rgba(255,255,255,.38);
             font-weight: 300; line-height: 1.75;
-            max-width: 440px; margin: 0 auto 60px;
+            max-width: 440px; margin: 0 auto 56px;
           }
 
-          /* FEAT GRID */
+          /* ── FEATURE GRID ── */
           .feat-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(278px, 1fr));
             gap: 1px;
-            background: var(--border);
-            border: 1px solid var(--border);
-            border-radius: 24px; overflow: hidden;
+            background: #191919;
+            border: 1px solid #191919;
+            border-radius: 22px; overflow: hidden;
           }
           .feat-card {
-            background: var(--surface);
-            padding: 36px 30px;
-            transition: background .2s;
+            background: #111;
+            padding: 32px 28px;
+            transition: background .18s;
           }
-          .feat-card:hover { background: var(--surface2); }
+          .feat-card:hover { background: #141414; }
           .feat-icon {
-            width: 48px; height: 48px; border-radius: 14px;
-            background: var(--bg);
-            border: 1px solid var(--border2);
+            width: 44px; height: 44px; border-radius: 12px;
+            background: #0d0d0d;
+            border: 1px solid #222;
             display: flex; align-items: center; justify-content: center;
-            font-size: 18px; color: var(--warm);
-            margin-bottom: 20px;
+            font-size: 17px; color: rgba(255,255,255,.55);
+            margin-bottom: 18px;
           }
-          .feat-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 9px; letter-spacing: -.01em; }
-          .feat-desc  { font-size: 13.5px; color: var(--muted); line-height: 1.8; font-weight: 300; }
+          .feat-title { font-size: 14.5px; font-weight: 700; color: #fff; margin-bottom: 8px; letter-spacing: -.02em; }
+          .feat-desc  { font-size: 13px; color: rgba(255,255,255,.36); line-height: 1.75; font-weight: 300; }
 
-          /* STEPS */
+          /* ── STEPS ── */
           .steps-wrap {
-            max-width: 560px; margin: 0 auto;
-            display: flex; flex-direction: column; gap: 14px;
+            max-width: 540px; margin: 0 auto;
+            display: flex; flex-direction: column; gap: 12px;
           }
           .step {
-            display: flex; align-items: flex-start; gap: 24px;
-            padding: 28px 30px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            transition: border-color .2s, transform .2s;
+            display: flex; align-items: flex-start; gap: 22px;
+            padding: 26px 28px;
+            background: #111;
+            border: 1px solid #1c1c1c;
+            border-radius: 18px;
+            transition: border-color .18s, transform .18s;
           }
-          .step:hover { border-color: var(--border2); transform: translateX(5px); }
+          .step:hover { border-color: #282828; transform: translateX(4px); }
           .step-n {
-            font-family: 'Lora', serif; font-style: italic;
-            font-size: 38px; color: rgba(200,169,122,.13);
-            line-height: 1; flex-shrink: 0; width: 42px; text-align: center;
-            margin-top: -4px;
+            font-size: 10.5px; font-weight: 700;
+            color: rgba(255,255,255,.16);
+            letter-spacing: .06em; flex-shrink: 0;
+            margin-top: 3px;
           }
-          .step-t { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; letter-spacing: -.01em; }
-          .step-d { font-size: 13.5px; color: var(--muted); line-height: 1.75; font-weight: 300; }
+          .step-t { font-size: 14.5px; font-weight: 700; color: #fff; margin-bottom: 5px; letter-spacing: -.02em; }
+          .step-d { font-size: 13px; color: rgba(255,255,255,.36); line-height: 1.7; font-weight: 300; }
 
-          /* FAQ */
+          /* ── FAQ ── */
           .faq-list {
-            max-width: 620px; margin: 0 auto;
+            max-width: 600px; margin: 0 auto;
             display: flex; flex-direction: column; gap: 10px;
           }
           .faq-item {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 18px; overflow: hidden;
+            background: #111;
+            border: 1px solid #1c1c1c;
+            border-radius: 16px; overflow: hidden;
           }
           .faq-q {
-            padding: 22px 26px;
-            font-size: 15px; font-weight: 600; color: var(--text);
+            padding: 20px 24px;
+            font-size: 14px; font-weight: 700; color: #fff;
             letter-spacing: -.01em;
             display: flex; align-items: center; justify-content: space-between; gap: 12px;
           }
-          .faq-q i { font-size: 11px; color: var(--warm); flex-shrink: 0; }
+          .faq-q i { font-size: 11px; color: rgba(255,255,255,.25); flex-shrink: 0; }
           .faq-a {
-            padding: 0 26px 20px;
-            font-size: 14px; color: var(--muted);
-            line-height: 1.8; font-weight: 300;
+            padding: 0 24px 18px;
+            font-size: 13px; color: rgba(255,255,255,.38);
+            line-height: 1.75; font-weight: 300;
           }
 
-          /* BOTTOM CTA */
+          /* ── BOTTOM CTA ── */
           .cta-box {
-            max-width: 600px; margin: 0 auto;
-            padding: 72px 48px;
-            background: var(--surface);
-            border: 1px solid var(--border2);
-            border-radius: 30px;
+            max-width: 580px; margin: 0 auto;
+            padding: 64px 44px;
+            background: #111;
+            border: 1px solid #1e1e1e;
+            border-radius: 28px;
             text-align: center;
             position: relative; overflow: hidden;
           }
           .cta-box::before {
             content: "";
-            position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
-            width: 300px; height: 180px;
-            background: radial-gradient(circle, rgba(200,169,122,.06) 0%, transparent 70%);
-          }
-          .cta-serif {
-            font-family: 'Lora', serif;
-            font-size: 56px; font-style: italic;
-            color: rgba(200,169,122,.1);
-            line-height: 1; margin-bottom: 8px;
+            position: absolute; top: -50px; left: 50%; transform: translateX(-50%);
+            width: 300px; height: 160px;
+            background: radial-gradient(circle, rgba(255,255,255,.025) 0%, transparent 70%);
           }
           .cta-t {
-            font-family: 'Lora', serif;
-            font-size: clamp(28px, 5vw, 38px);
-            font-weight: 500; letter-spacing: -.035em;
-            line-height: 1.15; margin-bottom: 16px;
+            font-size: clamp(26px, 5vw, 36px);
+            font-weight: 800; letter-spacing: -.04em;
+            line-height: 1.1; margin-bottom: 14px;
+            color: #fff;
           }
-          .cta-t em { font-style: italic; color: var(--warm); }
           .cta-d {
-            font-size: 15px; color: var(--muted);
-            font-weight: 300; line-height: 1.8;
-            max-width: 380px; margin: 0 auto 36px;
+            font-size: 14px; color: rgba(255,255,255,.36);
+            font-weight: 300; line-height: 1.78;
+            max-width: 380px; margin: 0 auto 32px;
           }
           .cta-url {
             display: inline-block;
-            padding: 7px 18px; margin-bottom: 30px;
-            background: rgba(200,169,122,.08);
-            border: 1px solid rgba(200,169,122,.18);
+            padding: 6px 16px; margin-bottom: 28px;
+            background: rgba(255,255,255,.05);
+            border: 1px solid #252525;
             border-radius: 100px;
-            font-size: 13.5px; color: var(--warm-lt); font-weight: 600;
+            font-size: 13px; color: rgba(255,255,255,.45); font-weight: 600;
           }
 
-          /* FOOTER */
+          /* ── FOOTER ── */
           footer {
             text-align: center;
-            padding: 36px 24px 48px;
-            border-top: 1px solid var(--border);
+            padding: 32px 24px 44px;
+            border-top: 1px solid #161616;
             position: relative; z-index: 1;
           }
-          .ft-logo {
-            font-family: 'Lora', serif; font-style: italic;
-            font-size: 21px; color: var(--dimmer); margin-bottom: 8px;
-          }
-          .ft-logo b { font-style: normal; color: rgba(200,169,122,.4); font-weight: 500; }
-          .ft-dev { font-size: 13px; color: var(--dimmer); }
-          .ft-dev strong { color: rgba(237,232,223,.3); font-weight: 600; }
+          .ft-logo { font-size: 15px; font-weight: 800; color: rgba(255,255,255,.3); letter-spacing: -.02em; margin-bottom: 7px; }
+          .ft-dev  { font-size: 12px; color: rgba(255,255,255,.18); }
+          .ft-dev strong { color: rgba(255,255,255,.3); font-weight: 700; }
           .ft-links {
             display: flex; align-items: center; justify-content: center;
-            flex-wrap: wrap; gap: 20px; margin-top: 14px;
+            flex-wrap: wrap; gap: 18px; margin-top: 12px;
           }
-          .ft-links a { font-size: 12px; color: var(--dimmer); font-weight: 500; transition: color .15s; }
-          .ft-links a:hover { color: rgba(237,232,223,.45); }
-          .ft-sep { color: var(--border2); }
+          .ft-links a { font-size: 11.5px; color: rgba(255,255,255,.18); font-weight: 500; transition: color .15s; }
+          .ft-links a:hover { color: rgba(255,255,255,.42); }
+          .ft-sep { color: #1e1e1e; }
 
           @media (max-width: 600px) {
-            nav { padding: 16px 22px; }
-            .hero { padding: 120px 22px 90px; }
-            .section { padding: 80px 22px; }
-            .cta-box { padding: 44px 26px; }
-            .feat-grid { border-radius: 18px; }
+            nav { padding: 16px 20px; }
+            .hero { padding: 120px 20px 90px; }
+            .section { padding: 76px 20px; }
+            .cta-box { padding: 42px 24px; }
+            .feat-grid { border-radius: 16px; }
             .word-wrap { min-width: 170px; }
-            .feat-card { padding: 28px 22px; }
+            .feat-card { padding: 26px 22px; }
           }
         `}</style>
       </Head>
 
       {/* NAV */}
       <nav className={scrolled ? "scrolled" : ""} aria-label="Main navigation">
-        <div className="nav-logo">link<b>i</b>tin</div>
+        <div className="nav-logo">linkitin</div>
         <a href="/create" className="nav-btn">Create Profile</a>
       </nav>
 
@@ -562,13 +534,13 @@ export default function Landing() {
         {/* HERO */}
         <div className={`hero ${visible ? "vis" : ""}`} role="banner">
 
-          <div className="hero-eyebrow a1">
+          <div className="eyebrow a1">
             <span className="dot" aria-hidden="true" />
             Free · No account needed
           </div>
 
           <h1 className="headline a2">
-            One link for<br /><em>everything you are</em>
+            One link for<br />everything you are
           </h1>
 
           <div className="word-row a2" aria-live="polite" aria-atomic="true">
@@ -595,7 +567,7 @@ export default function Landing() {
 
           <div className="cta-row a4">
             <a href="/create" className="btn-main">
-              <i className="fas fa-rocket" style={{ fontSize: 13 }} aria-hidden="true" />
+              <i className="fas fa-rocket" style={{ fontSize: 12 }} aria-hidden="true" />
               Create Your Profile — Free
             </a>
             <a href="#features" className="btn-ghost">
@@ -614,7 +586,7 @@ export default function Landing() {
                 Full-Stack Developer
               </div>
               <div className="p-icons" aria-hidden="true">
-                {["fab fa-github","fab fa-instagram","fab fa-linkedin","fab fa-spotify"].map((ic,i)=>(
+                {["fab fa-github","fab fa-instagram","fab fa-linkedin","fab fa-spotify"].map((ic, i) => (
                   <div key={i} className="p-icon"><i className={ic} /></div>
                 ))}
               </div>
@@ -625,7 +597,7 @@ export default function Landing() {
         {/* FEATURES */}
         <section id="features" className="section" aria-labelledby="feat-h">
           <div className="sec-eye">What you get</div>
-          <h2 className="sec-h" id="feat-h">Everything in <em>one profile</em></h2>
+          <h2 className="sec-h" id="feat-h">Everything in one profile</h2>
           <p className="sec-sub">All the tools to show the world who you are — wrapped in a single, shareable link.</p>
           <div className="feat-grid" role="list">
             {features.map((f, i) => (
@@ -643,12 +615,12 @@ export default function Landing() {
         {/* STEPS */}
         <section className="section" aria-labelledby="steps-h">
           <div className="sec-eye">How it works</div>
-          <h2 className="sec-h" id="steps-h">Up and running in <em>3 steps</em></h2>
+          <h2 className="sec-h" id="steps-h">Up and running in 3 steps</h2>
           <p className="sec-sub">No form to fill. No email to confirm. Just build and share.</p>
           <div className="steps-wrap" role="list">
             {steps.map((s, i) => (
               <div key={i} className="step" role="listitem">
-                <div className="step-n" aria-hidden="true">{s.n}</div>
+                <div className="step-n">{s.n}</div>
                 <div>
                   <h3 className="step-t">{s.t}</h3>
                   <p className="step-d">{s.d}</p>
@@ -663,7 +635,7 @@ export default function Landing() {
         {/* FAQ */}
         <section className="section" aria-labelledby="faq-h">
           <div className="sec-eye">FAQ</div>
-          <h2 className="sec-h" id="faq-h">Common <em>questions</em></h2>
+          <h2 className="sec-h" id="faq-h">Common questions</h2>
           <p className="sec-sub">Straight answers, no fluff.</p>
           <div className="faq-list" role="list">
             {faqs.map((f, i) => (
@@ -687,9 +659,8 @@ export default function Landing() {
         {/* BOTTOM CTA */}
         <section className="section" aria-labelledby="cta-h">
           <div className="cta-box">
-            <div className="cta-serif" aria-hidden="true">&ldquo;</div>
             <h2 className="cta-t" id="cta-h">
-              Your profile,<br /><em>your way</em>
+              Your profile,<br />your way
             </h2>
             <p className="cta-d">
               No account. No email. Open on any device, build your page, and share your link — done.
@@ -697,7 +668,7 @@ export default function Landing() {
             <div className="cta-url">linkitin.site/<strong>you</strong></div>
             <br />
             <a href="/create" className="btn-main" style={{ display: "inline-flex" }}>
-              <i className="fas fa-rocket" style={{ fontSize: 13 }} aria-hidden="true" />
+              <i className="fas fa-rocket" style={{ fontSize: 12 }} aria-hidden="true" />
               Create for Free
             </a>
           </div>
@@ -706,7 +677,7 @@ export default function Landing() {
 
       {/* FOOTER */}
       <footer role="contentinfo">
-        <div className="ft-logo">link<b>i</b>tin</div>
+        <div className="ft-logo">linkitin</div>
         <div className="ft-dev">Developed by <strong>Samartha GS</strong></div>
         <div className="ft-links">
           <a href="/">© {new Date().getFullYear()} linkitin</a>
