@@ -11,7 +11,6 @@ export default function Landing() {
   const [visible, setVisible] = useState(false);
   const [wordIdx, setWordIdx] = useState(0);
   const [fade,    setFade]    = useState(true);
-  const [scrolled,setScrolled]= useState(false);
 
   useEffect(() => { setTimeout(() => setVisible(true), 60); }, []);
 
@@ -21,12 +20,6 @@ export default function Landing() {
       setTimeout(() => { setWordIdx(i => (i + 1) % WORDS.length); setFade(true); }, 240);
     }, 2200);
     return () => clearInterval(id);
-  }, []);
-
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", fn, { passive: true });
-    return () => window.removeEventListener("scroll", fn);
   }, []);
 
   const features = [
@@ -158,45 +151,27 @@ export default function Landing() {
           }
           @keyframes wordIn  { from { opacity:0; transform:translateY(8px);  } to { opacity:1; transform:translateY(0);    } }
           @keyframes wordOut { from { opacity:1; transform:translateY(0);     } to { opacity:0; transform:translateY(-8px); } }
-          @keyframes blink   { 0%,100% { opacity:.35; } 50% { opacity:1; } }
+          @keyframes blink   { 0%,100% { opacity:.3; } 50% { opacity:.9; } }
 
           .vis .a1 { animation: fadeUp .7s .05s cubic-bezier(.16,1,.3,1) both; }
           .vis .a2 { animation: fadeUp .7s .14s cubic-bezier(.16,1,.3,1) both; }
           .vis .a3 { animation: fadeUp .7s .23s cubic-bezier(.16,1,.3,1) both; }
           .vis .a4 { animation: fadeUp .7s .32s cubic-bezier(.16,1,.3,1) both; }
 
-          /* ── NAV — logo only, centered ── */
-          nav {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-            display: flex; align-items: center; justify-content: center;
-            padding: 20px 24px;
-            transition: background .3s, backdrop-filter .3s;
-          }
-          nav.scrolled {
-            background: rgba(13,13,13,.9);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid #1c1c1c;
-          }
-          .nav-logo {
-            font-size: 20px; font-weight: 800;
-            letter-spacing: -.03em; color: #fff;
-          }
-
           /* ── HERO ── */
           .hero {
             min-height: 100vh;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            padding: 100px 20px 80px;
+            padding: 60px 20px 72px;
             text-align: center;
             position: relative;
           }
           .hero::before {
             content: "";
-            position: absolute; top: -10%; left: 50%; transform: translateX(-50%);
-            width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(255,255,255,.025) 0%, transparent 65%);
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 560px; height: 560px;
+            background: radial-gradient(circle, rgba(255,255,255,.022) 0%, transparent 65%);
             pointer-events: none;
           }
           .hero::after {
@@ -207,41 +182,41 @@ export default function Landing() {
           }
 
           .eyebrow {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 6px 16px;
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 5px 14px;
             border: 1px solid #222;
             border-radius: 100px;
             font-size: 11px; font-weight: 600;
-            color: rgba(255,255,255,.3);
+            color: rgba(255,255,255,.28);
             letter-spacing: .05em; text-transform: uppercase;
-            margin-bottom: 40px;
+            margin-bottom: 36px;
           }
           .dot {
-            width: 6px; height: 6px; border-radius: 50%;
-            background: #fff; opacity: .5;
+            width: 5px; height: 5px; border-radius: 50%;
+            background: #fff;
             animation: blink 2.4s ease-in-out infinite;
           }
 
           .headline {
-            font-size: clamp(38px, 10vw, 88px);
+            font-size: clamp(36px, 10vw, 88px);
             font-weight: 800;
             line-height: 1.0;
             letter-spacing: -.045em;
             color: #fff;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
           }
 
           .word-row {
-            font-size: clamp(30px, 8vw, 72px);
+            font-size: clamp(28px, 8vw, 72px);
             font-weight: 800;
             line-height: 1.0;
             letter-spacing: -.04em;
-            margin-bottom: 36px;
+            margin-bottom: 32px;
           }
-          .word-wrap { display: inline-block; min-width: 200px; }
+          .word-wrap { display: inline-block; min-width: 180px; }
           .changing-word {
             display: inline-block;
-            background: linear-gradient(90deg, rgba(255,255,255,.38) 0%, #fff 45%, rgba(255,255,255,.38) 100%);
+            background: linear-gradient(90deg, rgba(255,255,255,.35) 0%, #fff 45%, rgba(255,255,255,.35) 100%);
             background-size: 200% auto;
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -251,61 +226,63 @@ export default function Landing() {
           .changing-word.fade-out { animation: wordOut .22s ease forwards; }
 
           .hero-sub {
-            font-size: clamp(13px, 3.5vw, 17px);
-            color: rgba(255,255,255,.42);
+            font-size: clamp(13px, 3.8vw, 16px);
+            color: rgba(255,255,255,.4);
             font-weight: 300;
-            max-width: 420px;
-            margin: 0 auto 20px;
+            max-width: 400px;
+            margin: 0 auto 18px;
             line-height: 1.8;
           }
 
           .pills {
             display: flex; flex-wrap: wrap;
             align-items: center; justify-content: center;
-            gap: 7px; margin-bottom: 44px;
+            gap: 6px; margin-bottom: 40px;
           }
           .pill {
-            padding: 5px 12px;
+            padding: 4px 11px;
             border: 1px solid #222;
             border-radius: 100px;
-            font-size: 11px; font-weight: 600;
-            color: rgba(255,255,255,.22);
+            font-size: 10.5px; font-weight: 600;
+            color: rgba(255,255,255,.2);
             display: flex; align-items: center; gap: 5px;
           }
-          .pill i { font-size: 9px; color: rgba(255,255,255,.38); }
+          .pill i { font-size: 8px; color: rgba(255,255,255,.35); }
 
           .cta-row {
             display: flex; align-items: center; justify-content: center;
             flex-wrap: wrap; gap: 10px;
+            width: 100%;
           }
           .btn-main {
-            display: inline-flex; align-items: center; gap: 9px;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
             padding: 14px 28px;
             background: #fff; color: #0d0d0d;
             font-family: 'Sora', sans-serif;
             font-size: 14px; font-weight: 700;
             border-radius: 100px;
             transition: opacity .15s, transform .15s;
+            white-space: nowrap;
           }
           .btn-main:hover { opacity: .9; transform: scale(1.025); }
           .btn-ghost {
-            display: inline-flex; align-items: center; gap: 8px;
+            display: inline-flex; align-items: center; justify-content: center; gap: 7px;
             padding: 13px 22px;
             background: transparent;
-            color: rgba(255,255,255,.38);
+            color: rgba(255,255,255,.36);
             font-family: 'Sora', sans-serif;
             font-size: 13px; font-weight: 600;
             border-radius: 100px;
-            border: 1px solid #242424;
+            border: 1px solid #232323;
             transition: border-color .15s, color .15s;
+            white-space: nowrap;
           }
           .btn-ghost:hover { border-color: rgba(255,255,255,.22); color: #fff; }
 
           /* ── SECTIONS ── */
-          .section {
+          .wrap {
             max-width: 960px; margin: 0 auto;
-            padding: 96px 20px;
-            position: relative; z-index: 1;
+            padding: 88px 20px;
           }
           .divider {
             max-width: 960px; margin: 0 auto;
@@ -313,123 +290,124 @@ export default function Landing() {
           }
           .sec-eye {
             text-align: center;
-            font-size: 10.5px; font-weight: 700;
+            font-size: 10px; font-weight: 700;
             letter-spacing: .13em; text-transform: uppercase;
-            color: rgba(255,255,255,.25);
+            color: rgba(255,255,255,.22);
             margin-bottom: 12px;
           }
           .sec-h {
             text-align: center;
-            font-size: clamp(24px, 6vw, 38px);
-            font-weight: 800;
-            letter-spacing: -.04em; line-height: 1.1;
+            font-size: clamp(22px, 6vw, 36px);
+            font-weight: 800; letter-spacing: -.04em; line-height: 1.1;
             color: #fff; margin-bottom: 10px;
           }
           .sec-sub {
             text-align: center;
-            font-size: 14px; color: rgba(255,255,255,.36);
+            font-size: clamp(12.5px, 3.2vw, 14px);
+            color: rgba(255,255,255,.34);
             font-weight: 300; line-height: 1.75;
-            max-width: 420px; margin: 0 auto 48px;
+            max-width: 400px; margin: 0 auto 44px;
           }
 
           /* ── FEATURE GRID ── */
           .feat-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
             gap: 1px;
             background: #191919;
             border: 1px solid #191919;
-            border-radius: 20px; overflow: hidden;
+            border-radius: 18px; overflow: hidden;
           }
           .feat-card {
             background: #111;
-            padding: 28px 24px;
+            padding: 24px 22px;
             transition: background .18s;
           }
           .feat-card:hover { background: #141414; }
           .feat-icon {
-            width: 42px; height: 42px; border-radius: 11px;
+            width: 40px; height: 40px; border-radius: 10px;
             background: #0d0d0d; border: 1px solid #222;
             display: flex; align-items: center; justify-content: center;
-            font-size: 16px; color: rgba(255,255,255,.5);
-            margin-bottom: 16px;
+            font-size: 15px; color: rgba(255,255,255,.48);
+            margin-bottom: 14px;
           }
-          .feat-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 7px; letter-spacing: -.02em; }
-          .feat-desc  { font-size: 12.5px; color: rgba(255,255,255,.35); line-height: 1.75; font-weight: 300; }
+          .feat-title { font-size: 13.5px; font-weight: 700; color: #fff; margin-bottom: 6px; letter-spacing: -.02em; }
+          .feat-desc  { font-size: 12px; color: rgba(255,255,255,.33); line-height: 1.75; font-weight: 300; }
 
           /* ── STEPS ── */
           .steps-wrap {
-            max-width: 520px; margin: 0 auto;
+            max-width: 500px; margin: 0 auto;
             display: flex; flex-direction: column; gap: 10px;
           }
           .step {
-            display: flex; align-items: flex-start; gap: 18px;
-            padding: 22px 24px;
+            display: flex; align-items: flex-start; gap: 16px;
+            padding: 20px 22px;
             background: #111; border: 1px solid #1c1c1c;
-            border-radius: 16px;
+            border-radius: 14px;
             transition: border-color .18s, transform .18s;
           }
           .step:hover { border-color: #282828; transform: translateX(3px); }
           .step-n {
             font-size: 10px; font-weight: 700;
-            color: rgba(255,255,255,.16);
-            letter-spacing: .06em; flex-shrink: 0; margin-top: 3px;
+            color: rgba(255,255,255,.15);
+            letter-spacing: .06em; flex-shrink: 0; margin-top: 2px;
           }
-          .step-t { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; letter-spacing: -.02em; }
-          .step-d { font-size: 12.5px; color: rgba(255,255,255,.35); line-height: 1.7; font-weight: 300; }
+          .step-t { font-size: 13.5px; font-weight: 700; color: #fff; margin-bottom: 4px; letter-spacing: -.02em; }
+          .step-d { font-size: 12px; color: rgba(255,255,255,.33); line-height: 1.7; font-weight: 300; }
 
           /* ── FAQ ── */
           .faq-list {
-            max-width: 580px; margin: 0 auto;
+            max-width: 560px; margin: 0 auto;
             display: flex; flex-direction: column; gap: 8px;
           }
           .faq-item {
             background: #111; border: 1px solid #1c1c1c;
-            border-radius: 14px; overflow: hidden;
+            border-radius: 13px; overflow: hidden;
           }
           .faq-q {
-            padding: 18px 22px;
-            font-size: 13.5px; font-weight: 700; color: #fff;
+            padding: 17px 20px;
+            font-size: 13px; font-weight: 700; color: #fff;
             letter-spacing: -.01em;
             display: flex; align-items: center; justify-content: space-between; gap: 12px;
           }
-          .faq-q i { font-size: 10px; color: rgba(255,255,255,.22); flex-shrink: 0; }
+          .faq-q i { font-size: 10px; color: rgba(255,255,255,.2); flex-shrink: 0; }
           .faq-a {
-            padding: 0 22px 16px;
-            font-size: 12.5px; color: rgba(255,255,255,.36);
+            padding: 0 20px 15px;
+            font-size: 12px; color: rgba(255,255,255,.34);
             line-height: 1.75; font-weight: 300;
           }
 
           /* ── BOTTOM CTA ── */
           .cta-box {
-            max-width: 560px; margin: 0 auto;
-            padding: 56px 36px;
+            max-width: 540px; margin: 0 auto;
+            padding: 52px 32px;
             background: #111; border: 1px solid #1e1e1e;
-            border-radius: 24px; text-align: center;
+            border-radius: 22px; text-align: center;
             position: relative; overflow: hidden;
           }
           .cta-box::before {
             content: "";
-            position: absolute; top: -50px; left: 50%; transform: translateX(-50%);
-            width: 280px; height: 150px;
-            background: radial-gradient(circle, rgba(255,255,255,.025) 0%, transparent 70%);
+            position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
+            width: 260px; height: 130px;
+            background: radial-gradient(circle, rgba(255,255,255,.022) 0%, transparent 70%);
           }
           .cta-t {
-            font-size: clamp(24px, 6vw, 34px);
+            font-size: clamp(22px, 6vw, 32px);
             font-weight: 800; letter-spacing: -.04em;
             line-height: 1.1; margin-bottom: 12px; color: #fff;
           }
           .cta-d {
-            font-size: 13.5px; color: rgba(255,255,255,.35);
+            font-size: clamp(12px, 3.2vw, 13.5px);
+            color: rgba(255,255,255,.33);
             font-weight: 300; line-height: 1.78;
-            max-width: 360px; margin: 0 auto 28px;
+            max-width: 340px; margin: 0 auto 26px;
           }
           .cta-url {
             display: inline-block;
-            padding: 6px 16px; margin-bottom: 24px;
+            padding: 5px 14px; margin-bottom: 22px;
             background: rgba(255,255,255,.05); border: 1px solid #252525;
             border-radius: 100px;
-            font-size: 12.5px; color: rgba(255,255,255,.42); font-weight: 600;
+            font-size: 12px; color: rgba(255,255,255,.4); font-weight: 600;
           }
 
           /* ── FOOTER ── */
@@ -438,43 +416,39 @@ export default function Landing() {
             padding: 28px 20px 40px;
             border-top: 1px solid #161616;
           }
-          .ft-logo { font-size: 15px; font-weight: 800; color: rgba(255,255,255,.28); letter-spacing: -.02em; margin-bottom: 6px; }
-          .ft-dev  { font-size: 12px; color: rgba(255,255,255,.18); }
-          .ft-dev strong { color: rgba(255,255,255,.28); font-weight: 700; }
+          .ft-logo { font-size: 14px; font-weight: 800; color: rgba(255,255,255,.25); letter-spacing: -.02em; margin-bottom: 6px; }
+          .ft-dev  { font-size: 11.5px; color: rgba(255,255,255,.16); }
+          .ft-dev strong { color: rgba(255,255,255,.26); font-weight: 700; }
           .ft-links {
             display: flex; align-items: center; justify-content: center;
-            flex-wrap: wrap; gap: 16px; margin-top: 10px;
+            flex-wrap: wrap; gap: 14px; margin-top: 10px;
           }
-          .ft-links a { font-size: 11.5px; color: rgba(255,255,255,.18); font-weight: 500; transition: color .15s; }
-          .ft-links a:hover { color: rgba(255,255,255,.4); }
+          .ft-links a { font-size: 11px; color: rgba(255,255,255,.16); font-weight: 500; transition: color .15s; }
+          .ft-links a:hover { color: rgba(255,255,255,.38); }
           .ft-sep { color: #1e1e1e; }
 
-          /* ── MOBILE ── */
-          @media (max-width: 480px) {
-            .hero { padding: 88px 16px 72px; }
-            .section { padding: 72px 16px; }
-            .cta-box { padding: 40px 20px; }
+          /* ── MOBILE TWEAKS ── */
+          @media (max-width: 420px) {
+            .hero { padding: 52px 16px 64px; }
+            .wrap { padding: 64px 16px; }
+            .cta-box { padding: 38px 18px; }
             .feat-grid { border-radius: 14px; }
-            .word-wrap { min-width: 160px; }
-            .feat-card { padding: 22px 18px; }
-            .step { padding: 18px 18px; }
-            .faq-q { padding: 16px 18px; }
-            .faq-a { padding: 0 18px 14px; }
-            .pills { gap: 6px; }
-            .pill { font-size: 10.5px; padding: 4px 10px; }
-            .btn-main { padding: 13px 24px; font-size: 13.5px; }
-            .btn-ghost { padding: 12px 18px; font-size: 12.5px; }
+            .feat-card { padding: 20px 16px; }
+            .step { padding: 16px 16px; }
+            .faq-q { padding: 15px 16px; }
+            .faq-a { padding: 0 16px 13px; }
+            .word-wrap { min-width: 150px; }
+            .btn-main { width: 100%; padding: 14px 20px; }
+            .btn-ghost { width: 100%; padding: 13px 20px; }
+            .cta-row { flex-direction: column; align-items: stretch; }
           }
         `}</style>
       </Head>
 
-      {/* NAV — logo only, centered */}
-      <nav className={scrolled ? "scrolled" : ""} aria-label="Main navigation">
-        <div className="nav-logo">linkitin</div>
-      </nav>
-
       <main>
-        
+        {/* HERO */}
+        <div className={`hero ${visible ? "vis" : ""}`} role="banner">
+
           <div className="eyebrow a1">
             <span className="dot" aria-hidden="true" />
             Free · No account needed
@@ -513,14 +487,14 @@ export default function Landing() {
             </a>
             <a href="#features" className="btn-ghost">
               See features
-              <i className="fas fa-arrow-down" style={{ fontSize: 11 }} aria-hidden="true" />
+              <i className="fas fa-arrow-down" style={{ fontSize: 10 }} aria-hidden="true" />
             </a>
           </div>
 
         </div>
 
         {/* FEATURES */}
-        <section id="features" className="section" aria-labelledby="feat-h">
+        <section id="features" className="wrap" aria-labelledby="feat-h">
           <div className="sec-eye">What you get</div>
           <h2 className="sec-h" id="feat-h">Everything in one profile</h2>
           <p className="sec-sub">All the tools to show the world who you are — wrapped in a single, shareable link.</p>
@@ -538,7 +512,7 @@ export default function Landing() {
         <div className="divider" aria-hidden="true" />
 
         {/* STEPS */}
-        <section className="section" aria-labelledby="steps-h">
+        <section className="wrap" aria-labelledby="steps-h">
           <div className="sec-eye">How it works</div>
           <h2 className="sec-h" id="steps-h">Up and running in 3 steps</h2>
           <p className="sec-sub">No form to fill. No email to confirm. Just build and share.</p>
@@ -558,7 +532,7 @@ export default function Landing() {
         <div className="divider" aria-hidden="true" />
 
         {/* FAQ */}
-        <section className="section" aria-labelledby="faq-h">
+        <section className="wrap" aria-labelledby="faq-h">
           <div className="sec-eye">FAQ</div>
           <h2 className="sec-h" id="faq-h">Common questions</h2>
           <p className="sec-sub">Straight answers, no fluff.</p>
@@ -582,7 +556,7 @@ export default function Landing() {
         <div className="divider" aria-hidden="true" />
 
         {/* BOTTOM CTA */}
-        <section className="section" aria-labelledby="cta-h">
+        <section className="wrap" aria-labelledby="cta-h">
           <div className="cta-box">
             <h2 className="cta-t" id="cta-h">
               Your profile,<br />your way
