@@ -922,7 +922,10 @@ export default function ProfileCreator() {
   /* ════ FORM ════ */
   return(
     <div style={{minHeight:"100vh",background:"#f4f5f9",paddingBottom:48}}>
-      <Head><title>Create Your Profile | Linkitin</title></Head>
+      <Head>
+        <title>Create Your Profile | Linkitin</title>
+        <link rel="icon" href="/icon.png" type="image/png" />
+      </Head>
       {showShare&&<ShareSheet url={getUrl()} onClose={()=>setShowShare(false)} onCopy={copyLink}/> }
       <Topbar right={
         saved ? (
