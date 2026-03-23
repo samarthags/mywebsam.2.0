@@ -2,7 +2,49 @@
 import Head from "next/head";
 import { useState, useEffect } from "react";
 import clientPromise from "../lib/mongodb";
+import crypto from "crypto";
 
+// ─── Cloudinary upload helper (same as in create.js) ─────────────────────────
+async function uploadToCloudinary(base64DataUri, folder = "linkitin") {
+  const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = process.env;
+  if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
+    throw new Error("Cloudinary env vars not configured");
+  }
+
+  const timestamp    = Math.floor(Date.now() / 1000);
+  const paramsToSign = `folder=${folder}&timestamp=${timestamp}`;
+  const signature    = crypto
+    .createHmac("sha256", CLOUDINARY_API_SECRET)
+    .update(paramsToSign)
+    .digest("hex");
+
+  const formData = new FormData();
+  formData.append("file",      base64DataUri);
+  formData.append("timestamp", String(timestamp));
+  formData.append("api_key",   CLOUDINARY_API_KEY);
+  formData.append("signature", signature);
+  formData.append("folder",    folder);
+
+  const res  = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+    { method: "POST", body: formData }
+  );
+  const json = await res.json();
+
+  if (!res.ok || json.error) {
+    throw new Error(json.error?.message || "Cloudinary upload failed");
+  }
+  return json.secure_url;
+}
+
+async function maybeUpload(value, folder) {
+  if (value && value.startsWith("data:image/")) {
+    return await uploadToCloudinary(value, folder);
+  }
+  return value || "";
+}
+
+// ─── Constants ────────────────────────────────────────────────────────────────
 const PLAT = {
   email:        { i:"fas fa-envelope",      c:"#EA4335", u:(v)=>`mailto:${v}`,                                    n:"Email" },
   whatsapp:     { i:"fab fa-whatsapp",       c:"#25D366", u:(v)=>`https://wa.me/${v.replace(/\D/g,"")}`,          n:"WhatsApp" },
@@ -54,6 +96,7 @@ const BADGE_ICONS = {
   student:"fas fa-graduation-cap", other:"fas fa-star",
 };
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 function calcAge(dob) {
   if (!dob) return null;
   const t = new Date(), b = new Date(dob);
@@ -69,6 +112,7 @@ function track(username, event) {
   }).catch(()=>{});
 }
 
+// ─── Share sheet ───────────────────────────────────────────────────────────────
 function ShareSheet({ url, name, onClose }) {
   const [copied, setCopied] = useState(false);
   const enc = encodeURIComponent;
@@ -126,6 +170,7 @@ function ShareSheet({ url, name, onClose }) {
   );
 }
 
+// ─── Profile page ─────────────────────────────────────────────────────────────
 export default function ProfilePage({ user, pageUrl, avatarUrl }) {
   const [shareOpen, setShareOpen] = useState(false);
   const [spOpen,    setSpOpen]    = useState(false);
@@ -139,7 +184,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
       <>
         <Head>
           <title>Not Found | linkitin</title>
-        <link rel="icon" href="/icon.png" type="image/png" />
+          <link rel="icon" href="/icon.png" type="image/png" />
           <meta name="robots" content="noindex"/>
           <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
           <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
@@ -170,7 +215,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
   const badge     = user.interests?.role;
   const badgeIcon = badge && BADGE_ICONS[badge];
   const badgeLabel= badge ? badge.replace(/_/g," ").replace(/\b\w/g,l=>l.toUpperCase()) : null;
-  const metaDesc = badgeLabel || `${user.name}'s profile on Linkitin`;
+  const metaDesc  = badgeLabel || `${user.name}'s profile on Linkitin`;
 
   return (
     <>
@@ -200,19 +245,13 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           html,body{min-height:100%;-webkit-font-smoothing:antialiased;}
           *{-webkit-tap-highlight-color:transparent;}
           a,button{outline:none;text-decoration:none;color:inherit;}
-          body{
-            background:#0d0d0d;
-            color:#fff;
-            font-family:'Sora',sans-serif;
-            min-height:100vh;overflow-x:hidden;
-          }
+          body{background:#0d0d0d;color:#fff;font-family:'Sora',sans-serif;min-height:100vh;overflow-x:hidden;}
 
           @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
           @keyframes slideUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
           @keyframes breathe{0%,100%{opacity:.9;}50%{opacity:.4;}}
           @keyframes shimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
 
-          /* stagger helpers — smooth ease */
           .s1{animation:slideUp .6s .04s cubic-bezier(.16,1,.3,1) both;}
           .s2{animation:slideUp .6s .12s cubic-bezier(.16,1,.3,1) both;}
           .s3{animation:slideUp .6s .20s cubic-bezier(.16,1,.3,1) both;}
@@ -221,263 +260,63 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .s6{animation:slideUp .6s .44s cubic-bezier(.16,1,.3,1) both;}
           .s7{animation:slideUp .6s .52s cubic-bezier(.16,1,.3,1) both;}
 
-          /* ── HERO ── */
-          .hero{
-            position:relative;
-            width:100%;
-            height:58vh;
-            min-height:300px;
-            max-height:500px;
-            overflow:hidden;
-            animation:fadeIn .7s ease both;
-          }
-          .hero-img{
-            width:100%;height:100%;
-            object-fit:cover;
-            object-position:center top;
-            display:block;
-          }
-          /* Deep gradient — color exactly = body #0d0d0d */
-          .hero-fade{
-            position:absolute;inset:0;pointer-events:none;
-            background:linear-gradient(
-              to bottom,
-              rgba(13,13,13,0)   0%,
-              rgba(13,13,13,0)   18%,
-              rgba(13,13,13,.2)  40%,
-              rgba(13,13,13,.7)  65%,
-              rgba(13,13,13,.95) 85%,
-              rgba(13,13,13,1)   100%
-            );
-          }
+          .hero{position:relative;width:100%;height:58vh;min-height:300px;max-height:500px;overflow:hidden;animation:fadeIn .7s ease both;}
+          .hero-img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;}
+          .hero-fade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,rgba(13,13,13,0) 0%,rgba(13,13,13,0) 18%,rgba(13,13,13,.2) 40%,rgba(13,13,13,.7) 65%,rgba(13,13,13,.95) 85%,rgba(13,13,13,1) 100%);}
 
-          /* No photo fallback */
-          .hero-ph{
-            width:100%;height:58vh;min-height:320px;max-height:520px;
-            background:#080808;
-            display:flex;align-items:center;justify-content:center;
-          }
-          .av-ph{
-            width:100px;height:100px;border-radius:50%;
-            background:#1a1a1a;border:2px solid #2a2a2a;
-            display:flex;align-items:center;justify-content:center;
-            font-size:40px;font-weight:800;color:#fff;
-          }
+          .hero-ph{width:100%;height:58vh;min-height:320px;max-height:520px;background:#080808;display:flex;align-items:center;justify-content:center;}
+          .av-ph{width:100px;height:100px;border-radius:50%;background:#1a1a1a;border:2px solid #2a2a2a;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:800;color:#fff;}
 
-          /* ── IDENTITY ── */
-          .id-block{
-            text-align:center;
-            padding:14px 20px 0;
-            position:relative;
-            z-index:2;
-          }
-                    .pname{
-            font-size:clamp(32px,9vw,52px);
-            font-family:'Sora',sans-serif;
-            font-weight:700;
-            color:#fff;
-            letter-spacing:-.02em;
-            line-height:1.05;
-            margin-bottom:10px;
-          }
-          /* badge row — no @handle */
-          .badge-row{
-            display:flex;align-items:center;justify-content:center;
-            flex-wrap:wrap;gap:8px;margin-bottom:4px;
-          }
-          .age-pill{
-            display:inline-flex;align-items:center;gap:5px;
-            background:rgba(255,255,255,.05);
-            border:1px solid rgba(255,255,255,.09);
-            border-radius:999px;padding:4px 12px;
-            font-size:12px;font-weight:600;color:rgba(255,255,255,.42);
-          }
+          .id-block{text-align:center;padding:14px 20px 0;position:relative;z-index:2;}
+          .pname{font-size:clamp(32px,9vw,52px);font-family:'Sora',sans-serif;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.05;margin-bottom:10px;}
+          .badge-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;}
+          .age-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600;color:rgba(255,255,255,.42);}
           .age-pill i{font-size:9px;opacity:.65;}
-          .badge-pill{
-            display:inline-flex;align-items:center;gap:6px;
-            background:linear-gradient(
-              90deg,
-              rgba(255,255,255,.06) 0%,
-              rgba(255,255,255,.14) 50%,
-              rgba(255,255,255,.06) 100%
-            );
-            background-size:200% auto;
-            border:1px solid rgba(255,255,255,.12);
-            border-radius:999px;padding:5px 16px;
-            font-size:12px;font-weight:600;
-            color:rgba(255,255,255,.65);
-            animation:shimmer 2.8s linear infinite;
-            letter-spacing:.01em;
-          }
+          .badge-pill{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(90deg,rgba(255,255,255,.06) 0%,rgba(255,255,255,.14) 50%,rgba(255,255,255,.06) 100%);background-size:200% auto;border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:5px 16px;font-size:12px;font-weight:600;color:rgba(255,255,255,.65);animation:shimmer 2.8s linear infinite;letter-spacing:.01em;}
           .badge-pill i{font-size:10px;opacity:.7;}
 
-          /* ── CONTENT ── */
-          .content{
-            max-width:460px;
-            margin:0 auto;
-            padding:12px 16px 64px;
-          }
+          .content{max-width:520px;margin:0 auto;padding:18px 16px 72px;}
+          .bio-text{font-size:15px;line-height:1.7;color:rgba(255,255,255,.55);text-align:center;margin-bottom:20px;font-weight:400;}
 
-          /* Bio */
-          .bio-text{
-            font-size:14px;line-height:1.8;
-            color:rgba(255,255,255,.52);
-            text-align:center;
-            margin-bottom:18px;
-          }
-
-          /* Interest tags */
-          .int-tags{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-bottom:24px;}
-          .itag{
-            padding:6px 15px;border-radius:999px;
-            font-size:12px;font-weight:600;
-            color:rgba(255,255,255,.52);
-            background:linear-gradient(180deg,#131313 0%,#0f0f0f 100%);
-            border:1px solid #202020;
-            transition:transform .2s cubic-bezier(.34,1.56,.64,1),color .13s,border-color .13s,box-shadow .18s;
-            box-shadow:0 1px 0 rgba(255,255,255,.03) inset;
-          }
-          .itag:hover{color:rgba(255,255,255,.82);border-color:#2e2e2e;transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.4);}
-
-          /* Social icons */
-          .soc-row{
-            display:flex;justify-content:center;flex-wrap:wrap;gap:9px;
-            margin-bottom:20px;
-          }
-          .soc-btn{
-            width:46px;height:46px;border-radius:13px;
-            display:flex;align-items:center;justify-content:center;
-            font-size:17px;
-            background:#141414;
-            border:1px solid #1e1e1e;
-            transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .18s,border-color .15s;
-            position:relative;
-            box-shadow:0 1px 0 rgba(255,255,255,.04) inset;
-          }
+          .soc-row{display:flex;justify-content:center;flex-wrap:wrap;gap:9px;margin-bottom:20px;}
+          .soc-btn{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:17px;background:#141414;border:1px solid #1e1e1e;transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .18s,border-color .15s;position:relative;box-shadow:0 1px 0 rgba(255,255,255,.04) inset;}
           .soc-btn::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);pointer-events:none;border-radius:inherit;}
           .soc-btn:hover{transform:translateY(-3px) scale(1.05);border-color:#2e2e2e;box-shadow:0 8px 20px rgba(0,0,0,.45);}
           .soc-btn:active{transform:scale(.93);}
 
-          /* ── External Links — same card style as Spotify ── */
-          .links-container{
-            margin-bottom:20px;
-            position:relative;
-          }
-          .links-container::before{content:none;}
+          .links-container{margin-bottom:20px;}
           .links{display:flex;flex-direction:column;gap:10px;}
-          .lbtn{
-            display:flex;align-items:center;
-            width:100%;
-            padding:12px 14px;
-            background:#111;
-            border:1px solid #222;
-            border-radius:16px;
-            cursor:pointer;
-            transition:background .14s,border-color .14s,box-shadow .14s;
-            box-shadow:0 2px 8px rgba(0,0,0,.3);
-          }
+          .lbtn{display:flex;align-items:center;width:100%;padding:12px 14px;background:#111;border:1px solid #222;border-radius:16px;cursor:pointer;transition:background .14s,border-color .14s,box-shadow .14s;box-shadow:0 2px 8px rgba(0,0,0,.3);}
           .lbtn:hover{background:#161616;border-color:#2e2e2e;box-shadow:0 4px 16px rgba(0,0,0,.45);}
           .lbtn:active{background:rgba(255,255,255,.07);}
-          .lbtn-ic-wrap{
-            width:50px;
-            display:flex;align-items:center;justify-content:center;
-            flex-shrink:0;
-          }
-          .lbtn-ic{
-            width:50px;height:50px;border-radius:10px;
-            overflow:hidden;
-            display:flex;align-items:center;justify-content:center;
-            font-size:24px;color:rgba(255,255,255,.55);
-            background:rgba(255,255,255,.05);
-            border:1px solid rgba(255,255,255,.09);
-            flex-shrink:0;
-            transition:color .13s;
-          }
+          .lbtn-ic-wrap{width:50px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+          .lbtn-ic{width:50px;height:50px;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:24px;color:rgba(255,255,255,.55);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);flex-shrink:0;transition:color .13s;}
           .lbtn:hover .lbtn-ic{color:rgba(255,255,255,.85);}
-          .lbtn-t{
-            flex:1;
-            font-size:14px;font-weight:600;
-            color:rgba(255,255,255,.82);
-            padding:0 12px;
-            letter-spacing:-.01em;
-          }
-          .lbtn-a{
-            font-size:10px;color:rgba(255,255,255,.2);
-            transition:color .13s,transform .14s;
-            flex-shrink:0;
-          }
+          .lbtn-t{flex:1;font-size:14px;font-weight:600;color:rgba(255,255,255,.82);padding:0 12px;letter-spacing:-.01em;}
+          .lbtn-a{font-size:10px;color:rgba(255,255,255,.2);transition:color .13s,transform .14s;flex-shrink:0;}
           .lbtn:hover .lbtn-a{color:rgba(255,255,255,.45);transform:translateX(2px);}
 
-          /* Spotify player card */
           .sp-block{margin-bottom:20px;}
-          .sp-card{
-            background:#111;
-            border:1px solid rgba(255,255,255,.08);
-            border-radius:18px;overflow:hidden;
-            cursor:pointer;
-            transition:border-color .15s,box-shadow .15s;
-          }
+          .sp-card{background:#111;border:1px solid rgba(255,255,255,.08);border-radius:18px;overflow:hidden;cursor:pointer;transition:border-color .15s,box-shadow .15s;}
           .sp-card:hover{border-color:rgba(255,255,255,.14);box-shadow:0 8px 24px rgba(0,0,0,.4);}
-          .sp-trig{
-            display:flex;align-items:center;gap:13px;
-            padding:14px 16px;
-            position:relative;
-          }
+          .sp-trig{display:flex;align-items:center;gap:13px;padding:14px 16px;position:relative;}
           .sp-trig.open{border-bottom:1px solid rgba(255,255,255,.06);}
-          .sp-card::before{content:none;}
-          .sp-art{
-            width:50px;height:50px;border-radius:10px;
-            background:rgba(255,255,255,.05);
-            border:1px solid rgba(255,255,255,.1);
-            display:flex;align-items:center;justify-content:center;
-            font-size:24px;color:rgba(255,255,255,.7);flex-shrink:0;
-          }
+          .sp-art{width:50px;height:50px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:24px;color:rgba(255,255,255,.7);flex-shrink:0;}
           .sp-meta{flex:1;min-width:0;}
-          .sp-eye{
-            font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-            color:rgba(255,255,255,.35);margin-bottom:4px;
-            display:flex;align-items:center;gap:5px;
-          }
+          .sp-eye{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:4px;display:flex;align-items:center;gap:5px;}
           .sp-dot{display:none;}
           .sp-title{font-size:14px;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3;}
           .sp-artist{font-size:11.5px;color:rgba(255,255,255,.3);margin-top:2px;}
           .sp-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
-          .sp-play-btn{
-            width:34px;height:34px;border-radius:50%;
-            background:rgba(255,255,255,.12);
-            border:1px solid rgba(255,255,255,.18);
-            display:flex;align-items:center;justify-content:center;
-            font-size:12px;color:rgba(255,255,255,.8);
-            transition:transform .15s,background .13s;
-            flex-shrink:0;
-          }
+          .sp-play-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:12px;color:rgba(255,255,255,.8);transition:transform .15s,background .13s;flex-shrink:0;}
           .sp-card:hover .sp-play-btn{transform:scale(1.08);background:rgba(255,255,255,.2);}
-          .sp-caret{font-size:12px;color:rgba(255,255,255,.2);transition:transform .25s cubic-bezier(.34,1.56,.64,1);}
-          .sp-caret.open{transform:rotate(180deg);}
-          .sp-embed{
-            overflow:hidden;
-            background:#111;
-            padding:10px 10px 0;
-          }
+          .sp-embed{overflow:hidden;background:#111;padding:10px 10px 0;}
 
-          /* Footer */
           .foot{text-align:center;padding:8px 0 4px;}
-          .foot-cta{
-            font-size:12px;color:#2a2a2a;font-weight:600;
-            letter-spacing:.02em;
-          }
+          .foot-cta{font-size:12px;color:#2a2a2a;font-weight:600;letter-spacing:.02em;}
           .foot-cta:hover{color:#555;}
 
-          /* Share FAB — square like social icons */
-          .sfab{
-            position:fixed;top:16px;right:16px;
-            width:46px;height:46px;border-radius:13px;
-            background:#111;border:1px solid #1e1e1e;
-            display:flex;align-items:center;justify-content:center;
-            font-size:17px;color:rgba(255,255,255,.6);cursor:pointer;z-index:80;
-            transition:transform .18s cubic-bezier(.34,1.56,.64,1),background .13s,border-color .13s,box-shadow .13s;
-            position:fixed;
-          }
+          .sfab{position:fixed;top:16px;right:16px;width:46px;height:46px;border-radius:13px;background:#111;border:1px solid #1e1e1e;display:flex;align-items:center;justify-content:center;font-size:17px;color:rgba(255,255,255,.6);cursor:pointer;z-index:80;transition:transform .18s cubic-bezier(.34,1.56,.64,1),background .13s,border-color .13s,box-shadow .13s;}
           .sfab::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,rgba(255,255,255,.06),transparent);pointer-events:none;}
           .sfab:hover{transform:translateY(-3px) scale(1.07);background:#181818;border-color:#2c2c2c;color:#fff;box-shadow:0 8px 22px rgba(0,0,0,.5);}
           .sfab:active{transform:scale(.93);}
@@ -550,25 +389,26 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
 
         {(user.links||[]).length > 0 && (
           <div className="links-container s4">
-          <div className="links">
-            {user.links.map((lnk,i)=>(
-              <a key={lnk.id||i} href={lnk.url} target="_blank" rel="noopener noreferrer"
-                className="lbtn"
-                onClick={()=>track(user.username,"link_click")}>
-                <div className="lbtn-ic-wrap">
-                  <div className="lbtn-ic">
-                    {lnk.icon?.startsWith("data:")
-                      ? <img src={lnk.icon} style={{width:"100%",height:"100%",objectFit:"cover",display:"block",borderRadius:"10px"}} alt=""/>
-                      : lnk.icon?.startsWith("fas ")||lnk.icon?.startsWith("fab ")
-                        ? <i className={lnk.icon}/>
-                        : <span style={{fontSize:17}}>{lnk.icon||"🔗"}</span>}
+            <div className="links">
+              {user.links.map((lnk,i)=>(
+                <a key={lnk.id||i} href={lnk.url} target="_blank" rel="noopener noreferrer"
+                  className="lbtn"
+                  onClick={()=>track(user.username,"link_click")}>
+                  <div className="lbtn-ic-wrap">
+                    <div className="lbtn-ic">
+                      {/* Handles Cloudinary URLs (https://), legacy base64 (data:), FA icons, and emoji */}
+                      {(lnk.icon?.startsWith("https://") || lnk.icon?.startsWith("data:"))
+                        ? <img src={lnk.icon} style={{width:"100%",height:"100%",objectFit:"cover",display:"block",borderRadius:"10px"}} alt=""/>
+                        : lnk.icon?.startsWith("fas ") || lnk.icon?.startsWith("fab ")
+                          ? <i className={lnk.icon}/>
+                          : <span style={{fontSize:17}}>{lnk.icon||"🔗"}</span>}
+                    </div>
                   </div>
-                </div>
-                <div className="lbtn-t">{lnk.title}</div>
-                <div className="lbtn-a"><i className="fas fa-arrow-up-right-from-square"/></div>
-              </a>
-            ))}
-          </div>
+                  <div className="lbtn-t">{lnk.title}</div>
+                  <div className="lbtn-a"><i className="fas fa-arrow-up-right-from-square"/></div>
+                </a>
+              ))}
+            </div>
           </div>
         )}
 
@@ -614,44 +454,95 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
   );
 }
 
+// ─── SSR ──────────────────────────────────────────────────────────────────────
 export async function getServerSideProps({ params, req }) {
   try {
-    const client    = await clientPromise;
-    const db        = client.db(process.env.DB_NAME);
-    const user      = await db.collection("users").findOne(
+    const client = await clientPromise;
+    const db     = client.db(process.env.DB_NAME);
+    const raw    = await db.collection("users").findOne(
       { username: params.username.toLowerCase() },
       { projection: { _id: 0 } }
     );
-    const host      = req.headers.host || "linkitin.site";
-    const proto     = host.startsWith("localhost") ? "http" : "https";
-    const base      = `${proto}://${host}`;
-    const pageUrl   = `${base}/${params.username.toLowerCase()}`;
-    const avatarUrl = `${base}/api/avatar/${params.username.toLowerCase()}`;
-    if (!user) return { props: { user:null, pageUrl, avatarUrl } };
+
+    const host    = req.headers.host || "linkitin.site";
+    const proto   = host.startsWith("localhost") ? "http" : "https";
+    const base    = `${proto}://${host}`;
+    const pageUrl = `${base}/${params.username.toLowerCase()}`;
+
+    if (!raw) {
+      return { props: { user: null, pageUrl, avatarUrl: `${base}/api/avatar/${params.username.toLowerCase()}` } };
+    }
+
+    // ── Migrate any legacy base64 blobs to Cloudinary on first view ────────────
+    let needsUpdate = false;
+
+    let safeAvatar = raw.avatar || "";
+    if (safeAvatar.startsWith("data:image/")) {
+      try {
+        safeAvatar = await uploadToCloudinary(safeAvatar, "linkitin/avatars");
+        needsUpdate = true;
+      } catch (e) {
+        console.error("[username SSR] avatar upload failed:", e.message);
+        safeAvatar = ""; // hide broken blob rather than crash
+      }
+    }
+
+    const safeLinks = await Promise.all(
+      (raw.links || []).map(async (lnk) => {
+        if (lnk.icon && lnk.icon.startsWith("data:image/")) {
+          try {
+            const url = await uploadToCloudinary(lnk.icon, "linkitin/link-icons");
+            needsUpdate = true;
+            return { ...lnk, icon: url };
+          } catch (e) {
+            console.error("[username SSR] link icon upload failed:", e.message);
+            return { ...lnk, icon: "fas fa-link" };
+          }
+        }
+        return lnk;
+      })
+    );
+
+    // Persist the migrated CDN URLs back to MongoDB so we never do this again
+    if (needsUpdate) {
+      try {
+        await db.collection("users").updateOne(
+          { username: raw.username },
+          { $set: { avatar: safeAvatar, links: safeLinks, updatedAt: new Date() } }
+        );
+      } catch (e) {
+        console.error("[username SSR] migration save failed:", e.message);
+      }
+    }
+
+    // avatarUrl for OG meta — use Cloudinary URL directly if available
+    const avatarUrl = safeAvatar || `${base}/api/avatar/${params.username.toLowerCase()}`;
+
     return {
       props: {
-        pageUrl, avatarUrl,
+        pageUrl,
+        avatarUrl,
         user: JSON.parse(JSON.stringify({
-          username:       user.username       || "",
-          name:           user.name           || "",
-          dob:            user.dob            || null,
-          bio:            user.bio            || "",
-          aboutme:        user.aboutme        || "",
-          avatar:         user.avatar         || "",
-          socialProfiles: user.socialProfiles || {},
-          links:          user.links          || [],
-          interests:      user.interests      || {},
-          favSong:        user.favSong        || "",
-          favArtist:      user.favArtist      || "",
-          favSongTrackId: user.favSongTrackId || "",
+          username:       raw.username       || "",
+          name:           raw.name           || "",
+          dob:            raw.dob            || null,
+          bio:            raw.bio            || "",
+          aboutme:        raw.aboutme        || "",
+          avatar:         safeAvatar,
+          socialProfiles: raw.socialProfiles || {},
+          links:          safeLinks,
+          interests:      raw.interests      || {},
+          favSong:        raw.favSong        || "",
+          favArtist:      raw.favArtist      || "",
+          favSongTrackId: raw.favSongTrackId || "",
         }))
       }
     };
   } catch(e) {
-    console.error("[username page]",e);
-    const host  = req?.headers?.host||"linkitin.site";
-    const proto = host.startsWith("localhost")?"http":"https";
+    console.error("[username page]", e);
+    const host  = req?.headers?.host || "linkitin.site";
+    const proto = host.startsWith("localhost") ? "http" : "https";
     const base  = `${proto}://${host}`;
-    return { props:{user:null,pageUrl:`${base}/${params.username}`,avatarUrl:`${base}/api/avatar/${params.username}`} };
+    return { props: { user: null, pageUrl: `${base}/${params.username}`, avatarUrl: `${base}/api/avatar/${params.username}` } };
   }
 }
