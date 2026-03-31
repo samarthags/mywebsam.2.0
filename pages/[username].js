@@ -4,33 +4,29 @@ import { useState, useEffect } from "react";
 import clientPromise from "../lib/mongodb";
 import crypto from "crypto";
 
-// ─── Cloudinary upload helper (same as in create.js) ─────────────────────────
+// ─── Cloudinary upload helper ─────────────────────────────────────────────────
 async function uploadToCloudinary(base64DataUri, folder = "linkitin") {
   const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = process.env;
   if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
     throw new Error("Cloudinary env vars not configured");
   }
-
   const timestamp    = Math.floor(Date.now() / 1000);
   const paramsToSign = `folder=${folder}&timestamp=${timestamp}`;
   const signature    = crypto
     .createHmac("sha256", CLOUDINARY_API_SECRET)
     .update(paramsToSign)
     .digest("hex");
-
   const formData = new FormData();
   formData.append("file",      base64DataUri);
   formData.append("timestamp", String(timestamp));
   formData.append("api_key",   CLOUDINARY_API_KEY);
   formData.append("signature", signature);
   formData.append("folder",    folder);
-
   const res  = await fetch(
     `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
     { method: "POST", body: formData }
   );
   const json = await res.json();
-
   if (!res.ok || json.error) {
     throw new Error(json.error?.message || "Cloudinary upload failed");
   }
@@ -112,6 +108,105 @@ function track(username, event) {
   }).catch(()=>{});
 }
 
+// ─── Loading Screen ────────────────────────────────────────────────────────────
+function LoadingScreen({ avatarUrl, name, visible }) {
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "#080808",
+        zIndex: 9999,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 20,
+        transition: "opacity 0.5s ease, visibility 0.5s ease",
+        opacity: visible ? 1 : 0,
+        visibility: visible ? "visible" : "hidden",
+        pointerEvents: visible ? "all" : "none",
+      }}
+    >
+      <style>{`
+        @keyframes lsPulse {
+          0%,100% { transform: scale(1); opacity: .9; }
+          50% { transform: scale(1.04); opacity: .6; }
+        }
+        @keyframes lsSpin {
+          to { transform: rotate(360deg); }
+        }
+        @keyframes lsDots {
+          0%,80%,100% { opacity: 0; transform: translateY(0); }
+          40% { opacity: 1; transform: translateY(-5px); }
+        }
+        .ls-avatar {
+          width: 90px;
+          height: 90px;
+          border-radius: 50%;
+          object-fit: cover;
+          object-position: center top;
+          border: 2px solid rgba(255,255,255,.1);
+          animation: lsPulse 1.8s ease-in-out infinite;
+        }
+        .ls-avatar-ph {
+          width: 90px;
+          height: 90px;
+          border-radius: 50%;
+          background: #1a1a1a;
+          border: 2px solid #222;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 36px;
+          font-weight: 800;
+          color: #fff;
+          animation: lsPulse 1.8s ease-in-out infinite;
+        }
+        .ls-ring {
+          width: 106px;
+          height: 106px;
+          border-radius: 50%;
+          border: 2px solid transparent;
+          border-top-color: rgba(255,255,255,.25);
+          border-right-color: rgba(255,255,255,.08);
+          position: absolute;
+          animation: lsSpin 1.1s linear infinite;
+        }
+        .ls-name {
+          font-family: 'Sora', sans-serif;
+          font-size: 16px;
+          font-weight: 700;
+          color: rgba(255,255,255,.55);
+          letter-spacing: .02em;
+        }
+        .ls-dots span {
+          display: inline-block;
+          width: 5px;
+          height: 5px;
+          border-radius: 50%;
+          background: rgba(255,255,255,.3);
+          margin: 0 3px;
+          animation: lsDots 1.2s ease-in-out infinite;
+        }
+        .ls-dots span:nth-child(2) { animation-delay: .2s; }
+        .ls-dots span:nth-child(3) { animation-delay: .4s; }
+      `}</style>
+      <div style={{ position: "relative", width: 106, height: 106, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div className="ls-ring" />
+        {avatarUrl && !avatarUrl.includes("/api/avatar/")
+          ? <img src={avatarUrl} alt={name} className="ls-avatar" />
+          : <div className="ls-avatar-ph">{name?.charAt(0)?.toUpperCase() || "?"}</div>
+        }
+      </div>
+      {name && <div className="ls-name">{name}</div>}
+      <div className="ls-dots">
+        <span /><span /><span />
+      </div>
+    </div>
+  );
+}
+
 // ─── Share sheet ───────────────────────────────────────────────────────────────
 function ShareSheet({ url, name, onClose }) {
   const [copied, setCopied] = useState(false);
@@ -174,10 +269,114 @@ function ShareSheet({ url, name, onClose }) {
 export default function ProfilePage({ user, pageUrl, avatarUrl }) {
   const [shareOpen, setShareOpen] = useState(false);
   const [spOpen,    setSpOpen]    = useState(false);
+  // Loading state: true until avatar + fonts are ready
+  const [loading,   setLoading]   = useState(true);
 
   useEffect(()=>{
     if (user?.username) track(user.username, "view");
   },[]);
+
+  useEffect(()=>{
+    if (!user) { setLoading(false); return; }
+
+    let resolved = false;
+    const done = () => {
+      if (resolved) return;
+      resolved = true;
+      // Small extra delay so the splash feels intentional, not a flicker
+      setTimeout(() => setLoading(false), 320);
+    };
+
+    // Safety timeout — never block more than 4 seconds
+    const safety = setTimeout(done, 4000);
+
+    const pending = [];
+
+    // Wait for avatar image if it exists
+    if (user.avatar) {
+      const img = new Image();
+      img.src = user.avatar;
+      if (img.complete) {
+        // already cached
+      } else {
+        const p = new Promise(res => {
+          img.onload = res;
+          img.onerror = res; // resolve even on error
+        });
+        pending.push(p);
+      }
+    }
+
+    // Wait for link icon images
+    (user.links || []).forEach(lnk => {
+      if (lnk.icon?.startsWith("https://")) {
+        const img = new Image();
+        img.src = lnk.icon;
+        if (!img.complete) {
+          pending.push(new Promise(res => { img.onload = res; img.onerror = res; }));
+        }
+      }
+    });
+
+    // Wait for Font Awesome + Google Fonts to be ready
+    const fontReady = document.fonts
+      ? document.fonts.ready
+      : Promise.resolve();
+
+    Promise.all([fontReady, ...pending]).then(() => {
+      clearTimeout(safety);
+      done();
+    });
+
+    return () => clearTimeout(safety);
+  }, [user]);
+
+  // ── SEO helpers ──────────────────────────────────────────────────────────────
+  const userAge   = user ? calcAge(user.dob) : null;
+  const socials   = user ? Object.entries(user.socialProfiles||{}).filter(([,v])=>v?.trim()).filter(([k])=>PLAT[k]) : [];
+  const interests = user ? Object.values(user.interests||{}).flat().filter(v=>v&&typeof v==="string").slice(0,12) : [];
+  const bio       = user ? (user.aboutme||user.bio||"") : "";
+  const badge     = user?.interests?.role;
+  const badgeIcon = badge && BADGE_ICONS[badge];
+  const badgeLabel= badge ? badge.replace(/_/g," ").replace(/\b\w/g,l=>l.toUpperCase()) : null;
+
+  // Rich description for SEO
+  const richDesc = user
+    ? [
+        badgeLabel ? `${user.name} — ${badgeLabel}` : user.name,
+        bio ? bio.slice(0, 120) : null,
+        socials.length ? `Find ${user.name} on ${socials.slice(0,3).map(([k])=>PLAT[k].n).join(", ")}` : null,
+        `Linkitin profile`,
+      ].filter(Boolean).join(". ")
+    : "Profile not found on Linkitin";
+
+  const ptitle    = user ? `${user.name} (@${user.username}) | Linkitin` : "Not Found | Linkitin";
+  const keywords  = user
+    ? [
+        user.name, user.username, "linkitin",
+        badgeLabel, "link in bio", "profile",
+        ...socials.map(([k])=>PLAT[k].n),
+        ...interests.slice(0,6),
+      ].filter(Boolean).join(", ")
+    : "linkitin, profile";
+
+  // JSON-LD structured data
+  const jsonLd = user ? {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "name": `${user.name}'s Profile`,
+    "url": pageUrl,
+    "description": richDesc,
+    "mainEntity": {
+      "@type": "Person",
+      "name": user.name,
+      "url": pageUrl,
+      "image": avatarUrl,
+      "description": bio || undefined,
+      "jobTitle": badgeLabel || undefined,
+      "sameAs": socials.map(([k,v]) => PLAT[k].u(v)).filter(u => !u.startsWith("mailto:")),
+    }
+  } : null;
 
   if (!user) {
     return (
@@ -207,39 +406,59 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
     );
   }
 
-  const userAge   = calcAge(user.dob);
-  const socials   = Object.entries(user.socialProfiles||{}).filter(([,v])=>v?.trim()).filter(([k])=>PLAT[k]);
-  const interests = Object.values(user.interests||{}).flat().filter(v=>v&&typeof v==="string").slice(0,12);
-  const bio       = user.aboutme||user.bio||"";
-  const ptitle    = `${user.name} | Linkitin`;
-  const badge     = user.interests?.role;
-  const badgeIcon = badge && BADGE_ICONS[badge];
-  const badgeLabel= badge ? badge.replace(/_/g," ").replace(/\b\w/g,l=>l.toUpperCase()) : null;
-  const metaDesc  = badgeLabel || `${user.name}'s profile on Linkitin`;
-
   return (
     <>
       <Head>
+        {/* ── Primary SEO ── */}
         <title>{ptitle}</title>
-        <link rel="icon" href="/icon.png" type="image/png" />
-        <meta name="description"         content={metaDesc}/>
-        <meta name="viewport"            content="width=device-width,initial-scale=1"/>
-        <meta name="theme-color"         content="#080808"/>
+        <meta name="description"    content={richDesc}/>
+        <meta name="keywords"       content={keywords}/>
+        <meta name="author"         content={user.name}/>
+        <meta name="robots"         content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
+        <link rel="canonical"       href={pageUrl}/>
+
+        {/* ── Viewport / Theme ── */}
+        <meta name="viewport"       content="width=device-width,initial-scale=1"/>
+        <meta name="theme-color"    content="#080808"/>
+        <link rel="icon"            href="/icon.png" type="image/png"/>
+
+        {/* ── Open Graph ── */}
         <meta property="og:type"         content="profile"/>
         <meta property="og:title"        content={ptitle}/>
-        <meta property="og:description"  content={metaDesc}/>
+        <meta property="og:description"  content={richDesc}/>
         <meta property="og:url"          content={pageUrl}/>
-        <meta property="og:site_name"    content="linkitin"/>
+        <meta property="og:site_name"    content="Linkitin"/>
         <meta property="og:image"        content={avatarUrl}/>
         <meta property="og:image:width"  content="400"/>
         <meta property="og:image:height" content="400"/>
         <meta property="og:image:type"   content="image/jpeg"/>
+        <meta property="og:image:alt"    content={`${user.name}'s profile photo`}/>
+        {user.username && <meta property="profile:username" content={user.username}/>}
+
+        {/* ── Twitter Card ── */}
         <meta name="twitter:card"        content="summary_large_image"/>
         <meta name="twitter:title"       content={ptitle}/>
-        <meta name="twitter:description" content={metaDesc}/>
+        <meta name="twitter:description" content={richDesc}/>
         <meta name="twitter:image"       content={avatarUrl}/>
+        <meta name="twitter:image:alt"   content={`${user.name}'s profile photo`}/>
+        {user.socialProfiles?.twitter &&
+          <meta name="twitter:creator" content={`@${user.socialProfiles.twitter.replace("@","")}`}/>}
+
+        {/* ── JSON-LD Structured Data ── */}
+        {jsonLd && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          />
+        )}
+
+        {/* ── Preconnect / Fonts ── */}
+        <link rel="preconnect" href="https://fonts.googleapis.com"/>
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous"/>
+        {user.avatar && <link rel="preload" as="image" href={user.avatar}/>}
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
         <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+
         <style>{`
           *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
           html,body{min-height:100%;-webkit-font-smoothing:antialiased;}
@@ -334,7 +553,10 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         `}</style>
       </Head>
 
-      {/* Share FAB */}
+      {/* ── LOADING SPLASH ── */}
+      <LoadingScreen avatarUrl={avatarUrl} name={user.name} visible={loading} />
+
+      {/* ── Share FAB ── */}
       <button className="sfab" onClick={()=>{
         setShareOpen(true);
         track(user.username,"share");
@@ -345,7 +567,13 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
       {/* ── HERO ── */}
       {user.avatar ? (
         <div className="hero">
-          <img src={user.avatar} alt={user.name} className="hero-img"/>
+          <img
+            src={user.avatar}
+            alt={`${user.name}'s profile photo`}
+            className="hero-img"
+            // Use fetchpriority (LCP image)
+            fetchpriority="high"
+          />
           <div className="hero-fade"/>
         </div>
       ) : (
@@ -356,7 +584,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
 
       {/* ── Identity ── */}
       <div className="id-block s1">
-        <div className="pname">{user.name}</div>
+        <h1 className="pname">{user.name}</h1>
         <div className="badge-row">
           {userAge && <span className="age-pill"><i className="fas fa-cake-candles"/>{userAge}</span>}
           {badgeLabel && (
@@ -379,7 +607,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
               const m=PLAT[pl];
               return(
                 <a key={pl} href={m.u(val)} target="_blank" rel="noopener noreferrer"
-                  className="soc-btn" title={m.n} style={{color:m.c}}>
+                  className="soc-btn" title={m.n} aria-label={m.n} style={{color:m.c}}>
                   <i className={m.i}/>
                 </a>
               );
@@ -393,10 +621,10 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
               {user.links.map((lnk,i)=>(
                 <a key={lnk.id||i} href={lnk.url} target="_blank" rel="noopener noreferrer"
                   className="lbtn"
+                  aria-label={lnk.title}
                   onClick={()=>track(user.username,"link_click")}>
                   <div className="lbtn-ic-wrap">
                     <div className="lbtn-ic">
-                      {/* Handles Cloudinary URLs (https://), legacy base64 (data:), FA icons, and emoji */}
                       {(lnk.icon?.startsWith("https://") || lnk.icon?.startsWith("data:"))
                         ? <img src={lnk.icon} style={{width:"100%",height:"100%",objectFit:"cover",display:"block",borderRadius:"10px"}} alt=""/>
                         : lnk.icon?.startsWith("fas ") || lnk.icon?.startsWith("fab ")
@@ -436,6 +664,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
                     width="100%" height="380" frameBorder="0"
                     allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                     loading="lazy" style={{display:"block",width:"100%",maxWidth:"100%"}}
+                    title={`${user.favSong || "Favourite Song"} by ${user.favArtist || "Artist"}`}
                   />
                 </div>
               )}
@@ -473,7 +702,7 @@ export async function getServerSideProps({ params, req }) {
       return { props: { user: null, pageUrl, avatarUrl: `${base}/api/avatar/${params.username.toLowerCase()}` } };
     }
 
-    // ── Migrate any legacy base64 blobs to Cloudinary on first view ────────────
+    // ── Migrate any legacy base64 blobs to Cloudinary on first view ──────────
     let needsUpdate = false;
 
     let safeAvatar = raw.avatar || "";
@@ -483,7 +712,7 @@ export async function getServerSideProps({ params, req }) {
         needsUpdate = true;
       } catch (e) {
         console.error("[username SSR] avatar upload failed:", e.message);
-        safeAvatar = ""; // hide broken blob rather than crash
+        safeAvatar = "";
       }
     }
 
@@ -503,7 +732,6 @@ export async function getServerSideProps({ params, req }) {
       })
     );
 
-    // Persist the migrated CDN URLs back to MongoDB so we never do this again
     if (needsUpdate) {
       try {
         await db.collection("users").updateOne(
@@ -515,7 +743,6 @@ export async function getServerSideProps({ params, req }) {
       }
     }
 
-    // avatarUrl for OG meta — use Cloudinary URL directly if available
     const avatarUrl = safeAvatar || `${base}/api/avatar/${params.username.toLowerCase()}`;
 
     return {
