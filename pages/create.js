@@ -397,7 +397,8 @@ const Footer = () => (
       Samartha Gs
     </a>
   </strong>
-</div>
+    </div>
+  </div>
 );
 
 /* ─── Searchable tag section ─── */
