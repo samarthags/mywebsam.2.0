@@ -554,7 +554,8 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
       </Head>
 
       {/* ── LOADING SPLASH ── */}
-      <LoadingScreen avatarUrl={avatarUrl} name={user.name} visible={loading} />
+      <LoadingScreen 
+ visible={loading} />
 
       {/* ── Share FAB ── */}
       <button className="sfab" onClick={()=>{
