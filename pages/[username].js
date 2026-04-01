@@ -225,7 +225,7 @@ function ShareSheet({ url, name, onClose }) {
     {l:"Copy Link", ic:"fas fa-copy",          bg:"#1a1a2a",fg:"#a78bfa",fn:doCopy},
     {l:"WhatsApp",  ic:"fab fa-whatsapp",       bg:"#0d1f15",fg:"#25D366",fn:()=>window.open(`https://wa.me/?text=${enc("Visit "+name+"'s Profile: "+url)}`)},
     {l:"Instagram", ic:"fab fa-instagram",      bg:"#2a0d1a",fg:"#E4405F",fn:()=>window.open(`https://www.instagram.com/?url=${enc(url)}`)},
-    {l:"Snapchat",  ic:"fab fa-snapchat",       bg:"#2a2a00",fg:"#FFE700",fn:()=>window.open(`https://www.snapchat.com/scan?attachmentUrl=${enc(url)}&ref=linkitin`)},
+    {l:"Snapchat",  ic:"fab fa-snapchat",       bg:"#2a2a00",fg:"#FFE700",fn:()=>window.open(`https://www.snapchat.com/scan?attachmentUrl=${enc(url)}`)},
     {l:"Telegram",  ic:"fab fa-telegram",       bg:"#0d1820",fg:"#26A5E4",fn:()=>window.open(`https://t.me/share/url?url=${enc(url)}&text=${enc("Visit "+name+"'s Profile!")}`)},
     {l:"Twitter",   ic:"fab fa-x-twitter",      bg:"#111",   fg:"#fff",   fn:()=>window.open(`https://twitter.com/intent/tweet?text=${enc("Visit "+name+"'s Profile! "+url)}`)},
     {l:"Facebook",  ic:"fab fa-facebook-f",     bg:"#0d1220",fg:"#1877F2",fn:()=>window.open(`https://facebook.com/sharer/sharer.php?u=${enc(url)}`)},
@@ -268,7 +268,7 @@ function ShareSheet({ url, name, onClose }) {
 // ─── Profile page ─────────────────────────────────────────────────────────────
 export default function ProfilePage({ user, pageUrl, avatarUrl }) {
   const [shareOpen, setShareOpen] = useState(false);
-  // spOpen removed — Spotify embed now always visible
+  const [spOpen,    setSpOpen]    = useState(false);
   // Loading state: true until avatar + fonts are ready
   const [loading,   setLoading]   = useState(true);
 
@@ -283,27 +283,50 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
     const done = () => {
       if (resolved) return;
       resolved = true;
-      setTimeout(() => setLoading(false), 280);
+      // Small extra delay so the splash feels intentional, not a flicker
+      setTimeout(() => setLoading(false), 320);
     };
 
-    // Safety timeout — never block more than 3 seconds
-    const safety = setTimeout(done, 3000);
+    // Safety timeout — never block more than 4 seconds
+    const safety = setTimeout(done, 4000);
 
-    // Only wait for the avatar/hero image — nothing else blocks the splash
+    const pending = [];
+
+    // Wait for avatar image if it exists
     if (user.avatar) {
       const img = new Image();
       img.src = user.avatar;
       if (img.complete) {
-        done();
+        // already cached
       } else {
-        img.onload  = () => { clearTimeout(safety); done(); };
-        img.onerror = () => { clearTimeout(safety); done(); };
+        const p = new Promise(res => {
+          img.onload = res;
+          img.onerror = res; // resolve even on error
+        });
+        pending.push(p);
       }
-    } else {
-      // No avatar → dismiss immediately after a tiny intentional delay
-      const t = setTimeout(() => { clearTimeout(safety); done(); }, 400);
-      return () => { clearTimeout(t); clearTimeout(safety); };
     }
+
+    // Wait for link icon images
+    (user.links || []).forEach(lnk => {
+      if (lnk.icon?.startsWith("https://")) {
+        const img = new Image();
+        img.src = lnk.icon;
+        if (!img.complete) {
+          pending.push(new Promise(res => { img.onload = res; img.onerror = res; }));
+        }
+      }
+    });
+
+    // Wait for Font Awesome + Google Fonts to be ready
+    const fontReady = document.fonts
+      ? document.fonts.ready
+      : Promise.resolve();
+
+    Promise.all([fontReady, ...pending]).then(() => {
+      clearTimeout(safety);
+      done();
+    });
 
     return () => clearTimeout(safety);
   }, [user]);
@@ -620,8 +643,8 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         {user.favSongTrackId && (
           <div className="sp-block s5">
             <div className="sp-card">
-              {/* Always-visible header row — click just scrolls to embed */}
-              <div className="sp-trig open">
+              <div className={`sp-trig${spOpen?" open":""}`}
+                onClick={()=>{setSpOpen(v=>!v);if(!spOpen)track(user.username,"spotify_play");}}>
                 <div className="sp-art"><i className="fas fa-music"/></div>
                 <div className="sp-meta">
                   <div className="sp-eye"><span className="sp-dot"/>Favourite one</div>
@@ -629,28 +652,22 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
                   {user.favArtist&&<div className="sp-artist">{user.favArtist}</div>}
                 </div>
                 <div className="sp-right">
-                  <a
-                    href={`https://open.spotify.com/track/${user.favSongTrackId}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={()=>track(user.username,"spotify_play")}
-                    style={{display:"flex",alignItems:"center",justifyContent:"center",width:34,height:34,borderRadius:"50%",background:"rgba(29,185,84,.18)",border:"1px solid rgba(29,185,84,.35)",color:"#1DB954",fontSize:13,flexShrink:0,textDecoration:"none"}}
-                    aria-label="Open on Spotify">
-                    <i className="fab fa-spotify"/>
-                  </a>
+                  <div className="sp-play-btn">
+                    <i className={spOpen?"fas fa-chevron-up":"fas fa-play"} style={{marginLeft:spOpen?0:2}}/>
+                  </div>
                 </div>
               </div>
-              {/* Embed always rendered — preloads immediately, no click needed */}
-              <div className="sp-embed">
-                <iframe
-                  src={`https://open.spotify.com/embed/track/${user.favSongTrackId}?utm_source=generator&theme=0`}
-                  width="100%" height="152" frameBorder="0"
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                  loading="eager"
-                  style={{display:"block",width:"100%",maxWidth:"100%",borderRadius:"0 0 8px 8px"}}
-                  title={`${user.favSong || "Favourite Song"} by ${user.favArtist || "Artist"}`}
-                />
-              </div>
+              {spOpen&&(
+                <div className="sp-embed">
+                  <iframe
+                    src={`https://open.spotify.com/embed/track/${user.favSongTrackId}?utm_source=generator&theme=0&autoplay=1`}
+                    width="100%" height="380" frameBorder="0"
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    loading="lazy" style={{display:"block",width:"100%",maxWidth:"100%"}}
+                    title={`${user.favSong || "Favourite Song"} by ${user.favArtist || "Artist"}`}
+                  />
+                </div>
+              )}
             </div>
           </div>
         )}
