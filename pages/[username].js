@@ -256,23 +256,28 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
     setRoastLoading(true);
     setRoastOpen(true);
     setRoastText("");
-    const role    = user?.interests?.role?.replace(/_/g," ") || "";
-    const name    = user?.name || "this person";
-    const bio     = user?.aboutme || user?.bio || "";
-    const socials = Object.keys(user?.socialProfiles||{}).filter(k=>(user.socialProfiles[k]||"").trim()).join(", ") || "none";
-    const links   = (user?.links||[]).length;
-    const tags    = Object.values(user?.interests||{}).flat().filter(v=>v&&typeof v==="string").length;
+    const role      = user?.interests?.role?.replace(/_/g," ") || "";
+    const name      = user?.name || "this person";
+    const bio       = user?.aboutme || user?.bio || "";
+    const socials   = Object.keys(user?.socialProfiles||{}).filter(k=>(user.socialProfiles[k]||"").trim()).join(", ") || "none";
+    const links     = (user?.links||[]).length;
+    const tags      = Object.values(user?.interests||{}).flat().filter(v=>v&&typeof v==="string").length;
     const hasAvatar = !!user?.avatar;
     try {
-      const res = await fetch("/api/roast-profile", {
+      const res  = await fetch("/api/roast-profile", {
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body: JSON.stringify({ name, role, bio, socials, links, tags, hasAvatar }),
       });
       const data = await res.json();
-      setRoastText(data.roast || "Couldn't roast right now. Your profile is too mid to even roast.");
-    } catch(_) {
-      setRoastText("Even the AI gave up on roasting you. That says a lot.");
+      if (data?.roast) {
+        setRoastText(data.roast);
+      } else {
+        setRoastText("The AI took one look at this profile and had nothing to say. That's the real roast.");
+      }
+    } catch(err) {
+      console.error("roast error:", err);
+      setRoastText("Something went wrong. Even roasting you failed. Impressive.");
     } finally {
       setRoastLoading(false);
     }
@@ -863,11 +868,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
             ) : (
               <p className="roast-text">"{roastText}"</p>
             )}
-            <button className="roast-btn" style={{background:"rgba(255,60,0,.12)",color:"rgba(255,140,60,.9)",border:"1px solid rgba(255,100,0,.3)"}}
-              onClick={roastProfile} disabled={roastLoading}>
-              <i className="fas fa-rotate-right"/> Roast Again
-            </button>
-            <button className="roast-btn" style={{background:"#1a1a1a",color:"rgba(255,255,255,.5)",border:"1px solid #2a2a2a",marginTop:8}}
+            <button className="roast-btn" style={{background:"#1a1a1a",color:"rgba(255,255,255,.45)",border:"1px solid #222",marginTop:18}}
               onClick={()=>setRoastOpen(false)}>
               Close
             </button>
