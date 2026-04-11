@@ -217,7 +217,7 @@ function ShareSheet({ url, name, onClose }) {
 // ─── Profile page ─────────────────────────────────────────────────────────────
 export default function ProfilePage({ user, pageUrl, avatarUrl }) {
   const [shareOpen,    setShareOpen]    = useState(false);
-  const [spOpen,       setSpOpen]       = useState(!!user?.favSongTrackId);
+  const [spOpen,       setSpOpen]       = useState(false);
   const [loading,      setLoading]      = useState(true);
   // ── NEW: toggle age ↔ birthday on click ──
   const [showBirthday, setShowBirthday] = useState(false);
@@ -568,22 +568,13 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .sp-art{width:50px;height:50px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:24px;color:rgba(255,255,255,.7);flex-shrink:0;}
           .sp-meta{flex:1;min-width:0;}
           .sp-eye{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:4px;display:flex;align-items:center;gap:5px;}
+          .sp-dot{display:none;}
           .sp-title{font-size:14px;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3;}
           .sp-artist{font-size:11.5px;color:rgba(255,255,255,.3);margin-top:2px;}
           .sp-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
           .sp-play-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:12px;color:rgba(255,255,255,.8);transition:transform .15s,background .13s;flex-shrink:0;}
           .sp-card:hover .sp-play-btn{transform:scale(1.08);background:rgba(255,255,255,.2);}
           .sp-embed{overflow:hidden;background:#111;padding:10px 10px 0;}
-          /* music bars */
-          @keyframes bar1{0%,100%{height:6px;}50%{height:18px;}}
-          @keyframes bar2{0%,100%{height:14px;}50%{height:5px;}}
-          @keyframes bar3{0%,100%{height:9px;}50%{height:20px;}}
-          .sp-bars{display:flex;align-items:flex-end;gap:2px;height:20px;}
-          .sp-bars span{width:3px;border-radius:2px;background:#1DB954;animation-duration:0.9s;animation-iteration-count:infinite;animation-timing-function:ease-in-out;}
-          .sp-bars span:nth-child(1){animation-name:bar1;}
-          .sp-bars span:nth-child(2){animation-name:bar2;animation-delay:.18s;}
-          .sp-bars span:nth-child(3){animation-name:bar3;animation-delay:.36s;}
-          .sp-dot{display:none;}
 
           .foot{text-align:center;padding:8px 0 4px;}
           .foot-cta{font-size:12px;color:#2a2a2a;font-weight:600;letter-spacing:.02em;}
@@ -709,26 +700,31 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         {user.favSongTrackId && (
           <div className="sp-block s5">
             <div className="sp-card">
-              <div className="sp-trig open">
+              <div className={`sp-trig${spOpen?" open":""}`}
+                onClick={()=>{setSpOpen(v=>!v);if(!spOpen)track(user.username,"spotify_play");}}>
                 <div className="sp-art"><i className="fas fa-music"/></div>
                 <div className="sp-meta">
-                  <div className="sp-eye">
-                    <div className="sp-bars"><span/><span/><span/></div>
-                    Now Playing
-                  </div>
+                  <div className="sp-eye"><span className="sp-dot"/>Favourite one</div>
                   <div className="sp-title">{user.favSong||"My Favourite Song"}</div>
                   {user.favArtist&&<div className="sp-artist">{user.favArtist}</div>}
                 </div>
+                <div className="sp-right">
+                  <div className="sp-play-btn">
+                    <i className={spOpen?"fas fa-chevron-up":"fas fa-play"} style={{marginLeft:spOpen?0:2}}/>
+                  </div>
+                </div>
               </div>
-              <div className="sp-embed">
-                <iframe
-                  src={`https://open.spotify.com/embed/track/${user.favSongTrackId}?utm_source=generator&theme=0&autoplay=1`}
-                  width="100%" height="152" frameBorder="0"
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                  loading="lazy" style={{display:"block",width:"100%",maxWidth:"100%",borderRadius:"0 0 18px 18px"}}
-                  title={`${user.favSong || "Favourite Song"} by ${user.favArtist || "Artist"}`}
-                />
-              </div>
+              {spOpen&&(
+                <div className="sp-embed">
+                  <iframe
+                    src={`https://open.spotify.com/embed/track/${user.favSongTrackId}?utm_source=generator&theme=0&autoplay=1`}
+                    width="100%" height="380" frameBorder="0"
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    loading="lazy" style={{display:"block",width:"100%",maxWidth:"100%"}}
+                    title={`${user.favSong || "Favourite Song"} by ${user.favArtist || "Artist"}`}
+                  />
+                </div>
+              )}
             </div>
           </div>
         )}
