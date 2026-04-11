@@ -251,10 +251,30 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
   };
   const theme = (user && THEMES[user?.interests?.role]) || { accent:"#fff", glow:"rgba(255,255,255,.10)", hero:"#0d0d0d", badge:"rgba(255,220,90,.88)" };
 
-  /* ── Roast my profile ── */
+  /* ── Roast my profile (cached in localStorage per user) ── */
+  const ROAST_TTL = 24 * 60 * 60 * 1000; // 24 hours
+  const roastCacheKey = user?.username ? `roast_cache_${user.username}` : null;
+
   const roastProfile = async () => {
-    setRoastLoading(true);
     setRoastOpen(true);
+
+    // ── Check localStorage cache first ──
+    if (roastCacheKey) {
+      try {
+        const cached = localStorage.getItem(roastCacheKey);
+        if (cached) {
+          const { text, ts } = JSON.parse(cached);
+          if (text && Date.now() - ts < ROAST_TTL) {
+            setRoastText(text);
+            setRoastLoading(false);
+            return; // serve from cache, skip API
+          }
+        }
+      } catch (_) {}
+    }
+
+    // ── No valid cache — fetch from API ──
+    setRoastLoading(true);
     setRoastText("");
     const role      = user?.interests?.role?.replace(/_/g," ") || "";
     const name      = user?.name || "this person";
@@ -270,10 +290,11 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         body: JSON.stringify({ name, role, bio, socials, links, tags, hasAvatar }),
       });
       const data = await res.json();
-      if (data?.roast) {
-        setRoastText(data.roast);
-      } else {
-        setRoastText("The AI took one look at this profile and had nothing to say. That's the real roast.");
+      const roast = data?.roast || "The AI took one look at this profile and had nothing to say. That's the real roast.";
+      setRoastText(roast);
+      // ── Save to localStorage ──
+      if (roastCacheKey) {
+        try { localStorage.setItem(roastCacheKey, JSON.stringify({ text: roast, ts: Date.now() })); } catch (_) {}
       }
     } catch(err) {
       console.error("roast error:", err);
@@ -848,13 +869,26 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
       {roastOpen && (
         <div className="roast-overlay" onClick={()=>setRoastOpen(false)}>
           <div className="roast-sheet" onClick={e=>e.stopPropagation()}>
+            {/* drag handle */}
             <div style={{display:"flex",justifyContent:"center",marginBottom:6}}>
               <div style={{width:40,height:4,borderRadius:2,background:"#2a2a2a"}}/>
             </div>
-            <div className="roast-fire"><i className="fas fa-fire-flame-curved" style={{color:"#ff6820"}}/></div>
-            <div style={{fontWeight:800,fontSize:16,textAlign:"center",marginBottom:14,color:"#fff"}}>
-              <i className="fas fa-fire" style={{color:"#ff6820",marginRight:7,fontSize:14}}/>{user.name}&apos;s Roast
+            {/* header: title centred + share icon on right */}
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center",position:"relative",marginBottom:4}}>
+              <div style={{fontWeight:800,fontSize:16,color:"#fff",textAlign:"center"}}>
+                <i className="fas fa-fire" style={{color:"#ff6820",marginRight:7,fontSize:14}}/>{user.name}&apos;s Roast
+              </div>
+              <button
+                onClick={()=>{ setRoastOpen(false); setShareOpen(true); track(user.username,"share"); }}
+                title="Share profile"
+                style={{position:"absolute",right:0,top:"50%",transform:"translateY(-50%)",width:34,height:34,borderRadius:"50%",background:"#1a1a1a",border:"1px solid #2a2a2a",color:"rgba(255,255,255,.5)",fontSize:14,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",outline:"none",WebkitTapHighlightColor:"transparent",transition:"background .13s,color .13s"}}
+                onMouseEnter={e=>{e.currentTarget.style.background="#252525";e.currentTarget.style.color="#fff";}}
+                onMouseLeave={e=>{e.currentTarget.style.background="#1a1a1a";e.currentTarget.style.color="rgba(255,255,255,.5)";}}
+              >
+                <i className="fas fa-share-nodes"/>
+              </button>
             </div>
+            <div className="roast-fire"><i className="fas fa-fire-flame-curved" style={{color:"#ff6820"}}/></div>
             {roastLoading ? (
               <div style={{textAlign:"center",padding:"20px 0"}}>
                 <div style={{display:"flex",justifyContent:"center",gap:7,marginBottom:12}}>
@@ -865,30 +899,14 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
                 <div style={{fontSize:13,color:"rgba(255,255,255,.35)"}}>Cooking up the roast...</div>
               </div>
             ) : (
-              <p className="roast-text">"{roastText}"</p>
+              <p className="roast-text">&ldquo;{roastText}&rdquo;</p>
             )}
-            {!roastLoading && roastText && (
-              <button
-                className="roast-btn"
-                style={{background:"linear-gradient(135deg,#ff6820,#ff3d00)",color:"#fff",border:"none",marginTop:18,boxShadow:"0 4px 18px rgba(255,80,10,.35)"}}
-                onClick={()=>{
-                  const shareText = `🔥 I got roasted on Linkitin!\n\n"${roastText}"\n\nGet roasted too 👇\n${pageUrl}`;
-                  if (navigator.share) {
-                    navigator.share({ title: "My Linkitin Roast 🔥", text: shareText, url: pageUrl }).catch(()=>{});
-                  } else {
-                    const enc = encodeURIComponent;
-                    window.open(`https://twitter.com/intent/tweet?text=${enc(shareText)}`);
-                  }
-                }}>
-                <i className="fas fa-share-nodes" style={{fontSize:14}}/> Share My Roast
-              </button>
-            )}
-            <button className="roast-btn" style={{background:"#1a1a1a",color:"rgba(255,255,255,.35)",border:"1px solid #222",marginTop:10}}
+            <button className="roast-btn" style={{background:"#1a1a1a",color:"rgba(255,255,255,.35)",border:"1px solid #222",marginTop:18}}
               onClick={()=>setRoastOpen(false)}>
               Close
             </button>
-            <p style={{textAlign:"center",fontSize:10.5,color:"rgba(255,255,255,.2)",marginTop:14,fontStyle:"italic",lineHeight:1.5}}>
-              😄 This roast is purely for fun — don&apos;t take it seriously!
+            <p style={{textAlign:"center",fontSize:10.5,color:"rgba(255,255,255,.18)",marginTop:12,fontStyle:"italic",lineHeight:1.5}}>
+              😄 Just for fun — don&apos;t take it seriously!
             </p>
           </div>
         </div>
