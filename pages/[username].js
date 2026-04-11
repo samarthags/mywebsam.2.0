@@ -219,12 +219,64 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
   const [shareOpen,    setShareOpen]    = useState(false);
   const [spOpen,       setSpOpen]       = useState(false);
   const [loading,      setLoading]      = useState(true);
-  // ── NEW: toggle age ↔ birthday on click ──
   const [showBirthday, setShowBirthday] = useState(false);
+  const [roastText,    setRoastText]    = useState("");
+  const [roastLoading, setRoastLoading] = useState(false);
+  const [roastOpen,    setRoastOpen]    = useState(false);
 
   useEffect(()=>{
     if (user?.username) track(user.username, "view");
   },[]);
+
+  /* ── Dynamic theme based on role ── */
+  const THEMES = {
+    coder:       { accent:"#00ff9d", glow:"rgba(0,255,157,.18)", hero:"linear-gradient(135deg,#000d08 0%,#001a10 100%)", badge:"#00ff9d" },
+    software_dev:{ accent:"#00ff9d", glow:"rgba(0,255,157,.18)", hero:"linear-gradient(135deg,#000d08 0%,#001a10 100%)", badge:"#00ff9d" },
+    web_dev:     { accent:"#38bdf8", glow:"rgba(56,189,248,.18)", hero:"linear-gradient(135deg,#00080f 0%,#001220 100%)", badge:"#38bdf8" },
+    app_dev:     { accent:"#818cf8", glow:"rgba(129,140,248,.18)", hero:"linear-gradient(135deg,#06040f 0%,#0d0820 100%)", badge:"#818cf8" },
+    data_sci:    { accent:"#fb923c", glow:"rgba(251,146,60,.18)", hero:"linear-gradient(135deg,#0f0700 0%,#1a0d00 100%)", badge:"#fb923c" },
+    ai_eng:      { accent:"#a78bfa", glow:"rgba(167,139,250,.18)", hero:"linear-gradient(135deg,#07050f 0%,#110d20 100%)", badge:"#a78bfa" },
+    designer:    { accent:"#f472b6", glow:"rgba(244,114,182,.22)", hero:"linear-gradient(135deg,#0f0009 0%,#1a0012 100%)", badge:"#f472b6" },
+    ui_ux:       { accent:"#f472b6", glow:"rgba(244,114,182,.22)", hero:"linear-gradient(135deg,#0f0009 0%,#1a0012 100%)", badge:"#f472b6" },
+    artist:      { accent:"#f87171", glow:"rgba(248,113,113,.22)", hero:"linear-gradient(135deg,#0f0505 0%,#200808 100%)", badge:"#f87171" },
+    creator:     { accent:"#fbbf24", glow:"rgba(251,191,36,.18)", hero:"linear-gradient(135deg,#0f0c00 0%,#1a1400 100%)", badge:"#fbbf24" },
+    musician:    { accent:"#c084fc", glow:"rgba(192,132,252,.18)", hero:"linear-gradient(135deg,#08040f 0%,#130820 100%)", badge:"#c084fc" },
+    gamer:       { accent:"#4ade80", glow:"rgba(74,222,128,.18)", hero:"linear-gradient(135deg,#010f04 0%,#021a08 100%)", badge:"#4ade80" },
+    trader:      { accent:"#34d399", glow:"rgba(52,211,153,.18)", hero:"linear-gradient(135deg,#00100a 0%,#001a10 100%)", badge:"#34d399" },
+    crypto:      { accent:"#f59e0b", glow:"rgba(245,158,11,.18)", hero:"linear-gradient(135deg,#100900 0%,#1a1000 100%)", badge:"#f59e0b" },
+    entrepreneur:{ accent:"#f97316", glow:"rgba(249,115,22,.18)", hero:"linear-gradient(135deg,#100500 0%,#1a0a00 100%)", badge:"#f97316" },
+    athlete:     { accent:"#22d3ee", glow:"rgba(34,211,238,.18)", hero:"linear-gradient(135deg,#000f12 0%,#001820 100%)", badge:"#22d3ee" },
+    doctor:      { accent:"#6ee7b7", glow:"rgba(110,231,183,.15)", hero:"linear-gradient(135deg,#010f09 0%,#021a10 100%)", badge:"#6ee7b7" },
+    teacher:     { accent:"#fde68a", glow:"rgba(253,230,138,.15)", hero:"linear-gradient(135deg,#0f0d00 0%,#1a1600 100%)", badge:"#fde68a" },
+  };
+  const theme = (user && THEMES[user?.interests?.role]) || { accent:"#fff", glow:"rgba(255,255,255,.10)", hero:"#0d0d0d", badge:"rgba(255,220,90,.88)" };
+
+  /* ── Roast my profile ── */
+  const roastProfile = async () => {
+    setRoastLoading(true);
+    setRoastOpen(true);
+    setRoastText("");
+    const role    = user?.interests?.role?.replace(/_/g," ") || "";
+    const name    = user?.name || "this person";
+    const bio     = user?.aboutme || user?.bio || "";
+    const socials = Object.keys(user?.socialProfiles||{}).filter(k=>(user.socialProfiles[k]||"").trim()).join(", ") || "none";
+    const links   = (user?.links||[]).length;
+    const tags    = Object.values(user?.interests||{}).flat().filter(v=>v&&typeof v==="string").length;
+    const hasAvatar = !!user?.avatar;
+    try {
+      const res = await fetch("/api/roast-profile", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ name, role, bio, socials, links, tags, hasAvatar }),
+      });
+      const data = await res.json();
+      setRoastText(data.roast || "Couldn't roast right now. Your profile is too mid to even roast.");
+    } catch(_) {
+      setRoastText("Even the AI gave up on roasting you. That says a lot.");
+    } finally {
+      setRoastLoading(false);
+    }
+  };
 
   useEffect(()=>{
     if (!user) { setLoading(false); return; }
@@ -381,6 +433,12 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
     );
   }
 
+  const themeStyle = {
+    "--theme-accent": theme.accent,
+    "--theme-glow":   theme.glow,
+    "--theme-hero":   theme.hero,
+  };
+
   return (
     <>
       <Head>
@@ -396,6 +454,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         {/* ── Viewport / Theme / PWA hints ── */}
         <meta name="viewport"           content="width=device-width,initial-scale=1,viewport-fit=cover"/>
         <meta name="theme-color"        content="#080808"/>
+        <style>{`body{--theme-accent:${theme.accent};--theme-glow:${theme.glow};}`}</style>
         <meta name="mobile-web-app-capable" content="yes"/>
         <meta name="apple-mobile-web-app-capable" content="yes"/>
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
@@ -457,6 +516,24 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           *{-webkit-tap-highlight-color:transparent;}
           a,button{outline:none;text-decoration:none;color:inherit;}
           body{background:#0d0d0d;color:#fff;font-family:'Sora',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+          /* ── Dynamic theme glow on body ── */
+          .themed-bg{background:var(--theme-hero,#0d0d0d);min-height:100vh;}
+          .soc-btn:hover{box-shadow:0 8px 20px var(--theme-glow,rgba(255,255,255,.12))!important;}
+          .lbtn:hover{border-color:var(--theme-accent,#2e2e2e)!important;box-shadow:0 4px 16px var(--theme-glow,rgba(0,0,0,.45))!important;}
+          .foot-cta:hover{color:var(--theme-accent,#555)!important;}
+
+          /* ── Roast modal ── */
+          @keyframes roastIn{from{opacity:0;transform:translateY(30px) scale(.95);}to{opacity:1;transform:translateY(0) scale(1);}}
+          .roast-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:999;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px);}
+          .roast-sheet{background:#0a0a0a;border:1px solid #1e1e1e;border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:24px 20px 48px;animation:roastIn .35s cubic-bezier(.34,1.4,.64,1) both;}
+          .roast-fire{font-size:42px;text-align:center;margin-bottom:10px;animation:roastFlicker 1.2s ease-in-out infinite alternate;}
+          @keyframes roastFlicker{from{transform:scale(1) rotate(-3deg);}to{transform:scale(1.08) rotate(3deg);}}
+          .roast-text{font-size:15px;line-height:1.75;color:rgba(255,255,255,.82);text-align:center;font-weight:500;min-height:60px;}
+          .roast-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:14px;border:none;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;margin-top:18px;}
+          .roast-trigger{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:8px;padding:11px 22px;border-radius:999px;border:1px solid rgba(255,100,0,.35);background:rgba(255,60,0,.08);color:rgba(255,140,60,.9);font-family:'Sora',sans-serif;font-size:13px;font-weight:700;cursor:pointer;backdrop-filter:blur(10px);transition:all .2s;white-space:nowrap;}
+          .roast-trigger:hover{background:rgba(255,60,0,.16);border-color:rgba(255,100,0,.6);transform:translateX(-50%) translateY(-2px);}
+          .roast-trigger:active{transform:translateX(-50%) scale(.96);}
 
           @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
           @keyframes slideUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
@@ -601,12 +678,20 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
       {/* ── LOADING SPLASH ── */}
       <LoadingScreen visible={loading} />
 
+      {/* ── Theme background overlay ── */}
+      <div style={{position:"fixed",inset:0,background:theme.hero,zIndex:-1,opacity:.6,pointerEvents:"none"}}/>
+
       {/* ── Share FAB ── */}
       <button className="sfab" onClick={()=>{
         setShareOpen(true);
         track(user.username,"share");
       }} aria-label="Share">
         <i className="fas fa-share-nodes"/>
+      </button>
+
+      {/* ── Roast trigger button ── */}
+      <button className="roast-trigger" onClick={roastProfile}>
+        🔥 Roast My Profile
       </button>
 
       {/* ── HERO ── */}
@@ -656,7 +741,9 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
       {/* ── CONTENT ── */}
       <div className="content">
 
-        {bio && <p className="bio-text s2">{bio}</p>}
+        {bio && <p className="bio-text s2" style={{color:`rgba(255,255,255,.55)`}}>{bio}</p>}
+        {/* theme accent underline */}
+        <div style={{width:40,height:2,borderRadius:2,background:theme.accent,margin:"-10px auto 20px",opacity:.6}}/>
 
         {socials.length > 0 && (
           <div className="soc-row s3">
@@ -736,6 +823,41 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
       </div>
 
       {shareOpen&&<ShareSheet url={pageUrl} name={user.name} onClose={()=>setShareOpen(false)}/>}
+
+      {/* ── Roast Modal ── */}
+      {roastOpen && (
+        <div className="roast-overlay" onClick={()=>setRoastOpen(false)}>
+          <div className="roast-sheet" onClick={e=>e.stopPropagation()}>
+            <div style={{display:"flex",justifyContent:"center",marginBottom:6}}>
+              <div style={{width:40,height:4,borderRadius:2,background:"#2a2a2a"}}/>
+            </div>
+            <div className="roast-fire">🔥</div>
+            <div style={{fontWeight:800,fontSize:16,textAlign:"center",marginBottom:14,color:"#fff"}}>
+              Profile Roast
+            </div>
+            {roastLoading ? (
+              <div style={{textAlign:"center",padding:"20px 0"}}>
+                <div style={{display:"flex",justifyContent:"center",gap:7,marginBottom:12}}>
+                  {[0,.18,.36].map((d,i)=>(
+                    <div key={i} style={{width:8,height:8,borderRadius:"50%",background:"rgba(255,100,0,.7)",animation:`lsDots 1.3s ${d}s ease-in-out infinite`}}/>
+                  ))}
+                </div>
+                <div style={{fontSize:13,color:"rgba(255,255,255,.35)"}}>Cooking up the roast...</div>
+              </div>
+            ) : (
+              <p className="roast-text">"{roastText}"</p>
+            )}
+            <button className="roast-btn" style={{background:"rgba(255,60,0,.12)",color:"rgba(255,140,60,.9)",border:"1px solid rgba(255,100,0,.3)"}}
+              onClick={roastProfile} disabled={roastLoading}>
+              🔄 Roast Again
+            </button>
+            <button className="roast-btn" style={{background:"#1a1a1a",color:"rgba(255,255,255,.5)",border:"1px solid #2a2a2a",marginTop:8}}
+              onClick={()=>setRoastOpen(false)}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
