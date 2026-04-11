@@ -797,7 +797,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           </div>
           <div className="roast-card-text">
             <div className="roast-card-title">Roast {user.name};</div>
-            <div className="roast-card-sub"><i className= style={{marginRight:4,fontSize:9}}/>Tap to get roasted by expo</div>
+            <div className="roast-card-sub"><i className="fas fa-robot" style={{marginRight:4,fontSize:9}}/>Tap to get roasted by AI</div>
           </div>
 
         </div>
