@@ -217,7 +217,7 @@ function ShareSheet({ url, name, onClose }) {
 // ─── Profile page ─────────────────────────────────────────────────────────────
 export default function ProfilePage({ user, pageUrl, avatarUrl }) {
   const [shareOpen,    setShareOpen]    = useState(false);
-  const [spOpen,       setSpOpen]       = useState(false);
+  const [spOpen,       setSpOpen]       = useState(!!user?.favSongTrackId);
   const [loading,      setLoading]      = useState(true);
   // ── NEW: toggle age ↔ birthday on click ──
   const [showBirthday, setShowBirthday] = useState(false);
@@ -499,21 +499,44 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .age-pill i{font-size:9px;opacity:.65;transition:opacity .15s;}
           .age-pill:hover i{opacity:1;}
 
-          /* ── Advanced badge pill ── */
-          .badge-pill{
-            display:inline-flex;align-items:center;gap:5px;
-            background:rgba(255,255,255,.05);
-            border:1px solid rgba(255,255,255,.09);
-            border-radius:999px;
-            padding:4px 12px;
-            font-size:12px;font-weight:600;
-            color:rgba(255,255,255,.42);
-            letter-spacing:.01em;
-            transition:background .15s,border-color .15s,color .15s;
+          /* ── Advanced badge pill — gold glow ── */
+          @keyframes goldBreath{
+            0%,100%{box-shadow:0 0 6px 0 rgba(212,175,55,.18),0 0 0 0 rgba(212,175,55,.0);}
+            50%{box-shadow:0 0 14px 2px rgba(212,175,55,.32),0 0 28px 4px rgba(212,175,55,.10);}
           }
+          @keyframes goldSweep{
+            0%{left:-70%;}
+            100%{left:130%;}
+          }
+          .badge-pill{
+            display:inline-flex;align-items:center;gap:6px;
+            position:relative;overflow:hidden;
+            background:linear-gradient(110deg,rgba(212,175,55,.10) 0%,rgba(255,215,80,.16) 50%,rgba(180,140,30,.10) 100%);
+            border:1px solid rgba(212,175,55,.30);
+            border-radius:999px;
+            padding:4px 13px 4px 10px;
+            font-size:12px;font-weight:700;
+            color:rgba(255,220,90,.88);
+            letter-spacing:.02em;
+            cursor:default;
+            animation:goldBreath 3s ease-in-out infinite;
+            transition:transform .15s cubic-bezier(.34,1.56,.64,1),filter .15s;
+            -webkit-tap-highlight-color:transparent;
+          }
+          .badge-pill::before{
+            content:"";
+            position:absolute;top:0;left:-70%;
+            width:32%;height:100%;
+            background:linear-gradient(90deg,transparent,rgba(255,230,100,.18),transparent);
+            animation:goldSweep 3.4s ease-in-out infinite;
+            pointer-events:none;
+          }
+          .badge-pill:active{transform:scale(.92);}
+          @media(hover:hover){.badge-pill:hover{transform:scale(1.06);filter:brightness(1.12);}}
           .badge-pill i{
             font-size:9px;
-            opacity:.65;
+            opacity:.80;
+            color:rgba(255,215,80,.85);
           }
 
           .content{max-width:520px;margin:0 auto;padding:18px 16px 72px;}
@@ -545,13 +568,22 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .sp-art{width:50px;height:50px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:24px;color:rgba(255,255,255,.7);flex-shrink:0;}
           .sp-meta{flex:1;min-width:0;}
           .sp-eye{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:4px;display:flex;align-items:center;gap:5px;}
-          .sp-dot{display:none;}
           .sp-title{font-size:14px;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3;}
           .sp-artist{font-size:11.5px;color:rgba(255,255,255,.3);margin-top:2px;}
           .sp-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
           .sp-play-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:12px;color:rgba(255,255,255,.8);transition:transform .15s,background .13s;flex-shrink:0;}
           .sp-card:hover .sp-play-btn{transform:scale(1.08);background:rgba(255,255,255,.2);}
           .sp-embed{overflow:hidden;background:#111;padding:10px 10px 0;}
+          /* music bars */
+          @keyframes bar1{0%,100%{height:6px;}50%{height:18px;}}
+          @keyframes bar2{0%,100%{height:14px;}50%{height:5px;}}
+          @keyframes bar3{0%,100%{height:9px;}50%{height:20px;}}
+          .sp-bars{display:flex;align-items:flex-end;gap:2px;height:20px;}
+          .sp-bars span{width:3px;border-radius:2px;background:#1DB954;animation-duration:0.9s;animation-iteration-count:infinite;animation-timing-function:ease-in-out;}
+          .sp-bars span:nth-child(1){animation-name:bar1;}
+          .sp-bars span:nth-child(2){animation-name:bar2;animation-delay:.18s;}
+          .sp-bars span:nth-child(3){animation-name:bar3;animation-delay:.36s;}
+          .sp-dot{display:none;}
 
           .foot{text-align:center;padding:8px 0 4px;}
           .foot-cta{font-size:12px;color:#2a2a2a;font-weight:600;letter-spacing:.02em;}
@@ -677,31 +709,26 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         {user.favSongTrackId && (
           <div className="sp-block s5">
             <div className="sp-card">
-              <div className={`sp-trig${spOpen?" open":""}`}
-                onClick={()=>{setSpOpen(v=>!v);if(!spOpen)track(user.username,"spotify_play");}}>
+              <div className="sp-trig open">
                 <div className="sp-art"><i className="fas fa-music"/></div>
                 <div className="sp-meta">
-                  <div className="sp-eye"><span className="sp-dot"/>Favourite one</div>
+                  <div className="sp-eye">
+                    <div className="sp-bars"><span/><span/><span/></div>
+                    Now Playing
+                  </div>
                   <div className="sp-title">{user.favSong||"My Favourite Song"}</div>
                   {user.favArtist&&<div className="sp-artist">{user.favArtist}</div>}
                 </div>
-                <div className="sp-right">
-                  <div className="sp-play-btn">
-                    <i className={spOpen?"fas fa-chevron-up":"fas fa-play"} style={{marginLeft:spOpen?0:2}}/>
-                  </div>
-                </div>
               </div>
-              {spOpen&&(
-                <div className="sp-embed">
-                  <iframe
-                    src={`https://open.spotify.com/embed/track/${user.favSongTrackId}?utm_source=generator&theme=0&autoplay=1`}
-                    width="100%" height="380" frameBorder="0"
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                    loading="lazy" style={{display:"block",width:"100%",maxWidth:"100%"}}
-                    title={`${user.favSong || "Favourite Song"} by ${user.favArtist || "Artist"}`}
-                  />
-                </div>
-              )}
+              <div className="sp-embed">
+                <iframe
+                  src={`https://open.spotify.com/embed/track/${user.favSongTrackId}?utm_source=generator&theme=0&autoplay=1`}
+                  width="100%" height="152" frameBorder="0"
+                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                  loading="lazy" style={{display:"block",width:"100%",maxWidth:"100%",borderRadius:"0 0 18px 18px"}}
+                  title={`${user.favSong || "Favourite Song"} by ${user.favArtist || "Artist"}`}
+                />
+              </div>
             </div>
           </div>
         )}
