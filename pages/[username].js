@@ -531,9 +531,19 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           @keyframes roastFlicker{from{transform:scale(1) rotate(-3deg);}to{transform:scale(1.08) rotate(3deg);}}
           .roast-text{font-size:15px;line-height:1.75;color:rgba(255,255,255,.82);text-align:center;font-weight:500;min-height:60px;}
           .roast-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:14px;border:none;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;margin-top:18px;}
-          .roast-trigger{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:8px;padding:11px 22px;border-radius:999px;border:1px solid rgba(255,100,0,.35);background:rgba(255,60,0,.08);color:rgba(255,140,60,.9);font-family:'Sora',sans-serif;font-size:13px;font-weight:700;cursor:pointer;backdrop-filter:blur(10px);transition:all .2s;white-space:nowrap;}
-          .roast-trigger:hover{background:rgba(255,60,0,.16);border-color:rgba(255,100,0,.6);transform:translateX(-50%) translateY(-2px);}
-          .roast-trigger:active{transform:translateX(-50%) scale(.96);}
+          /* ── Inline roast card ── */
+          @keyframes fireFloat{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-3px) scale(1.08);}}
+          @keyframes roastPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,80,0,.0),0 4px 24px rgba(255,80,0,.12);}50%{box-shadow:0 0 0 6px rgba(255,80,0,.06),0 4px 32px rgba(255,80,0,.22);}}
+          .roast-card{position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;width:100%;padding:14px 18px;background:linear-gradient(115deg,rgba(255,50,0,.07) 0%,rgba(255,120,0,.10) 50%,rgba(255,50,0,.07) 100%);border:1px solid rgba(255,90,0,.22);border-radius:18px;cursor:pointer;transition:all .2s cubic-bezier(.34,1.4,.64,1);margin-bottom:20px;animation:roastPulse 3s ease-in-out infinite;}
+          .roast-card::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,120,0,.07) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 3s linear infinite;pointer-events:none;}
+          .roast-card:hover{background:linear-gradient(115deg,rgba(255,50,0,.13) 0%,rgba(255,120,0,.18) 50%,rgba(255,50,0,.13) 100%);border-color:rgba(255,90,0,.45);transform:translateY(-2px) scale(1.01);}
+          .roast-card:active{transform:scale(.98);}
+          .roast-icon-wrap{width:46px;height:46px;border-radius:13px;background:rgba(255,80,0,.15);border:1px solid rgba(255,90,0,.3);display:flex;align-items:center;justify-content:center;font-size:22px;color:#ff6820;flex-shrink:0;animation:fireFloat 2s ease-in-out infinite;}
+          .roast-card-text{flex:1;min-width:0;}
+          .roast-card-title{font-size:14px;font-weight:800;color:rgba(255,255,255,.88);letter-spacing:-.01em;line-height:1.2;}
+          .roast-card-sub{font-size:11px;color:rgba(255,120,60,.7);font-weight:600;margin-top:2px;letter-spacing:.02em;}
+          .roast-card-arrow{font-size:12px;color:rgba(255,100,40,.5);flex-shrink:0;transition:transform .15s,color .15s;}
+          .roast-card:hover .roast-card-arrow{transform:translateX(3px);color:rgba(255,100,40,.9);}
 
           @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
           @keyframes slideUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
@@ -689,10 +699,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         <i className="fas fa-share-nodes"/>
       </button>
 
-      {/* ── Roast trigger button ── */}
-      <button className="roast-trigger" onClick={roastProfile}>
-        🔥 Roast My Profile
-      </button>
+
 
       {/* ── HERO ── */}
       {user.avatar ? (
@@ -744,6 +751,18 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
         {bio && <p className="bio-text s2" style={{color:`rgba(255,255,255,.55)`}}>{bio}</p>}
         {/* theme accent underline */}
         <div style={{width:40,height:2,borderRadius:2,background:theme.accent,margin:"-10px auto 20px",opacity:.6}}/>
+
+        {/* ── Roast card ── */}
+        <div className="roast-card" onClick={roastProfile} role="button" aria-label={`Roast ${user.name}'s profile`}>
+          <div className="roast-icon-wrap">
+            <i className="fas fa-fire-flame-curved"/>
+          </div>
+          <div className="roast-card-text">
+            <div className="roast-card-title">Roast {user.name}&apos;s Profile</div>
+            <div className="roast-card-sub"><i className="fas fa-robot" style={{marginRight:5,fontSize:10}}/>AI roasts this profile for fun</div>
+          </div>
+          <i className="fas fa-chevron-right roast-card-arrow"/>
+        </div>
 
         {socials.length > 0 && (
           <div className="soc-row s3">
@@ -831,9 +850,9 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
             <div style={{display:"flex",justifyContent:"center",marginBottom:6}}>
               <div style={{width:40,height:4,borderRadius:2,background:"#2a2a2a"}}/>
             </div>
-            <div className="roast-fire">🔥</div>
+            <div className="roast-fire"><i className="fas fa-fire-flame-curved" style={{color:"#ff6820"}}/></div>
             <div style={{fontWeight:800,fontSize:16,textAlign:"center",marginBottom:14,color:"#fff"}}>
-              Profile Roast
+              <i className="fas fa-fire" style={{color:"#ff6820",marginRight:7,fontSize:14}}/>{user.name}&apos;s Roast
             </div>
             {roastLoading ? (
               <div style={{textAlign:"center",padding:"20px 0"}}>
@@ -849,7 +868,7 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
             )}
             <button className="roast-btn" style={{background:"rgba(255,60,0,.12)",color:"rgba(255,140,60,.9)",border:"1px solid rgba(255,100,0,.3)"}}
               onClick={roastProfile} disabled={roastLoading}>
-              🔄 Roast Again
+              <i className="fas fa-rotate-right"/> Roast Again
             </button>
             <button className="roast-btn" style={{background:"#1a1a1a",color:"rgba(255,255,255,.5)",border:"1px solid #2a2a2a",marginTop:8}}
               onClick={()=>setRoastOpen(false)}>
