@@ -235,17 +235,17 @@ function RoastShareSheet({ roastText, userName, pageUrl, onClose }) {
     ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
     // subtle grid
-    ctx.strokeStyle = "rgba(255,70,5,0.055)"; ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(255,70,5,0.04)"; ctx.lineWidth = 1;
     for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
     for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
 
-    // glow
-    const orb = ctx.createRadialGradient(W/2, 0, 0, W/2, 0, 280);
-    orb.addColorStop(0, "rgba(255,80,10,0.22)"); orb.addColorStop(1, "rgba(0,0,0,0)");
+    // glow — softer
+    const orb = ctx.createRadialGradient(W/2, 0, 0, W/2, 0, 260);
+    orb.addColorStop(0, "rgba(255,80,10,0.13)"); orb.addColorStop(1, "rgba(0,0,0,0)");
     ctx.fillStyle = orb; ctx.fillRect(0, 0, W, H);
 
     // card border
-    ctx.strokeStyle = "rgba(255,80,15,0.18)"; ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(255,80,15,0.15)"; ctx.lineWidth = 1;
     roundRect(ctx, 18, 18, W-36, H-36, 18);
     ctx.stroke();
 
@@ -259,7 +259,7 @@ function RoastShareSheet({ roastText, userName, pageUrl, onClose }) {
 
     // divider
     const dg = ctx.createLinearGradient(38, 0, W-38, 0);
-    dg.addColorStop(0,"transparent"); dg.addColorStop(0.5,"rgba(255,80,15,0.35)"); dg.addColorStop(1,"transparent");
+    dg.addColorStop(0,"transparent"); dg.addColorStop(0.5,"rgba(255,80,15,0.25)"); dg.addColorStop(1,"transparent");
     ctx.strokeStyle = dg; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(38, 94); ctx.lineTo(W-38, 94); ctx.stroke();
 
