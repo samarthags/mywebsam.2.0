@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
   const { name, role, bio, socials, links, tags, hasAvatar } = req.body || {};
 
-  const groqKey = process.env.GROQ_API_KEY;
+  const groqKey = process.env.NEXT_PUBLIC_GROQ_API_KEY;
   if (!groqKey) return res.status(500).json({ error: "GROQ_API_KEY not configured" });
 
   const profileSummary = [
