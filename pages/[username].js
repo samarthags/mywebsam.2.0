@@ -217,177 +217,172 @@ function ShareSheet({ url, name, onClose }) {
 // ─── Roast Share Sheet ────────────────────────────────────────────────────────
 function RoastShareSheet({ roastText, userName, pageUrl, onClose }) {
   const [imgDataUrl, setImgDataUrl] = useState(null);
-  const [copying,    setCopying]    = useState(false);
-  const [imgLoading, setImgLoading] = useState(true);
+  const [downloaded, setDownloaded] = useState(false);
+  const [copied,     setCopied]     = useState(false);
+  const enc = encodeURIComponent;
+  const shareMsg = `🔥 "${roastText}"\n\n— Roasted on linkitin.site`;
 
+  // Build compact roast card on canvas
   useEffect(() => {
-    const W = 1080, H = 1080;
+    const W = 640, H = 360;
     const canvas = document.createElement("canvas");
     canvas.width = W; canvas.height = H;
     const ctx = canvas.getContext("2d");
 
-    // background gradient
+    // bg
     const bg = ctx.createLinearGradient(0, 0, W, H);
-    bg.addColorStop(0, "#0a0200");
-    bg.addColorStop(0.5, "#1a0800");
-    bg.addColorStop(1, "#0d0100");
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
+    bg.addColorStop(0, "#100300"); bg.addColorStop(1, "#1c0800");
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
     // subtle grid
-    ctx.strokeStyle = "rgba(255,80,10,0.06)";
-    ctx.lineWidth = 1;
-    for (let x = 0; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
-    for (let y = 0; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+    ctx.strokeStyle = "rgba(255,70,5,0.055)"; ctx.lineWidth = 1;
+    for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
 
-    // glow orb
-    const orb = ctx.createRadialGradient(W/2, 200, 0, W/2, 200, 460);
-    orb.addColorStop(0, "rgba(255,90,10,0.3)");
-    orb.addColorStop(1, "rgba(255,90,10,0)");
-    ctx.fillStyle = orb;
-    ctx.fillRect(0, 0, W, H);
+    // glow
+    const orb = ctx.createRadialGradient(W/2, 0, 0, W/2, 0, 280);
+    orb.addColorStop(0, "rgba(255,80,10,0.22)"); orb.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = orb; ctx.fillRect(0, 0, W, H);
 
-    // rounded card
-    const pad = 72, r = 32;
-    ctx.beginPath();
-    ctx.moveTo(pad+r, pad); ctx.lineTo(W-pad-r, pad);
-    ctx.quadraticCurveTo(W-pad, pad, W-pad, pad+r);
-    ctx.lineTo(W-pad, H-pad-r);
-    ctx.quadraticCurveTo(W-pad, H-pad, W-pad-r, H-pad);
-    ctx.lineTo(pad+r, H-pad);
-    ctx.quadraticCurveTo(pad, H-pad, pad, H-pad-r);
-    ctx.lineTo(pad, pad+r);
-    ctx.quadraticCurveTo(pad, pad, pad+r, pad);
-    ctx.closePath();
-    ctx.fillStyle = "rgba(18,6,0,0.82)";
-    ctx.fill();
-    ctx.strokeStyle = "rgba(255,90,20,0.22)";
-    ctx.lineWidth = 1.5;
+    // card border
+    ctx.strokeStyle = "rgba(255,80,15,0.18)"; ctx.lineWidth = 1;
+    roundRect(ctx, 18, 18, W-36, H-36, 18);
     ctx.stroke();
 
-    // fire emoji
-    ctx.font = "90px serif";
-    ctx.textAlign = "center";
-    ctx.fillText("🔥", W/2, 235);
-
-    // GOT ROASTED label
-    ctx.font = "bold 26px sans-serif";
-    ctx.fillStyle = "rgba(255,110,30,0.7)";
-    ctx.fillText("GOT  ROASTED", W/2, 296);
-
-    // name
-    ctx.font = "800 54px sans-serif";
-    ctx.fillStyle = "#ffffff";
-    ctx.fillText(userName, W/2, 374);
+    // fire + title row
+    ctx.font = "28px serif"; ctx.textAlign = "left";
+    ctx.fillText("🔥", 38, 62);
+    ctx.font = "700 15px sans-serif"; ctx.fillStyle = "rgba(255,100,30,0.65)";
+    ctx.fillText("GOT ROASTED", 72, 56);
+    ctx.font = "800 20px sans-serif"; ctx.fillStyle = "#fff";
+    ctx.fillText(userName, 72, 76);
 
     // divider
-    const divGrad = ctx.createLinearGradient(pad+80, 0, W-pad-80, 0);
-    divGrad.addColorStop(0, "transparent");
-    divGrad.addColorStop(0.5, "rgba(255,90,20,0.45)");
-    divGrad.addColorStop(1, "transparent");
-    ctx.strokeStyle = divGrad;
-    ctx.lineWidth = 1.2;
-    ctx.beginPath(); ctx.moveTo(pad+80, 402); ctx.lineTo(W-pad-80, 402); ctx.stroke();
+    const dg = ctx.createLinearGradient(38, 0, W-38, 0);
+    dg.addColorStop(0,"transparent"); dg.addColorStop(0.5,"rgba(255,80,15,0.35)"); dg.addColorStop(1,"transparent");
+    ctx.strokeStyle = dg; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(38, 94); ctx.lineTo(W-38, 94); ctx.stroke();
 
-    // roast text wrapped
-    const maxW = W - pad*2 - 80;
-    const fSize = roastText.length > 200 ? 30 : roastText.length > 120 ? 34 : 38;
-    ctx.font = `500 ${fSize}px sans-serif`;
-    ctx.fillStyle = "rgba(255,255,255,0.88)";
-    ctx.textAlign = "center";
-    const words = (`"${roastText}"`).split(" ");
+    // roast text
+    const maxW = W - 76;
+    const fSize = roastText.length > 160 ? 15 : roastText.length > 90 ? 17 : 19;
+    ctx.font = `400 ${fSize}px sans-serif`;
+    ctx.fillStyle = "rgba(255,255,255,0.82)"; ctx.textAlign = "center";
+    const words = `"${roastText}"`.split(" ");
     const lines = []; let cur = "";
     for (const w of words) {
-      const test = cur ? cur + " " + w : w;
-      if (ctx.measureText(test).width > maxW) { lines.push(cur); cur = w; }
-      else cur = test;
+      const t = cur ? cur + " " + w : w;
+      if (ctx.measureText(t).width > maxW) { lines.push(cur); cur = w; } else cur = t;
     }
     if (cur) lines.push(cur);
-    const lineH = fSize * 1.55;
-    let ty = 440 + (H - 440 - 180 - lines.length * lineH) / 2 + fSize;
-    for (const ln of lines) { ctx.fillText(ln, W/2, ty); ty += lineH; }
+    const lh = fSize * 1.6;
+    const totalH = lines.length * lh;
+    let ty = 94 + (H - 94 - 40 - totalH) / 2 + fSize + 4;
+    for (const ln of lines) { ctx.fillText(ln, W/2, ty); ty += lh; }
 
     // watermark
-    ctx.font = "700 26px sans-serif";
-    ctx.fillStyle = "rgba(255,90,30,0.55)";
-    ctx.textAlign = "center";
-    ctx.fillText("🔥 linkitin.site", W/2, H - pad - 22);
+    ctx.font = "600 12px sans-serif"; ctx.fillStyle = "rgba(255,80,20,0.4)"; ctx.textAlign = "right";
+    ctx.fillText("🔥 linkitin.site", W-30, H-22);
 
     setImgDataUrl(canvas.toDataURL("image/png"));
-    setImgLoading(false);
   }, [roastText, userName]);
 
-  async function shareImage() {
-    if (!imgDataUrl) return;
-    try {
-      const blob = await (await fetch(imgDataUrl)).blob();
-      const file = new File([blob], "roast.png", { type: "image/png" });
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: `${userName}'s Roast 🔥` });
-      } else {
-        const a = document.createElement("a"); a.href = imgDataUrl; a.download = "roast.png"; a.click();
-      }
-    } catch (_) {}
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x+r, y); ctx.lineTo(x+w-r, y); ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+    ctx.lineTo(x+w, y+h-r); ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+    ctx.lineTo(x+r, y+h); ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+    ctx.lineTo(x, y+r); ctx.quadraticCurveTo(x, y, x+r, y); ctx.closePath();
   }
 
-  async function shareText() {
-    const text = `🔥 I got roasted on Linkitin!\n\n"${roastText}"\n\nGet roasted 👉 ${pageUrl}`;
-    if (navigator.share) {
-      navigator.share({ text }).catch(()=>{});
-    } else {
-      try {
-        await navigator.clipboard.writeText(text);
-        setCopying(true); setTimeout(()=>setCopying(false), 2000);
-      } catch (_) {}
+  function dlImage() {
+    if (!imgDataUrl) return;
+    const a = document.createElement("a"); a.href = imgDataUrl; a.download = "roast.png"; a.click();
+    setDownloaded(true); setTimeout(()=>setDownloaded(false), 2200);
+  }
+
+  function copyText() {
+    const t = shareMsg;
+    try { navigator.clipboard.writeText(t).then(()=>{ setCopied(true); setTimeout(()=>setCopied(false),2200); }); }
+    catch (_) {
+      const el = document.createElement("textarea"); el.value = t;
+      el.style.cssText = "position:fixed;opacity:0;"; document.body.appendChild(el);
+      el.select(); document.execCommand("copy"); document.body.removeChild(el);
+      setCopied(true); setTimeout(()=>setCopied(false), 2200);
     }
   }
 
+  const textOpts = [
+    {l:"WhatsApp",  ic:"fab fa-whatsapp",    bg:"#0d1f15",fg:"#25D366",fn:()=>window.open(`https://wa.me/?text=${enc(shareMsg)}`)},
+    {l:"Twitter",   ic:"fab fa-x-twitter",   bg:"#111",   fg:"#fff",   fn:()=>window.open(`https://twitter.com/intent/tweet?text=${enc(shareMsg)}`)},
+    {l:"Telegram",  ic:"fab fa-telegram",    bg:"#0d1820",fg:"#26A5E4",fn:()=>window.open(`https://t.me/share/url?url=${enc(pageUrl)}&text=${enc(shareMsg)}`)},
+    {l:"Reddit",    ic:"fab fa-reddit-alien",bg:"#1f1208",fg:"#FF4500",fn:()=>window.open(`https://reddit.com/submit?url=${enc(pageUrl)}&title=${enc(shareMsg)}`)},
+    {l:"Email",     ic:"fas fa-envelope",    bg:"#1f0d0d",fg:"#EA4335",fn:()=>window.open(`mailto:?subject=${enc("I got roasted 🔥")}&body=${enc(shareMsg)}`)},
+    {l:"SMS",       ic:"fas fa-comment-sms", bg:"#0a1a0a",fg:"#4ade80",fn:()=>window.open(`sms:?body=${enc(shareMsg)}`)},
+  ];
+
   return (
-    <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.78)",zIndex:1100,display:"flex",alignItems:"flex-end",justifyContent:"center",backdropFilter:"blur(6px)"}}>
-      <div onClick={e=>e.stopPropagation()} style={{background:"#0a0a0a",border:"1px solid #1e1e1e",borderRadius:"24px 24px 0 0",width:"100%",maxWidth:520,paddingBottom:44,animation:"ssUp .28s cubic-bezier(.34,1.4,.64,1) both"}}>
+    <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.75)",zIndex:1100,display:"flex",alignItems:"flex-end",justifyContent:"center",backdropFilter:"blur(6px)"}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:"#0f0f0f",border:"1px solid #1e1e1e",borderRadius:"24px 24px 0 0",width:"100%",maxWidth:520,paddingBottom:44,animation:"ssUp .28s cubic-bezier(.34,1.4,.64,1) both"}}>
+
+        {/* handle */}
         <div style={{display:"flex",justifyContent:"center",padding:"14px 0 8px"}}>
           <div style={{width:40,height:4,borderRadius:2,background:"#2a2a2a"}}/>
         </div>
+
+        {/* header */}
         <div style={{padding:"4px 20px 14px",borderBottom:"1px solid #1e1e1e",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <div>
             <div style={{fontWeight:800,fontSize:15,color:"#fff"}}>
               <i className="fas fa-fire" style={{color:"#ff6820",marginRight:6,fontSize:13}}/>Share Roast
             </div>
-            <div style={{fontSize:11,color:"#444",marginTop:2}}>Share your roast card or text</div>
+            <div style={{fontSize:11,color:"#444",marginTop:2}}>Save card or share text</div>
           </div>
           <button onClick={onClose} style={{width:34,height:34,borderRadius:"50%",background:"#1a1a1a",border:"1px solid #2a2a2a",fontSize:17,color:"#555",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",outline:"none",WebkitTapHighlightColor:"transparent"}}>×</button>
         </div>
 
-        <div style={{padding:"16px 20px 12px",display:"flex",justifyContent:"center"}}>
-          {imgLoading ? (
-            <div style={{width:"100%",maxWidth:300,aspectRatio:"1",background:"#111",borderRadius:16,border:"1px solid #222",display:"flex",alignItems:"center",justifyContent:"center",color:"rgba(255,255,255,.2)",fontSize:13}}>
-              Generating card…
-            </div>
-          ) : (
-            <img src={imgDataUrl} alt="Roast card" style={{width:"100%",maxWidth:300,borderRadius:16,border:"1px solid rgba(255,90,20,.2)",boxShadow:"0 8px 32px rgba(255,60,0,.18)",display:"block"}}/>
-          )}
-        </div>
+        {/* card preview */}
+        {imgDataUrl && (
+          <div style={{padding:"14px 20px 6px",display:"flex",justifyContent:"center"}}>
+            <img src={imgDataUrl} alt="Roast card" style={{width:"100%",maxWidth:320,borderRadius:12,border:"1px solid rgba(255,80,15,.18)",boxShadow:"0 4px 20px rgba(255,50,0,.12)",display:"block"}}/>
+          </div>
+        )}
 
-        <div style={{padding:"4px 20px 0",display:"flex",gap:10}}>
-          <button onClick={shareImage} disabled={imgLoading}
-            style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:7,padding:"14px 8px",borderRadius:16,background:"linear-gradient(135deg,#1f0800,#2a1000)",border:"1px solid rgba(255,90,20,.25)",cursor:"pointer",outline:"none",WebkitTapHighlightColor:"transparent",opacity:imgLoading?0.5:1,transition:"all .15s"}}
-            onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(255,90,20,.55)"}
-            onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(255,90,20,.25)"}>
-            <div style={{width:46,height:46,borderRadius:13,background:"rgba(255,80,20,.12)",border:"1px solid rgba(255,90,20,.2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}}>🖼️</div>
-            <span style={{fontSize:11.5,fontWeight:700,color:"rgba(255,130,60,.9)"}}>Share Image</span>
+        {/* all share buttons — same grid as main ShareSheet */}
+        <div style={{padding:"12px 10px 0",display:"flex",flexWrap:"wrap",gap:8,justifyContent:"center"}}>
+
+          {/* Save Image */}
+          <button onClick={dlImage} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,width:72,padding:"10px 4px",border:"none",background:"transparent",cursor:"pointer",borderRadius:14,outline:"none",WebkitTapHighlightColor:"transparent",transition:"background .12s"}}
+            onMouseEnter={e=>e.currentTarget.style.background="#161616"}
+            onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+            <div style={{width:52,height:52,borderRadius:14,background:"#1a0e00",color:downloaded?"#4ade80":"#ff8c40",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22}}>
+              <i className={downloaded?"fas fa-check":"fas fa-image"}/>
+            </div>
+            <span style={{fontSize:10.5,fontWeight:600,color:"#555",textAlign:"center",lineHeight:1.2}}>{downloaded?"Saved!":"Save Image"}</span>
           </button>
 
-          <button onClick={shareText}
-            style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:7,padding:"14px 8px",borderRadius:16,background:"#111",border:"1px solid #1e1e1e",cursor:"pointer",outline:"none",WebkitTapHighlightColor:"transparent",transition:"all .15s"}}
-            onMouseEnter={e=>e.currentTarget.style.borderColor="#2e2e2e"}
-            onMouseLeave={e=>e.currentTarget.style.borderColor="#1e1e1e"}>
-            <div style={{width:46,height:46,borderRadius:13,background:"rgba(255,255,255,.05)",border:"1px solid #222",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}}>
-              {copying ? "✅" : "💬"}
+          {/* Copy Text */}
+          <button onClick={copyText} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,width:72,padding:"10px 4px",border:"none",background:"transparent",cursor:"pointer",borderRadius:14,outline:"none",WebkitTapHighlightColor:"transparent",transition:"background .12s"}}
+            onMouseEnter={e=>e.currentTarget.style.background="#161616"}
+            onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+            <div style={{width:52,height:52,borderRadius:14,background:"#1a1a2a",color:copied?"#4ade80":"#a78bfa",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22}}>
+              <i className={copied?"fas fa-check":"fas fa-copy"}/>
             </div>
-            <span style={{fontSize:11.5,fontWeight:700,color:copying?"#4ade80":"rgba(255,255,255,.5)"}}>
-              {copying ? "Copied!" : "Share Text"}
-            </span>
+            <span style={{fontSize:10.5,fontWeight:600,color:"#555",textAlign:"center",lineHeight:1.2}}>{copied?"Copied!":"Copy Text"}</span>
           </button>
+
+          {/* Social text share buttons */}
+          {textOpts.map(o=>(
+            <button key={o.l} onClick={o.fn} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,width:72,padding:"10px 4px",border:"none",background:"transparent",cursor:"pointer",borderRadius:14,outline:"none",WebkitTapHighlightColor:"transparent",transition:"background .12s"}}
+              onMouseEnter={e=>e.currentTarget.style.background="#161616"}
+              onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+              <div style={{width:52,height:52,borderRadius:14,background:o.bg,color:o.fg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22}}>
+                <i className={o.ic}/>
+              </div>
+              <span style={{fontSize:10.5,fontWeight:600,color:"#555",textAlign:"center",lineHeight:1.2}}>{o.l}</span>
+            </button>
+          ))}
+
         </div>
       </div>
     </div>
