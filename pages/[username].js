@@ -559,14 +559,11 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           @keyframes roastFlicker{from{transform:scale(1) rotate(-3deg);}to{transform:scale(1.08) rotate(3deg);}}
           .roast-text{font-size:15px;line-height:1.75;color:rgba(255,255,255,.82);text-align:center;font-weight:500;min-height:60px;}
           .roast-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:14px;border:none;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;margin-top:18px;}
-          /* ── Roast card ── */
-          .roast-card{display:flex;align-items:center;gap:12px;width:100%;padding:13px 15px;background:#111;border:1px solid rgba(255,90,20,.18);border-radius:14px;cursor:pointer;transition:all .18s;margin-bottom:20px;box-shadow:0 0 12px rgba(255,80,10,.06);}
-          .roast-card:hover{background:#161616;border-color:rgba(255,90,20,.35);box-shadow:0 0 18px rgba(255,80,10,.12);}
-          .roast-card:active{transform:scale(.98);}
-          .roast-icon-wrap{width:40px;height:40px;border-radius:10px;background:rgba(255,80,20,.1);border:1px solid rgba(255,90,20,.2);display:flex;align-items:center;justify-content:center;font-size:17px;color:rgba(255,110,40,.9);flex-shrink:0;text-shadow:0 0 8px rgba(255,100,30,.5);}
-          .roast-card-text{flex:1;min-width:0;}
-          .roast-card-title{font-size:13px;font-weight:700;color:rgba(255,255,255,.82);letter-spacing:-.01em;}
-          .roast-card-sub{font-size:10.5px;color:rgba(255,110,40,.6);font-weight:500;margin-top:2px;letter-spacing:.01em;}
+          /* ── Roast FAB ── */
+          .rfab{position:fixed;top:16px;left:16px;width:46px;height:46px;border-radius:13px;background:#111;border:1px solid rgba(255,90,20,.28);display:flex;align-items:center;justify-content:center;font-size:18px;color:rgba(255,110,40,.85);cursor:pointer;z-index:80;transition:transform .18s cubic-bezier(.34,1.56,.64,1),background .13s,border-color .13s,box-shadow .13s;}
+          .rfab::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,rgba(255,90,20,.08),transparent);pointer-events:none;}
+          .rfab:hover{transform:translateY(-3px) scale(1.07);background:#1a1008;border-color:rgba(255,90,20,.55);color:#ff6820;box-shadow:0 8px 22px rgba(255,80,10,.22);}
+          .rfab:active{transform:scale(.93);}
 
 
           @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
@@ -715,6 +712,11 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
       {/* ── Theme background overlay ── */}
       <div style={{position:"fixed",inset:0,background:theme.hero,zIndex:-1,opacity:.6,pointerEvents:"none"}}/>
 
+      {/* ── Roast FAB ── */}
+      <button className="rfab" onClick={roastProfile} aria-label="Roast profile">
+        <i className="fas fa-fire-flame-curved"/>
+      </button>
+
       {/* ── Share FAB ── */}
       <button className="sfab" onClick={()=>{
         setShareOpen(true);
@@ -789,18 +791,6 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
             })}
           </div>
         )}
-
-        {/* ── Roast card ── */}
-        <div className="roast-card" onClick={roastProfile} role="button">
-          <div className="roast-icon-wrap">
-            <i className="fas fa-fire-flame-curved"/>
-          </div>
-          <div className="roast-card-text">
-            <div className="roast-card-title">Roast {user.name};</div>
-            <div className="roast-card-sub"><i className="fas fa-robot" style={{marginRight:4,fontSize:9}}/>Tap to get roasted by AI</div>
-          </div>
-
-        </div>
 
         {(user.links||[]).length > 0 && (
           <div className="links-container s4">
