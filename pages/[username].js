@@ -560,9 +560,9 @@ export default function ProfilePage({ user, pageUrl, avatarUrl }) {
           .roast-text{font-size:15px;line-height:1.75;color:rgba(255,255,255,.82);text-align:center;font-weight:500;min-height:60px;}
           .roast-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:14px;border:none;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;margin-top:18px;}
           /* ── Roast FAB ── */
-          .rfab{position:fixed;top:16px;left:16px;width:46px;height:46px;border-radius:13px;background:#111;border:1px solid rgba(255,90,20,.28);display:flex;align-items:center;justify-content:center;font-size:18px;color:rgba(255,110,40,.85);cursor:pointer;z-index:80;transition:transform .18s cubic-bezier(.34,1.56,.64,1),background .13s,border-color .13s,box-shadow .13s;}
-          .rfab::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,rgba(255,90,20,.08),transparent);pointer-events:none;}
-          .rfab:hover{transform:translateY(-3px) scale(1.07);background:#1a1008;border-color:rgba(255,90,20,.55);color:#ff6820;box-shadow:0 8px 22px rgba(255,80,10,.22);}
+          .rfab{position:fixed;top:16px;left:16px;width:46px;height:46px;border-radius:13px;background:#111;border:1px solid #1e1e1e;display:flex;align-items:center;justify-content:center;font-size:17px;color:rgba(255,255,255,.6);cursor:pointer;z-index:80;transition:transform .18s cubic-bezier(.34,1.56,.64,1),background .13s,border-color .13s,box-shadow .13s;}
+          .rfab::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,rgba(255,255,255,.06),transparent);pointer-events:none;}
+          .rfab:hover{transform:translateY(-3px) scale(1.07);background:#181818;border-color:#2c2c2c;color:#fff;box-shadow:0 8px 22px rgba(0,0,0,.5);}
           .rfab:active{transform:scale(.93);}
 
 
